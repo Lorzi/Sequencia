@@ -2,48 +2,44 @@ import { useState } from 'react';
 import {Case} from "./Case";
 import {Line} from "./Line";
 import {NeedleManWunschScript} from "./NeedleManWunschScript";
+import {determineOptimalTraceback} from "./NeedleManOptimalPath";
 export default function App(){
     let [caseId,setCaseId] = useState();
-    const optimalPath = [(6, 6), (5, 5), (5, 4), (4, 4), (3, 3), (3, 2), (2, 2), (1, 1), (1, 0)];
-    const test_matrix = [
-        [0, -1, -2, -3, -4, -5, -6, -7, -8, -9],
-            [-1, -1, -2, -3, -4, -3, -4, -5, -6, -7],
-            [-2, -2, 0, -1, -2, -3, -4, -3, -4, -5],
-            [-3, -1, -1, 1, 0, -1, -2, -3, -4, -5],
-            [-4, -2, -2, 0, 0, -1, -2, -3, -2, -3],
-            [-5, -3, -3, -1, -1, 1, 0, -1, -2, -1],
-            [-6, -4, -4, -2, -2, 0, 0, -1, 0, -1],
-            [-7, -5, -5, -3, -3, -1, -1, -1, -1, 1],
-    ];
-    const S1 = "cacaaaa"
-    const S2 = "cacaaaa"
-    const matrixTestData = NeedleManWunschScript(S1,S2,1,-1,-1)
+    let [sequence1 ,setSequence1] = useState('')
+    let [sequence2 ,setSequence2] = useState('')
+    let [match,setMatch] = useState(1)
+    let [missmatch ,setMissmatch] = useState(-1)
+    let [gap,setGap]=useState(-3)
 
+
+
+    let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap) //liste qui contient la matrice de Substitution et la matrice transformée
+    let matrixFinal = matrixTestData[1]; //Matrice transformée
+    let optPath = determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match) //Liste qui contient l'ensemble des points qui sont issus du chemin optimal
+
+    //Matrice affichée sous forme de bouton en html
     const [displayed_matrix,setDisplayedMatrix] = useState(
-
         <div className="matrix-row">
-            {matrixTestData.map((x,xIndex)=> (
+            {matrixFinal.map((x,xIndex)=> (
                 <div className="matrix-line">
                     {Line(x,xIndex)}
                 </div>
             ))}
         </div>
     );
+
+    /* Permet d'actualiser la matrice affichée avec les nouvelles informations et le chemin optimal */
     const onDisplayPath = () => {
-        const keytab =[[7, 9], [6, 8], [5, 7], [5, 6], [5, 5], [4, 4], [3, 3], [2, 2], [1, 1], [0, 0], [0, 0]];
-        const keychain = [0,6]
-        console.log(displayed_matrix)
-        console.log(displayed_matrix.props)
         setDisplayedMatrix(displayed_matrix =>
             <div className="matrix-row">
-                {matrixTestData.map((x,xIndex)=> (
+                {matrixFinal.map((x,xIndex)=> (
                     <div className="matrix-line">
                         <div>
                             {x.map ((y,yIndex) => (
                                 <Case
                                     key = {[xIndex,yIndex]}
                                     value = {y}
-                                    color={keytab.some(coord => coord[0] === xIndex && coord[1] === yIndex) ? 'red' : 'white'}
+                                    color={optPath.some(coord => coord[0] === xIndex && coord[1] === yIndex) ? 'red' : 'white'} //Change de couleur en rouge si la case est retrouvé dans le chemin optimal
                                 />
                             ))}
                         </div>
@@ -52,18 +48,99 @@ export default function App(){
             </div>
         );
     }
+
     const displayPathButton =
         <button onClick={() => onDisplayPath() }>Display optimal path</button>
 
+    /*Composant contenant les box graphiques qui permettent d'entrer les informations (Sequence 1/Sequence 2)*/
+    const sequenceBox =
+        <div>
+            <label htmlFor="sequence1">Entrez la sequence 1 :</label>
+            <input
+                type="text"
+                id="sequence1"
+                value={sequence1}
+                onChange={(e) => {
+                    setSequence1(e.target.value)
+                    onDisplayPath()
+                }
+                }
+
+            />
+            <label htmlFor="sequence2">Entrez la sequence 2 :</label>
+            <input
+                type="text"
+                id="sequence2"
+                value={sequence2}
+                onChange={(e) => {
+                    setSequence2(e.target.value)
+                    onDisplayPath()
+                }
+                }
+
+            />
+        </div>
+
+    /*Composant contenant les box graphiques qui permettent d'entrer les informations (Match/Mismatch/Gap)*/
+    const valueBox =
+        <div>
+            <label htmlFor="match">Match :</label>
+            <input
+                type="number"
+                id="match"
+                value={match}
+                onChange={(e) => {
+                    const newMatch = e.target.value
+                    setMatch(+newMatch) /*Le probeme est que en passant des nombre en argument c'est une chaine string qui se met a la place d'un number*/
+
+                    onDisplayPath()
+                }
+            }
+                style={ { width: "50px", padding: "5px" }}
+            />
+            <label htmlFor="missmatch">Missmatch :</label>
+            <input
+                type="number"
+                id="missmatch"
+                value={missmatch}
+                onChange={(e) => {
+                    const newMissmatch = e.target.value
+                    setMissmatch(+newMissmatch)
+
+                    onDisplayPath()
+                }
+                }
+                style={ { width: "50px", padding: "5px" }}
+            />
+            <label htmlFor="gap">Gap :</label>
+            <input
+                type="number"
+                id="gap"
+                value={gap}
+                onChange={(e) => {
+                    const newGap = e.target.value
+                    setGap(+newGap)
+
+                    onDisplayPath()
+                }
+                }
+                style={ { width: "50px", padding: "5px" }}
+            />
+        </div>
+
     return (
-          <>
-              {displayed_matrix}
-              {displayPathButton}
+        <div>
+            <h1 style = {{ fontsize: '2em'}}>NeedleMen-Wunsch prototype</h1>
+            <div style = {{ margin: '20px'}} />
+            <label>Made by Lorentz Boivin</label>
+            <div style = {{ margin: '20px'}} />
+            {sequenceBox}
+            {valueBox}
+            <div style = {{ margin: '10px'}} />
+            {displayPathButton}
+            <div style = {{ margin: '10px'}} />
+            {displayed_matrix}
 
-          </>
-  );
+        </div>
+    );
 }
-
-
-
-
