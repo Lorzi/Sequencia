@@ -4,13 +4,13 @@ import {Line} from "./Line";
 import {NeedleManWunschScript} from "./NeedleManWunschScript";
 import {determineOptimalTraceback} from "./NeedleManOptimalPath";
 export default function App(){
-    let [caseId,setCaseId] = useState();
     let [sequence1 ,setSequence1] = useState('')
     let [sequence2 ,setSequence2] = useState('')
     let [match,setMatch] = useState(1)
     let [missmatch ,setMissmatch] = useState(-1)
     let [gap,setGap]=useState(-3)
 
+    const [selectedAlgorithm, setSelectedAlgorithm] = useState("Needleman-Wunsch");
 
 
     let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap) //liste qui contient la matrice de Substitution et la matrice transformée
@@ -127,6 +127,36 @@ export default function App(){
                 style={ { width: "50px", padding: "5px" }}
             />
         </div>
+    const selector =
+        <div>
+            <label>Choix de l'algorithme :</label>
+            <select
+                value ={selectedAlgorithm}
+                onChange = {(e) => {
+                    setSelectedAlgorithm(e.target.value)
+                    const selectedValue = e.target.value
+                    if(selectedValue === "Needleman-Wunsch"){
+                        matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap) //liste qui contient la matrice de Substitution et la matrice transformée
+                        matrixFinal = matrixTestData[1]; //Matrice transformée
+                        determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match)
+                        console.log("juste voir si on rentre ici trop de fois =)")
+                    }
+                    if(selectedValue === "Algorithme 2"){
+                        matrixTestData = [0,1]//liste qui contient la matrice de Substitution et la matrice transformée
+                        matrixFinal = matrixTestData[1]; //Matrice transformée
+                        determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match)
+                        console.log("juste voir si on rentre ici trop de fois =)")
+                    }
+
+                }
+                }
+            >
+                <option value = "Needleman-Wunsch">Needleman-Wunsch</option>
+                <option value = "Algorithme 2">Algorithme 2</option>
+                <option value = "Algorithme 3">Algorithme 3</option>
+
+            </select>
+        </div>
 
     return (
         <div>
@@ -135,6 +165,7 @@ export default function App(){
             <label>Made by Lorentz Boivin</label>
             <div style = {{ margin: '20px'}} />
             {sequenceBox}
+            {selector}
             {valueBox}
             <div style = {{ margin: '10px'}} />
             {displayPathButton}
