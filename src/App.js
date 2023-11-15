@@ -65,6 +65,9 @@ export default function App(){
                     onDisplayPath()
                 }
                 }
+                onKeyUp={(e) => {
+                    onDisplayPath()
+                }}
 
             />
             <label htmlFor="sequence2">Entrez la sequence 2 :</label>
@@ -77,7 +80,9 @@ export default function App(){
                     onDisplayPath()
                 }
                 }
-
+                onKeyUp={(e) => {
+                    onDisplayPath()
+                }}
             />
         </div>
 
@@ -95,7 +100,12 @@ export default function App(){
 
                     onDisplayPath()
                 }
+
             }
+                onKeyUp={(e) => {
+                    onDisplayPath()
+                }}
+
                 style={ { width: "50px", padding: "5px" }}
             />
             <label htmlFor="missmatch">Missmatch :</label>
@@ -110,6 +120,10 @@ export default function App(){
                     onDisplayPath()
                 }
                 }
+                onKeyUp={(e) => {
+                    onDisplayPath()
+                }}
+
                 style={ { width: "50px", padding: "5px" }}
             />
             <label htmlFor="gap">Gap :</label>
@@ -124,6 +138,9 @@ export default function App(){
                     onDisplayPath()
                 }
                 }
+                onKeyUp={(e) => {
+                    onDisplayPath()
+                }}
                 style={ { width: "50px", padding: "5px" }}
             />
         </div>
