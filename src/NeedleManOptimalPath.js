@@ -5,12 +5,14 @@ Determine the optimal path of the final matrix and put it inside a array that is
  */
 export function determineOptimalTraceback(S1,S2,subMatrix,transfMatrix,match){
     let y = S1.length, x= S2.length;
+
     let path = [[y,x]]
     while(x!==0 && y!==0){
         if(subMatrix[y-1][x-1]===match){
             y-=1;
             x-=1;
             path.push([y,x]);
+            //On ajoute une ↖
         }
         else{
             if(transfMatrix[y-1][x] > transfMatrix[y][x-1]){

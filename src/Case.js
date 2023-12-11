@@ -9,5 +9,5 @@ export function Case(props){
         </button>
 
     )
-    console.log(props.key);
+    //console.log(props.key);
 }

@@ -7,7 +7,7 @@ export function Line(x,xIndex){
                 <Case
                     key = {[xIndex,yIndex]}
                     value = {y}
-                    color = {'white'}
+                    color = {'light_blue'}
                 />
                 ))}
         </div>

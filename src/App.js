@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {Case} from "./Case";
 import {Line} from "./Line";
 import {NeedleManWunschScript} from "./NeedleManWunschScript";
 import {determineOptimalTraceback} from "./NeedleManOptimalPath";
+import {determineArrowMatrix} from "./ArrowMatrix";
+import {LetterLine} from "./LetterLine";
+import sequenciaImage from "./glitch-goblin.png"
+
+
 export default function App(){
     let [sequence1 ,setSequence1] = useState('')
     let [sequence2 ,setSequence2] = useState('')
@@ -16,7 +21,8 @@ export default function App(){
     let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap) //liste qui contient la matrice de Substitution et la matrice transformée
     let matrixFinal = matrixTestData[1]; //Matrice transformée
     let optPath = determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match) //Liste qui contient l'ensemble des points qui sont issus du chemin optimal
-
+    let arrowedMatrix = matrixTestData[0]
+    //let arrowedMatrix = determineArrowMatrix(sequence1,sequence2,matrixTestData[0],matrixFinal,match)
     //Matrice affichée sous forme de bouton en html
     const [displayed_matrix,setDisplayedMatrix] = useState(
         <div className="matrix-row">
@@ -28,8 +34,36 @@ export default function App(){
         </div>
     );
 
+    //Matrice de flèches
+    const [displayedArrowed_matrix,setDisplayedArrowedMatrix] = useState(
+        <div className="matrix-row">
+            {arrowedMatrix.map((x,xIndex)=> (
+                <div className="matrix-line">
+                    {Line(x,xIndex)}
+                </div>
+            ))}
+        </div>
+    );
+
+    //Composant affichage SEQUENCE MOT 2
+    const [displayedSeq,setDisplayedSeq] = useState(
+        <div className="line">
+            {LetterLine(sequence2)}
+        </div>
+    )
+    //Composant affichage SEQUENCE MOT 1
+    const [displayedOtherSeq,setDisplayedOtherSeq] = useState(
+        <div className="column">
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {LetterLine(sequence1)}
+            </div>
+        </div>
+    )
+
+
     /* Permet d'actualiser la matrice affichée avec les nouvelles informations et le chemin optimal */
     const onDisplayPath = () => {
+
         setDisplayedMatrix(displayed_matrix =>
             <div className="matrix-row">
                 {matrixFinal.map((x,xIndex)=> (
@@ -47,19 +81,104 @@ export default function App(){
                 ))}
             </div>
         );
+
+        //Actualisation de la matrice fléchée
+        setDisplayedArrowedMatrix(displayedArrowed_matrix =>
+            <div className="matrix-row">
+                {arrowedMatrix.map((x,xIndex)=> (
+                    <div className="matrix-line">
+                        <div>
+                            {x.map ((y,yIndex) => (
+                                <Case
+                                    key = {[xIndex,yIndex]}
+                                    value = {y}
+                                    color={"white"}
+                                    //Change de couleur en rouge si la case est retrouvé dans le chemin optimal
+                                />
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+
+        //Actualisation de la Sequence 2 affichée
+        setDisplayedSeq(displayedSeq => (
+            <div>
+                <Case
+                    key = {["first-case"]}
+                    value = {"-"}
+                    color = {'light_blue'}
+                />
+                <Case
+                    key = {["first-case"]}
+                    value = {"-"}
+                    color = {'light_blue'}
+                />
+                {sequence2.split('').map ((y,yIndex) => (
+                    <Case
+                        key = {[yIndex]}
+                        value = {y}
+                        color = {'light_blue'}
+                    />
+                ))}
+            </div>
+        ))
+
+        setDisplayedOtherSeq(displayedOtherSeq => (
+
+
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+
+                <div>
+                    <Case
+                        key = {["first-case"]}
+                        value = {"-"}
+                        color = {'light_blue'}
+                    />
+
+
+
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {sequence1.split('').map ((y,yIndex) => (
+
+                        <Case
+                            key = {[yIndex]}
+                            value = {y}
+                            color = {'light_blue'}
+                        />
+
+                    ))}
+                </div>
+                </div>
+            </div>
+        ))
+
+
     }
+
+
 
     const displayPathButton =
         <button onClick={() => onDisplayPath() }>Display optimal path</button>
 
     /*Composant contenant les box graphiques qui permettent d'entrer les informations (Sequence 1/Sequence 2)*/
     const sequenceBox =
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
             <label htmlFor="sequence1">Entrez la sequence 1 :</label>
             <input
                 type="text"
                 id="sequence1"
                 value={sequence1}
+                style={{
+                    width: '200px',
+                    padding: '5px',
+                    outline: 'none', // Supprimer la bordure par défaut sur le focus
+                    transition: 'box-shadow 0.3s', // Ajouter une transition pour un effet fluide
+                }}
+                onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'} // Ajouter le glow en focus
+                onBlur={(e) => e.target.style.boxShadow = 'none'} // Supprimer le glow lorsque le focus est perdu
+                maxLength={15}
                 onChange={(e) => {
                     setSequence1(e.target.value)
                     onDisplayPath()
@@ -75,6 +194,17 @@ export default function App(){
                 type="text"
                 id="sequence2"
                 value={sequence2}
+                style={{
+                    width: '200px',
+                    padding: '5px',
+                    outline: 'none', // Supprimer la bordure par défaut sur le focus
+                    transition: 'box-shadow 0.3s', // Ajouter une transition pour un effet fluide
+                }}                                                                                                                                                  //ALERTE CANIBALESQUE
+                onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'} // Ajouter le glow en focus
+                onBlur={(e) => e.target.style.boxShadow = 'none'} // Supprimer le glow lorsque le focus est perdu
+
+
+                maxLength={15}
                 onChange={(e) => {
                     setSequence2(e.target.value)
                     onDisplayPath()
@@ -175,19 +305,54 @@ export default function App(){
             </select>
         </div>
 
-    return (
+    let FullMatrix =
+    <div>
+        {displayedSeq}
+        <div style={{ display: 'flex' }}>
+            {displayedOtherSeq}
+            {displayed_matrix}
+        </div>
+    </div>
+
+    let FullMatrix2 =
         <div>
-            <h1 style = {{ fontsize: '2em'}}>NeedleMen-Wunsch prototype</h1>
+            {displayedSeq}
+            <div style={{ display: 'flex' }}>
+                {displayedOtherSeq}
+                {displayedArrowed_matrix}
+            </div>
+        </div>
+
+
+
+    let TwoMatrix =
+        <div style={{ display: 'flex', position: 'relative'}}>
+            <div style={{ marginLeft: '20px'}}/>
+            {FullMatrix}
+            <hr style={{ border: '2px solid #ccc', margin: '20px ' }} />
+            <div style={{ marginLeft: '20px', position: 'absolute', top: '0px', left: '750px', zIndex: '2' }}>
+            {FullMatrix2}
+            </div>
+        </div>
+
+    return (
+        <div style={{ marginLeft: '20px',marginTop: "20px",marginBottom: '50px'}}>
+
+            <img src={sequenciaImage} alt="Title of the website"   />
+
             <div style = {{ margin: '20px'}} />
             <label>Made by Lorentz Boivin</label>
             <div style = {{ margin: '20px'}} />
             {sequenceBox}
+            <div style = {{ margin: '20px'}} />
             {selector}
+            <div style = {{ margin: '20px'}} />
             {valueBox}
-            <div style = {{ margin: '10px'}} />
+            <div style = {{ margin: '20px'}} />
             {displayPathButton}
-            <div style = {{ margin: '10px'}} />
-            {displayed_matrix}
+            <div style = {{ margin: '20px'}} />
+
+            {TwoMatrix}
 
         </div>
     );
