@@ -17,8 +17,8 @@ export function determineOptimalTraceback(S1,S2,subMatrix,transfMatrix,match){
         else{
             if(transfMatrix[y-1][x] > transfMatrix[y][x-1]){
                 if(transfMatrix[y-1][x]>transfMatrix[y-1][x-1]){
-                    path.push([y-1,x]);
                     y-=1;
+                    path.push([y,x]);
                 }
                 else{
                     x-=1;
@@ -28,8 +28,9 @@ export function determineOptimalTraceback(S1,S2,subMatrix,transfMatrix,match){
             }
             else{
                 if(transfMatrix[y][x-1] > transfMatrix[y-1][x-1]){
-                    path.push([y,x-1]);
                     x-=1;
+                    path.push([y,x]);
+
                 }
                 else{
                     x-=1;

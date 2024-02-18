@@ -6,6 +6,7 @@ import {determineOptimalTraceback} from "./NeedleManOptimalPath";
 import {determineArrowMatrix} from "./ArrowMatrix";
 import {LetterLine} from "./LetterLine";
 import sequenciaImage from "./glitch-goblin.png"
+import {determineArrowedMatrix} from "./NeedleManOptimalPath_V2";
 
 
 export default function App(){
@@ -13,7 +14,7 @@ export default function App(){
     let [sequence2 ,setSequence2] = useState('')
     let [match,setMatch] = useState(1)
     let [missmatch ,setMissmatch] = useState(-1)
-    let [gap,setGap]=useState(-3)
+    let [gap,setGap]=useState(-2)
 
     const [selectedAlgorithm, setSelectedAlgorithm] = useState("Needleman-Wunsch");
 
@@ -21,8 +22,8 @@ export default function App(){
     let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap) //liste qui contient la matrice de Substitution et la matrice transformée
     let matrixFinal = matrixTestData[1]; //Matrice transformée
     let optPath = determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match) //Liste qui contient l'ensemble des points qui sont issus du chemin optimal
-    let arrowedMatrix = matrixTestData[0]
-    //let arrowedMatrix = determineArrowMatrix(sequence1,sequence2,matrixTestData[0],matrixFinal,match)
+    //let arrowedMatrix = matrixTestData[0]
+    let arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0],matrixFinal,match,gap,missmatch)
     //Matrice affichée sous forme de bouton en html
     const [displayed_matrix,setDisplayedMatrix] = useState(
         <div className="matrix-row">
