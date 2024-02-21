@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {Case} from "./Case";
 import {Line} from "./Line";
 import {NeedleManWunschScript} from "./NeedleManWunschScript";
@@ -6,7 +6,7 @@ import {determineOptimalTraceback} from "./NeedleManOptimalPath";
 import {determineArrowMatrix} from "./ArrowMatrix";
 import {LetterLine} from "./LetterLine";
 import sequenciaImage from "./glitch-goblin.png"
-import {determineArrowedMatrix} from "./NeedleManOptimalPath_V2";
+import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
 
 
 export default function App(){
@@ -15,15 +15,33 @@ export default function App(){
     let [match,setMatch] = useState(1)
     let [missmatch ,setMissmatch] = useState(-1)
     let [gap,setGap]=useState(-2)
+    let [pathCounter, setPathCounter] = useState(0);
 
     const [selectedAlgorithm, setSelectedAlgorithm] = useState("Needleman-Wunsch");
 
 
     let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap) //liste qui contient la matrice de Substitution et la matrice transformée
     let matrixFinal = matrixTestData[1]; //Matrice transformée
-    let optPath = determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match) //Liste qui contient l'ensemble des points qui sont issus du chemin optimal
+
+    //let optPath = determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match) //Liste qui contient l'ensemble des points qui sont issus du chemin optimal
     //let arrowedMatrix = matrixTestData[0]
     let arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0],matrixFinal,match,gap,missmatch)
+    let allPath = findPaths(arrowedMatrix);
+    let optPath = allPath[pathCounter];
+    //let mergedAllPath = allPath.reduce((acc, current) => acc.concat(current), []);//Utile pour l'affichage en jaune de tout les chemins possible sur la matrice fléchée
+    console.log("c'est merged");
+    //console.log(mergedAllPath)
+
+    const mergedAllPath = allPath.reduce((merged, current) => {
+        current.forEach(path => {
+            if (!merged.includes(path)) {
+                merged.push(path);
+            }
+        });
+        return merged;
+    }, []);
+
+
     //Matrice affichée sous forme de bouton en html
     const [displayed_matrix,setDisplayedMatrix] = useState(
         <div className="matrix-row">
@@ -93,7 +111,7 @@ export default function App(){
                                 <Case
                                     key = {[xIndex,yIndex]}
                                     value = {y}
-                                    color={"white"}
+                                    color={mergedAllPath.some(coord => coord[0] === xIndex && coord[1] === yIndex) ? 'orange' : 'white'}
                                     //Change de couleur en rouge si la case est retrouvé dans le chemin optimal
                                 />
                             ))}
@@ -163,6 +181,38 @@ export default function App(){
     const displayPathButton =
         <button onClick={() => onDisplayPath() }>Display optimal path</button>
 
+    const handleLeftButtonClick = () => {
+        if(pathCounter===0){
+            setPathCounter(allPath.length-1);
+        }
+        else{
+            setPathCounter(pathCounter-1);
+        }
+        onDisplayPath();
+
+
+    };
+
+    const handleRightButtonClick = () => {
+        if(pathCounter+1===allPath.length){
+            setPathCounter(0);
+        }
+        else{
+            setPathCounter(pathCounter+1);
+        }
+        onDisplayPath();
+    };
+    useEffect(() => {
+        onDisplayPath(); // Exécuter onDisplayPath() lorsque pathCounter est mis à jour
+    }, [pathCounter]);
+
+
+    const leftOnPath =
+        <button onClick={() => handleLeftButtonClick()}>←</button>
+
+    const rightOnPath =
+        <button onClick={() => handleRightButtonClick()}>→</button>
+
     /*Composant contenant les box graphiques qui permettent d'entrer les informations (Sequence 1/Sequence 2)*/
     const sequenceBox =
         <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -181,6 +231,7 @@ export default function App(){
                 onBlur={(e) => e.target.style.boxShadow = 'none'} // Supprimer le glow lorsque le focus est perdu
                 maxLength={15}
                 onChange={(e) => {
+                    setPathCounter(0)
                     setSequence1(e.target.value)
                     onDisplayPath()
                 }
@@ -207,6 +258,7 @@ export default function App(){
 
                 maxLength={15}
                 onChange={(e) => {
+                    setPathCounter(0)
                     setSequence2(e.target.value)
                     onDisplayPath()
                 }
@@ -226,6 +278,7 @@ export default function App(){
                 id="match"
                 value={match}
                 onChange={(e) => {
+                    setPathCounter(0);
                     const newMatch = e.target.value
                     setMatch(+newMatch) /*Le probeme est que en passant des nombre en argument c'est une chaine string qui se met a la place d'un number*/
 
@@ -245,6 +298,7 @@ export default function App(){
                 id="missmatch"
                 value={missmatch}
                 onChange={(e) => {
+                    setPathCounter(0);
                     const newMissmatch = e.target.value
                     setMissmatch(+newMissmatch)
 
@@ -263,6 +317,7 @@ export default function App(){
                 id="gap"
                 value={gap}
                 onChange={(e) => {
+                    setPathCounter(0);
                     const newGap = e.target.value
                     setGap(+newGap)
 
@@ -351,6 +406,11 @@ export default function App(){
             {valueBox}
             <div style = {{ margin: '20px'}} />
             {displayPathButton}
+            {leftOnPath}
+            {rightOnPath}
+            <label>Nombre de chemins optimaux existants : </label> {allPath.length}
+            <div style = {{ margin: '20px'}} />
+            <label>Index du chemin actuel : </label> {pathCounter}
             <div style = {{ margin: '20px'}} />
 
             {TwoMatrix}

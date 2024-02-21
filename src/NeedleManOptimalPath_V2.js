@@ -50,3 +50,98 @@ export function determineArrowedMatrix(S1,S2,subMatrix,transfMatrix,match,gap,mi
 
     return arrowedMatrix;
 }
+
+export function findPaths(arrowedMatrix) {
+    const paths = []; // Liste pour stocker les chemins trouvés
+    const queue = []; // File pour suivre les chemins
+
+    const yMax = arrowedMatrix.length - 1;
+    const xMax = arrowedMatrix[0].length - 1;
+    // Ajoute la dernière case à la file
+    queue.push([[yMax, xMax]]);
+
+    // Tant que la file n'est pas vide
+    while (queue.length > 0) {
+        const path = queue.shift(); // Récupère un chemin de la file
+        const [y, x] = path[0]; // Récupère la position actuelle du chemin
+
+        //Si on atteint la première case, ajoute le chemin trouvé à la liste des chemins
+        if (y === 0 || x === 0) {
+            let yNew = y, xNew = x;
+            if(y===0 && x!==0){
+                while(xNew!==0){
+                    path.push([yNew, xNew - 1]);
+                    xNew-=1;
+                }
+
+            }
+            if(x===0 && y!==0){
+                while(yNew!==0){
+                    path.push([yNew-1, xNew]);
+                    yNew-=1;
+                }
+
+            }
+            paths.push(path);
+        }
+
+
+
+
+
+        let arrows = arrowedMatrix[y][x].toString();
+
+        // Explore les directions possibles selon les flèches de la case
+        if (arrows.includes("↖")) {
+            queue.push([[y - 1, x - 1], ...path]); // Déplacement en diagonale
+        }
+        if (arrows.includes("↑")) {
+            queue.push([[y - 1, x], ...path]); // Déplacement vers le haut
+        }
+        if (arrows.includes("←")) {
+            queue.push([[y, x - 1], ...path]); // Déplacement vers la gauche
+        }
+    }
+    console.log("Here is your all Path :");
+    console.log(paths)
+    if (paths.length === 0){
+        return([[[yMax, xMax]]]);
+    }
+    else{
+        return paths;
+    }
+
+}
+// export function allPaths(S1,S2,arrowedMatrix){
+//     let y = S1.length - 1, x= S2.length - 1;
+//     let pathNumber = 1;
+//     let pathList = [];
+//
+//
+//     while(pathNumber !== 0){
+//         let onePath = [];
+//         while(x!==0 && y!==0){
+//             if (arrowedMatrix[y][x].length === 1){
+//
+//                 if (arrowedMatrix[y][x] === "←"){
+//                     onePath.push([y,x]);
+//                     x-=1;
+//                 }
+//                 if (arrowedMatrix[y][x] === "↖"){
+//                     onePath.push([y,x]);
+//                     x-=1;
+//                     y-=1;
+//                 }
+//                 if (arrowedMatrix[y][x] === "↑"){
+//                     onePath.push([y,x]);
+//                     y-=1;
+//                 }
+//
+//             }
+//
+//         }
+//
+//     }
+//
+//
+// }
