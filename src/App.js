@@ -2,35 +2,27 @@ import React, {useEffect, useState} from 'react';
 import {Case} from "./Case";
 import {Line} from "./Line";
 import {NeedleManWunschScript} from "./NeedleManWunschScript";
-import {determineOptimalTraceback} from "./NeedleManOptimalPath";
-import {determineArrowMatrix} from "./ArrowMatrix";
 import {LetterLine} from "./LetterLine";
 import sequenciaImage from "./glitch-goblin.png"
 import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
+import DataTable from "./components/Table"
 
 
 export default function App(){
+
     let [sequence1 ,setSequence1] = useState('')
     let [sequence2 ,setSequence2] = useState('')
     let [match,setMatch] = useState(1)
     let [missmatch ,setMissmatch] = useState(-1)
     let [gap,setGap]=useState(-2)
     let [pathCounter, setPathCounter] = useState(0);
-
     const [selectedAlgorithm, setSelectedAlgorithm] = useState("Needleman-Wunsch");
-
-
     let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap) //liste qui contient la matrice de Substitution et la matrice transformée
     let matrixFinal = matrixTestData[1]; //Matrice transformée
-
-    //let optPath = determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match) //Liste qui contient l'ensemble des points qui sont issus du chemin optimal
-    //let arrowedMatrix = matrixTestData[0]
     let arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0],matrixFinal,match,gap,missmatch)
     let allPath = findPaths(arrowedMatrix);
     let optPath = allPath[pathCounter];
-    //let mergedAllPath = allPath.reduce((acc, current) => acc.concat(current), []);//Utile pour l'affichage en jaune de tout les chemins possible sur la matrice fléchée
-    console.log("c'est merged");
-    //console.log(mergedAllPath)
+
 
     const mergedAllPath = allPath.reduce((merged, current) => {
         current.forEach(path => {
@@ -41,6 +33,42 @@ export default function App(){
         return merged;
     }, []);
 
+    const alignmentResultResolver =(actualPath) => {
+        let alignedSeq1 ="", alignedSeq2="";
+        console.log("PARTIE IMPORTANTE")
+        console.log(actualPath)
+
+        for(let i=1,j1=0,j2=0;i<actualPath.length;i++){
+            if(actualPath[i-1][0] !== actualPath[i][0] && actualPath[i-1][1]!==actualPath[i][1]){
+                alignedSeq1+=sequence1[j1];
+                alignedSeq2+=sequence2[j2];
+                j1++;
+                j2++;
+            }
+            if(actualPath[i-1][0] === actualPath[i][0] && actualPath[i-1][1] < actualPath[i][1]){
+                alignedSeq2+=sequence2[j2];
+                j2++;
+                alignedSeq1+="-";
+            }
+            if(actualPath[i-1][0] < actualPath[i][0] && actualPath[i-1][1] === actualPath[i][1]){
+                alignedSeq1+=sequence1[j1];
+                j1++;
+                alignedSeq2+="-";
+            }
+        }
+        return([alignedSeq1,alignedSeq2]);
+    }
+    const allAlignmentResultResolver = (allPath) =>{
+        let result = [];
+        for(let i=0;i<allPath.length;i++){
+            result.push(alignmentResultResolver(allPath[i]))
+        }
+        console.log("RESULT")
+        console.log(result)
+        return result;
+    }
+
+    let allAlignedResult = allAlignmentResultResolver(allPath);
 
     //Matrice affichée sous forme de bouton en html
     const [displayed_matrix,setDisplayedMatrix] = useState(
@@ -179,7 +207,13 @@ export default function App(){
 
 
     const displayPathButton =
-        <button onClick={() => onDisplayPath() }>Display optimal path</button>
+        <button onClick={() => {
+            onDisplayPath();
+            let aligned_components = alignmentResultResolver(pathCounter,optPath);
+            console.log(aligned_components[0]);
+            console.log(aligned_components[1]);
+
+        }}>Display optimal path</button>
 
     const handleLeftButtonClick = () => {
         if(pathCounter===0){
@@ -189,8 +223,10 @@ export default function App(){
             setPathCounter(pathCounter-1);
         }
         onDisplayPath();
+    };
 
-
+    const choosePathCounter = (chosenId) =>{
+        setPathCounter(chosenId);
     };
 
     const handleRightButtonClick = () => {
@@ -341,13 +377,13 @@ export default function App(){
                     if(selectedValue === "Needleman-Wunsch"){
                         matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap) //liste qui contient la matrice de Substitution et la matrice transformée
                         matrixFinal = matrixTestData[1]; //Matrice transformée
-                        determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match)
-                        console.log("juste voir si on rentre ici trop de fois =)")
+                        //determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match)
+                        console.log("juste voir skei on rentre ici trop de fois =)")
                     }
                     if(selectedValue === "Algorithme 2"){
                         matrixTestData = [0,1]//liste qui contient la matrice de Substitution et la matrice transformée
                         matrixFinal = matrixTestData[1]; //Matrice transformée
-                        determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match)
+                        //determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match)
                         console.log("juste voir si on rentre ici trop de fois =)")
                     }
 
@@ -355,7 +391,7 @@ export default function App(){
                 }
             >
                 <option value = "Needleman-Wunsch">Needleman-Wunsch</option>
-                <option value = "Algorithme 2">Algorithme 2</option>
+                <option value = "Algorithme 2">Algoritddedddthme 2</option>
                 <option value = "Algorithme 3">Algorithme 3</option>
 
             </select>
@@ -391,13 +427,13 @@ export default function App(){
             </div>
         </div>
 
-    return (
+        return (
         <div style={{ marginLeft: '20px',marginTop: "20px",marginBottom: '50px'}}>
 
             <img src={sequenciaImage} alt="Title of the website"   />
 
             <div style = {{ margin: '20px'}} />
-            <label>Made by Lorentz Boivin</label>
+            <label>Made bly Lorgfyhtdgentzf Bogfivin</label>
             <div style = {{ margin: '20px'}} />
             {sequenceBox}
             <div style = {{ margin: '20px'}} />
@@ -410,10 +446,12 @@ export default function App(){
             {rightOnPath}
             <label>Nombre de chemins optimaux existants : </label> {allPath.length}
             <div style = {{ margin: '20px'}} />
-            <label>Index du chemin actuel : </label> {pathCounter}
+            <label>Index du chekmin actueol : </label> {pathCounter}
             <div style = {{ margin: '20px'}} />
 
             {TwoMatrix}
+            <DataTable allPath = {allPath} choosePathCounter = {choosePathCounter} allAlignedResult = {allAlignedResult}/>
+
 
         </div>
     );

@@ -52,10 +52,10 @@ export function NeedleManWunschScript(S1,S2,Match,Missmatch,Gap){
     }
 
 
-    const 테스트매트릭스 = createSubMatrix(S1,S2,Match,Missmatch);
-    const transfMatrix = createTransfMatrix(S1,S2,테스트매트릭스,Gap);
+    const subMatrix = createSubMatrix(S1,S2,Match,Missmatch);
+    const transfMatrix = createTransfMatrix(S1,S2,subMatrix,Gap);
 
-    return([테스트매트릭스,transfMatrix]);
+    return([subMatrix,transfMatrix]);
 
 }
 
