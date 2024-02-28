@@ -427,11 +427,35 @@ export default function App(){
             </div>
         </div>
 
-        return (
-        <div style={{ marginLeft: '20px',marginTop: "20px",marginBottom: '50px'}}>
+    let resultDisplayElement =
+        <div>
+            <div style={{
+                display: 'flex',
+            }}>
+                {[...allAlignedResult[pathCounter][0]].map((char, index) => (
+                    <div key={index} style={{
+                        fontSize: '2.1rem',
+                        fontFamily: 'monospace',
+                        marginRight: '10px', // Espacement entre les caractères
+                    }}>{char}</div>
+                ))}
+            </div>
+            <div style={{
+                display: 'flex',
+            }}>
+                {[...allAlignedResult[pathCounter][1]].map((char, index) => (
+                    <div key={index} style={{
+                        fontSize: '2.1rem',
+                        fontFamily: 'monospace',
+                        marginRight: '10px', // Espacement entre les caractères
+                    }}>{char}</div>
+                ))}
+            </div>
+        </div>
 
+    let upElement =
+        <div>
             <img src={sequenciaImage} alt="Title of the website"   />
-
             <div style = {{ margin: '20px'}} />
             <label>Made bly Lorgfyhtdgentzf Bogfivin</label>
             <div style = {{ margin: '20px'}} />
@@ -444,15 +468,34 @@ export default function App(){
             {displayPathButton}
             {leftOnPath}
             {rightOnPath}
+
             <label>Nombre de chemins optimaux existants : </label> {allPath.length}
+
+
             <div style = {{ margin: '20px'}} />
+
             <label>Index du chekmin actueol : </label> {pathCounter}
             <div style = {{ margin: '20px'}} />
+        </div>
 
+
+
+        return (
+        <div style={{ marginLeft: '20px',marginTop: "20px",marginBottom: '50px'}}>
+            <div style={{ position: 'relative'}}>
+                {upElement}
+                <div style={{
+                    position: 'absolute',
+                    top: '300px', // Positionne l'élément au milieu de la hauteur de l'écran
+                    left: '780px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
+                    transform: 'translateY(-50%)', // Centre l'élément verticalement
+                    fontFamily: 'monospace',
+                }}>
+                    {resultDisplayElement}
+                </div>
+            </div>
             {TwoMatrix}
             <DataTable allPath = {allPath} choosePathCounter = {choosePathCounter} allAlignedResult = {allAlignedResult}/>
-
-
         </div>
     );
 }

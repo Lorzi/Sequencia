@@ -38,12 +38,6 @@ export default function DataTable({allPath,choosePathCounter,allAlignedResult}) 
                 disableMultipleSelection //Désactive la séléction multiple, on ne veut qu'un chemin a la fois
                 onCellClick={(rows,event) => handleClick(event, rows.id)}
             />
-            <div>
-                blablabla
-            </div>
-            <div>
-                BLABLABLA
-            </div>
         </div>
     );
 }
