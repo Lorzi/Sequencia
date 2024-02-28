@@ -5,7 +5,9 @@ import {NeedleManWunschScript} from "./NeedleManWunschScript";
 import {LetterLine} from "./LetterLine";
 import sequenciaImage from "./glitch-goblin.png"
 import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
-import DataTable from "./components/Table"
+import DataTable from "./components/DataTable"
+import SubTable from "./components/SubTable";
+import {Box, TextField} from "@mui/material";
 
 
 export default function App(){
@@ -22,7 +24,7 @@ export default function App(){
     let arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0],matrixFinal,match,gap,missmatch)
     let allPath = findPaths(arrowedMatrix);
     let optPath = allPath[pathCounter];
-
+    const [chosenCase, setChosenCase] = useState([]);
 
     const mergedAllPath = allPath.reduce((merged, current) => {
         current.forEach(path => {
@@ -109,6 +111,7 @@ export default function App(){
 
 
     /* Permet d'actualiser la matrice affichée avec les nouvelles informations et le chemin optimal */
+
     const onDisplayPath = () => {
 
         setDisplayedMatrix(displayed_matrix =>
@@ -120,7 +123,11 @@ export default function App(){
                                 <Case
                                     key = {[xIndex,yIndex]}
                                     value = {y}
-                                    color={optPath.some(coord => coord[0] === xIndex && coord[1] === yIndex) ? 'red' : 'white'} //Change de couleur en rouge si la case est retrouvé dans le chemin optimal
+                                    color={
+                                        (chosenCase[0] === xIndex && chosenCase[1] === yIndex) ? 'darkred' :
+                                            (optPath.some(coord => coord[0] === xIndex && coord[1] === yIndex) ? 'red' : 'white')
+                                    } //Si il est vrai qu'on trouve dans optPath des coord = aux index alors on le colorie en rouge
+                                    //Change de couleur en rouge si la case est retrouvé dans le chemin optimal
                                 />
                             ))}
                         </div>
@@ -222,12 +229,18 @@ export default function App(){
         else{
             setPathCounter(pathCounter-1);
         }
+        setChosenCase([])
         onDisplayPath();
     };
 
     const choosePathCounter = (chosenId) =>{
         setPathCounter(chosenId);
+        setChosenCase([])
     };
+    const chooseCase = (chosenCase) =>{
+        setChosenCase(chosenCase);
+        onDisplayPath();
+    }
 
     const handleRightButtonClick = () => {
         if(pathCounter+1===allPath.length){
@@ -236,12 +249,15 @@ export default function App(){
         else{
             setPathCounter(pathCounter+1);
         }
+        setChosenCase([])
         onDisplayPath();
     };
     useEffect(() => {
         onDisplayPath(); // Exécuter onDisplayPath() lorsque pathCounter est mis à jour
     }, [pathCounter]);
-
+    useEffect(() => {
+        onDisplayPath(); // Exécuter onDisplayPath() lorsque pathCounter est mis à jour
+    }, [chosenCase]);
 
     const leftOnPath =
         <button onClick={() => handleLeftButtonClick()}>←</button>
@@ -251,64 +267,80 @@ export default function App(){
 
     /*Composant contenant les box graphiques qui permettent d'entrer les informations (Sequence 1/Sequence 2)*/
     const sequenceBox =
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label htmlFor="sequence1">Entrez la sequence 1 :</label>
-            <input
-                type="text"
-                id="sequence1"
-                value={sequence1}
-                style={{
-                    width: '200px',
-                    padding: '5px',
-                    outline: 'none', // Supprimer la bordure par défaut sur le focus
-                    transition: 'box-shadow 0.3s', // Ajouter une transition pour un effet fluide
+        <div style={{ display: 'flex', flexDirection: 'COLUMN' }}>
+            <Box
+                sx={{
+                    '& > :not(style)': { m: 1, width: '25ch' },
                 }}
-                onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'} // Ajouter le glow en focus
-                onBlur={(e) => e.target.style.boxShadow = 'none'} // Supprimer le glow lorsque le focus est perdu
-                maxLength={15}
-                onChange={(e) => {
-                    setPathCounter(0)
-                    setSequence1(e.target.value)
-                    onDisplayPath()
-                }
-                }
-                onKeyUp={(e) => {
-                    onDisplayPath()
+                noValidate
+                autoComplete="off"
+            >
+                <TextField
+                    id="sequence1"
+                    label="Sequence 1"
+                    variant="outlined"
+                    type="text"
+                    value={sequence1}
+                    style={{
+                        width: '300px',
+                        padding: '5px',
+                        outline: 'none', // Supprimer la bordure par défaut sur le focus
+                        transition: 'box-shadow 0.3s', // Ajouter une transition pour un effet fluide
                 }}
-
-            />
-            <label htmlFor="sequence2">Entrez la sequence 2 :</label>
-            <input
-                type="text"
-                id="sequence2"
-                value={sequence2}
-                style={{
-                    width: '200px',
-                    padding: '5px',
-                    outline: 'none', // Supprimer la bordure par défaut sur le focus
-                    transition: 'box-shadow 0.3s', // Ajouter une transition pour un effet fluide
-                }}                                                                                                                                                  //ALERTE CANIBALESQUE
-                onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'} // Ajouter le glow en focus
-                onBlur={(e) => e.target.style.boxShadow = 'none'} // Supprimer le glow lorsque le focus est perdu
+                    onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'} // Ajouter le glow en focus
+                    onBlur={(e) => e.target.style.boxShadow = 'none'} // Supprimer le glow lorsque le focus est perdu
+                    inputProps={{maxLength: 15}} //LIMITER LE TEXTE ENTRE A 15
+                    onChange={(e) => {
+                        setPathCounter(0)
+                        setSequence1(e.target.value)
+                        setChosenCase([])
+                        onDisplayPath()
+                    }
+                    }
+                    onKeyUp={(e) => {
+                        onDisplayPath()
+                    }}/>
+            </Box>
 
 
-                maxLength={15}
-                onChange={(e) => {
-                    setPathCounter(0)
-                    setSequence2(e.target.value)
-                    onDisplayPath()
-                }
-                }
-                onKeyUp={(e) => {
-                    onDisplayPath()
+            <Box
+                sx={{
+                    '& > :not(style)': { m: 1, width: '25ch' },
                 }}
-            />
+                noValidate
+                autoComplete="off"
+            >
+                <TextField id="sequence2" label="Sequence 2" variant="outlined"
+                           type="text"
+                           value={sequence2}
+                           style={{
+                               width: '300px',
+                               padding: '5px',
+                               outline: 'none', // Supprimer la bordure par défaut sur le focus
+                               transition: 'box-shadow 0.3s', // Ajouter une transition pour un effet fluide
+                           }}                                                                                                                                                  //ALERTE CANIBALESQUE
+                           onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'} // Ajouter le glow en focus
+                           onBlur={(e) => e.target.style.boxShadow = 'none'} // Supprimer le glow lorsque le focus est perdu
+                           inputProps={{maxLength: 15}} //LIMITER LE TEXTE ENTRE A 15
+                           onChange={(e) => {
+                               setPathCounter(0)
+                               setSequence2(e.target.value)
+                               setChosenCase([])
+                               onDisplayPath()
+                           }
+                           }
+                           onKeyUp={(e) => {
+
+                               onDisplayPath()
+                           }}
+                />
+            </Box>
         </div>
 
     /*Composant contenant les box graphiques qui permettent d'entrer les informations (Match/Mismatch/Gap)*/
     const valueBox =
         <div>
-            <label htmlFor="match">Match :</label>
+            <label htmlFor="match" style={{marginLeft: '5px'}}>Match : </label>
             <input
                 type="number"
                 id="match"
@@ -319,16 +351,18 @@ export default function App(){
                     setMatch(+newMatch) /*Le probeme est que en passant des nombre en argument c'est une chaine string qui se met a la place d'un number*/
 
                     onDisplayPath()
+                    setChosenCase([])
                 }
 
             }
                 onKeyUp={(e) => {
                     onDisplayPath()
+                    setChosenCase([])
                 }}
 
                 style={ { width: "50px", padding: "5px" }}
             />
-            <label htmlFor="missmatch">Missmatch :</label>
+            <label htmlFor="missmatch" style={{marginLeft: '5px'}}>Missmatch : </label>
             <input
                 type="number"
                 id="missmatch"
@@ -339,15 +373,17 @@ export default function App(){
                     setMissmatch(+newMissmatch)
 
                     onDisplayPath()
+                    setChosenCase([])
                 }
                 }
                 onKeyUp={(e) => {
                     onDisplayPath()
+                    setChosenCase([])
                 }}
 
-                style={ { width: "50px", padding: "5px" }}
+                style={{ width: "50px", padding: "5px" }}
             />
-            <label htmlFor="gap">Gap :</label>
+            <label htmlFor="gap" style={{marginLeft: '5px'}}>Gap : </label>
             <input
                 type="number"
                 id="gap"
@@ -358,17 +394,19 @@ export default function App(){
                     setGap(+newGap)
 
                     onDisplayPath()
+                    setChosenCase([])
                 }
                 }
                 onKeyUp={(e) => {
                     onDisplayPath()
+                    setChosenCase([])
                 }}
                 style={ { width: "50px", padding: "5px" }}
             />
         </div>
     const selector =
         <div>
-            <label>Choix de l'algorithme :</label>
+            <label>Choix de l'algorithme : </label>
             <select
                 value ={selectedAlgorithm}
                 onChange = {(e) => {
@@ -457,7 +495,7 @@ export default function App(){
         <div>
             <img src={sequenciaImage} alt="Title of the website"   />
             <div style = {{ margin: '20px'}} />
-            <label>Made bly Lorgfyhtdgentzf Bogfivin</label>
+            <label><strong>Outil de visualisation d'alignement de séquences réalisé par BOIVIN Lorentz dans le cadre du projet de Master 1 à l'Université de Mons.</strong></label>
             <div style = {{ margin: '20px'}} />
             {sequenceBox}
             <div style = {{ margin: '20px'}} />
@@ -465,16 +503,18 @@ export default function App(){
             <div style = {{ margin: '20px'}} />
             {valueBox}
             <div style = {{ margin: '20px'}} />
-            {displayPathButton}
-            {leftOnPath}
-            {rightOnPath}
 
-            <label>Nombre de chemins optimaux existants : </label> {allPath.length}
-
-
+            <div style = {{ display: 'flex', flexDirection: 'row'}}>
+                {displayPathButton}
+                <div style={{marginLeft: '5px'}}/>
+                {leftOnPath}
+                <div style={{marginLeft: '5px'}}/>
+                {rightOnPath}
+            </div>
             <div style = {{ margin: '20px'}} />
-
-            <label>Index du chekmin actueol : </label> {pathCounter}
+            <label>Nombre de chemins optimaux existants : </label> {allPath.length}
+            <div style = {{ margin: '20px'}} />
+            <label>Index du chemin actuel : </label> {pathCounter}
             <div style = {{ margin: '20px'}} />
         </div>
 
@@ -495,7 +535,10 @@ export default function App(){
                 </div>
             </div>
             {TwoMatrix}
-            <DataTable allPath = {allPath} choosePathCounter = {choosePathCounter} allAlignedResult = {allAlignedResult}/>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <DataTable allPath = {allPath} choosePathCounter = {choosePathCounter} allAlignedResult = {allAlignedResult}/>
+                <SubTable uniquePath = {optPath} modSequence1 = {allAlignedResult[pathCounter][0]} modSequence2 = {allAlignedResult[pathCounter][1]} transfMatrix = {matrixFinal} chooseCase = {chooseCase}/>
+            </div>
         </div>
     );
 }

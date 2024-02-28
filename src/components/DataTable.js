@@ -24,19 +24,20 @@ export default function DataTable({allPath,choosePathCounter,allAlignedResult}) 
     }
 
     return (
-        <div style={{ height: 400, width: '100%' }}>
+        <div style={{ height: 400, width: '50%' }}>
             <DataGrid
                 rows={rows}
                 columns={columns}
                 autoHeight
                 initialState={{
                     pagination: {
-                        paginationModel: { page: 0, pageSize: 5 },
+                        paginationModel: { page: 0, pageSize: 20 },
                     },
                 }}
-                pageSizeOptions={[5, 10]}
+                pageSizeOptions={[5, 10,20,50,100]}
                 disableMultipleSelection //Désactive la séléction multiple, on ne veut qu'un chemin a la fois
                 onCellClick={(rows,event) => handleClick(event, rows.id)}
+                rowHeight={30}
             />
         </div>
     );
