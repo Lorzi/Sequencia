@@ -1,9 +1,9 @@
-export function NeedleManWunschScript(S1,S2,Match,Missmatch,Gap){
-
+export function NeedleManWunschScript(S1,S2,Match,Missmatch,Gap,operation_mm){
+    var operationMaxMin = Math.max;
     /*# Create and return the Substitution matrix that will be needed in order to fulfill the transformed matrix*/
     function createSubMatrix(S1,S2,Match,Missmatch){
         let i =0,j=0;
-        const subMatrix = []
+        const subMatrix = [];
 
         for(i=0;i<S1.length;i++){
             const line = [];
@@ -23,6 +23,13 @@ export function NeedleManWunschScript(S1,S2,Match,Missmatch,Gap){
         return subMatrix;
 
     }
+    if(operation_mm ===0){
+        operationMaxMin = Math.max;
+    }
+    else if(operation_mm===1){
+        operationMaxMin = Math.min;
+    }
+
 
     /*#  Create and return the transformed matrix that is will help to find the best path possible, this is also the matrix that should be displayed on the screen*/
     function createTransfMatrix(S1,S2,subMatrix,Gap){
@@ -45,7 +52,7 @@ export function NeedleManWunschScript(S1,S2,Match,Missmatch,Gap){
             transfMatrix.push([cumulative]) //#Ajout de la première colonne au fur et a mesure (obligatoire pour calculer la suite)
             for(j=1;j<lenX+1;j++) {
 
-                transfMatrix[i].push(Math.max(transfMatrix[i - 1][j - 1] + subMatrix[i - 1][j - 1], transfMatrix[i - 1][j] + Gap, transfMatrix[i][j - 1] + Gap)) //#Noyau de l'algorithme #C'est ty^piquement a cet endroit qu'on va afficher a chaque fois les étapes sur le GUI
+                transfMatrix[i].push(operationMaxMin(transfMatrix[i - 1][j - 1] + subMatrix[i - 1][j - 1], transfMatrix[i - 1][j] + Gap, transfMatrix[i][j - 1] + Gap)) //#Noyau de l'algorithme #C'est ty^piquement a cet endroit qu'on va afficher a chaque fois les étapes sur le GUI
             }
         }
         return transfMatrix

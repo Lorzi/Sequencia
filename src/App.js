@@ -8,6 +8,9 @@ import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
 import DataTable from "./components/DataTable"
 import SubTable from "./components/SubTable";
 import {Box, TextField} from "@mui/material";
+import CheckBox from "./components/NeedlemanExtra";
+import NeedlemanExtra from "./components/NeedlemanExtra";
+import SmithWaterManExtra from "./components/SmithWaterManExtra";
 
 
 export default function App(){
@@ -18,14 +21,23 @@ export default function App(){
     let [missmatch ,setMissmatch] = useState(-1)
     let [gap,setGap]=useState(-2)
     let [pathCounter, setPathCounter] = useState(0);
+    let [matchString, setMatchString] = useState(""); //Utile pour le LCS permet de faire un string de tout les caracteres ayuant un match
     const [selectedAlgorithm, setSelectedAlgorithm] = useState("Needleman-Wunsch");
-    let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap) //liste qui contient la matrice de Substitution et la matrice transformée
+    const [selectedVariant,setSelectedVariant] = useState("default");
+    const [operationMm,setOperationMm] = useState(0);
+
+    let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap,operationMm) //liste qui contient la matrice de Substitution et la matrice transformée
     let matrixFinal = matrixTestData[1]; //Matrice transformée
     let arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0],matrixFinal,match,gap,missmatch)
     let allPath = findPaths(arrowedMatrix);
     let optPath = allPath[pathCounter];
+    const [finalScore, setFinalScore] = useState(0);
     const [chosenCase, setChosenCase] = useState([]);
-
+    const [extraParameters,setExtraParameters]= useState(); //SERT A QUOI ?
+    const [missmatchDisabled , setMissmatchDisabled] = useState(false)
+    const [matchDisabled , setMatchDisabled] = useState(false)
+    const [gapDisabled , setGapDisabled] = useState(false)
+    const [colorVariantCase,setColorVariantCase] = useState([]);
     const mergedAllPath = allPath.reduce((merged, current) => {
         current.forEach(path => {
             if (!merged.includes(path)) {
@@ -72,6 +84,65 @@ export default function App(){
 
     let allAlignedResult = allAlignmentResultResolver(allPath);
 
+    const matchStringResolver = (actualPath) => {
+        let alignedSequences = alignmentResultResolver(optPath);
+        let matchString = "";
+        let coloredGreenCase =[]
+        let count =0;
+        while(count !== actualPath.length-1){
+            if (alignedSequences[0][count] === alignedSequences[1][count]){
+                matchString+=alignedSequences[0][count];
+                coloredGreenCase.push(actualPath[count+1]); //Push dans une liste les coordonnées des cases qu'on doit colorier pour mettre en évidence le LCS
+                count++;
+            }
+            else{
+                count++;
+            }
+        }
+        setMatchString(matchString);
+        setColorVariantCase(coloredGreenCase);
+
+    }
+    const checkVariant = () => {
+        if(matrixFinal[0].length === 0) {
+            setFinalScore(0);
+        }
+        else {
+            setFinalScore(matrixFinal[sequence1.length][sequence2.length]);
+        }
+
+        if(selectedVariant === "default"){
+            setMissmatchDisabled(false);
+            setMatchDisabled(false);
+            setGapDisabled(false);
+            setMatchString("");
+            setOperationMm(0);
+
+        }
+        else if(selectedVariant === "LCS"){
+            setMissmatchDisabled(true);
+            setMissmatch(0);
+            setMatchDisabled(true);
+            setMatch(1);
+            setGapDisabled(true);
+            setGap(0);
+            setOperationMm(0);
+            matchStringResolver(optPath);
+        }
+
+        else if(selectedVariant === "wagnerf"){
+            setMatch(0);
+            setMissmatchDisabled(true);
+            setMissmatch(1);
+            setMatchDisabled(true);
+            setGap(1);
+            setGapDisabled(true);
+            setOperationMm(1);
+
+        }
+
+
+    }
     //Matrice affichée sous forme de bouton en html
     const [displayed_matrix,setDisplayedMatrix] = useState(
         <div className="matrix-row">
@@ -110,9 +181,22 @@ export default function App(){
     )
 
 
+
+    const [LCSDisplayed,setLCSDisplayed] = useState(
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+            Résultat LCS : {matchString}
+        </div>
+
+
+    )
+
     /* Permet d'actualiser la matrice affichée avec les nouvelles informations et le chemin optimal */
 
     const onDisplayPath = () => {
+
+        setExtraParameters(<NeedlemanExtra chooseSelectedVariant = {chooseSelectedVariant} />); //PERMET De mettre la variante par defaut sinon elle n'apparait qu'apres avoir cliquer 2 fois sur needleman
+        checkVariant();
 
         setDisplayedMatrix(displayed_matrix =>
             <div className="matrix-row">
@@ -124,9 +208,17 @@ export default function App(){
                                     key = {[xIndex,yIndex]}
                                     value = {y}
                                     color={
-                                        (chosenCase[0] === xIndex && chosenCase[1] === yIndex) ? 'darkred' :
-                                            (optPath.some(coord => coord[0] === xIndex && coord[1] === yIndex) ? 'red' : 'white')
+                                        //(chosenCase[0] === xIndex && chosenCase[1] === yIndex) ? 'darkred' :
+                                       //     (optPath.some(coord => coord[0] === xIndex && coord[1] === yIndex) ? 'red' : 'white')
+
+                                        (colorVariantCase.some(coord => coord[0] === xIndex && coord[1] === yIndex)) && selectedVariant === "LCS" ? 'green' :
+                                                                                     ((chosenCase[0] === xIndex && chosenCase[1] === yIndex)) ? 'darkred' :
+                                                                                         (optPath.some(coord => coord[0] === xIndex && coord[1] === yIndex)) ? 'red' : 'white'
+                                        //Solution à explorer pour colorier les bonnes cases en vert mais la c'est un peu bugué donc voir ce qui va pas
+
+
                                     } //Si il est vrai qu'on trouve dans optPath des coord = aux index alors on le colorie en rouge
+
                                     //Change de couleur en rouge si la case est retrouvé dans le chemin optimal
                                 />
                             ))}
@@ -214,7 +306,7 @@ export default function App(){
 
 
     const displayPathButton =
-        <button onClick={() => {
+        <button id={"displayed_button"} onClick={() => {
             onDisplayPath();
             let aligned_components = alignmentResultResolver(pathCounter,optPath);
             console.log(aligned_components[0]);
@@ -237,10 +329,17 @@ export default function App(){
         setPathCounter(chosenId);
         setChosenCase([])
     };
+
     const chooseCase = (chosenCase) =>{
         setChosenCase(chosenCase);
         onDisplayPath();
     }
+    const chooseSelectedVariant = (selectedVariant) =>{
+        setSelectedVariant(selectedVariant);
+        setPathCounter(0);
+
+    };
+
 
     const handleRightButtonClick = () => {
         if(pathCounter+1===allPath.length){
@@ -252,18 +351,33 @@ export default function App(){
         setChosenCase([])
         onDisplayPath();
     };
+
+    const handleResetValueButtonClick = () => {
+        setPathCounter(0);
+        setMatch(1);
+        setMissmatch(-1);
+        setGap(-2);
+
+    }
+
+
     useEffect(() => {
         onDisplayPath(); // Exécuter onDisplayPath() lorsque pathCounter est mis à jour
-    }, [pathCounter]);
+    }, [pathCounter,chosenCase,gap,colorVariantCase]);
     useEffect(() => {
-        onDisplayPath(); // Exécuter onDisplayPath() lorsque pathCounter est mis à jour
-    }, [chosenCase]);
+        checkVariant(); // Exécuter onDisplayPath() lorsque pathCounter est mis à jour
+    }, [selectedVariant,LCSDisplayed,pathCounter]);
+
+
 
     const leftOnPath =
         <button onClick={() => handleLeftButtonClick()}>←</button>
 
     const rightOnPath =
         <button onClick={() => handleRightButtonClick()}>→</button>
+
+    const resetValueButton =
+        <button disabled = {gapDisabled} onClick={() => handleResetValueButtonClick()}>Reset value</button>
 
     /*Composant contenant les box graphiques qui permettent d'entrer les informations (Sequence 1/Sequence 2)*/
     const sequenceBox =
@@ -359,6 +473,7 @@ export default function App(){
                     onDisplayPath()
                     setChosenCase([])
                 }}
+                disabled={matchDisabled}
 
                 style={ { width: "50px", padding: "5px" }}
             />
@@ -380,6 +495,7 @@ export default function App(){
                     onDisplayPath()
                     setChosenCase([])
                 }}
+                disabled={missmatchDisabled}
 
                 style={{ width: "50px", padding: "5px" }}
             />
@@ -388,6 +504,7 @@ export default function App(){
                 type="number"
                 id="gap"
                 value={gap}
+                //value={selectedVariant === 'LCS' ? '-2' : gap}
                 onChange={(e) => {
                     setPathCounter(0);
                     const newGap = e.target.value
@@ -395,44 +512,59 @@ export default function App(){
 
                     onDisplayPath()
                     setChosenCase([])
+
                 }
                 }
                 onKeyUp={(e) => {
                     onDisplayPath()
                     setChosenCase([])
                 }}
+                disabled={gapDisabled}
+
+
                 style={ { width: "50px", padding: "5px" }}
+
             />
         </div>
+
     const selector =
-        <div>
-            <label>Choix de l'algorithme : </label>
-            <select
-                value ={selectedAlgorithm}
-                onChange = {(e) => {
-                    setSelectedAlgorithm(e.target.value)
-                    const selectedValue = e.target.value
-                    if(selectedValue === "Needleman-Wunsch"){
-                        matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap) //liste qui contient la matrice de Substitution et la matrice transformée
-                        matrixFinal = matrixTestData[1]; //Matrice transformée
-                        //determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match)
-                        console.log("juste voir skei on rentre ici trop de fois =)")
-                    }
-                    if(selectedValue === "Algorithme 2"){
-                        matrixTestData = [0,1]//liste qui contient la matrice de Substitution et la matrice transformée
-                        matrixFinal = matrixTestData[1]; //Matrice transformée
-                        //determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match)
-                        console.log("juste voir si on rentre ici trop de fois =)")
-                    }
+        <div style={{ display: 'flex'}}>
+            <div>
+                <label>Choix de l'algorithme : </label>
+                <select
 
-                }
-                }
-            >
-                <option value = "Needleman-Wunsch">Needleman-Wunsch</option>
-                <option value = "Algorithme 2">Algoritddedddthme 2</option>
-                <option value = "Algorithme 3">Algorithme 3</option>
+                    value ={selectedAlgorithm}
+                    onChange = {(e) => {
+                        setSelectedAlgorithm(e.target.value)
+                        const selectedValue = e.target.value
+                        if(selectedValue === "Needleman-Wunsch"){
+                            setExtraParameters(<NeedlemanExtra chooseSelectedVariant = {chooseSelectedVariant}/>);
+                            matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap) //liste qui contient la matrice de Substitution et la matrice transformée
+                            matrixFinal = matrixTestData[1]; //Matrice transformée
+                            //determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match)
+                            console.log("juste voir skei on rentre ici trop de fois =)")
+                        }
+                        if(selectedValue === "Algorithme 2"){
+                            setExtraParameters(<SmithWaterManExtra/>);
+                            matrixTestData = [0,1]//liste qui contient la matrice de Substitution et la matrice transformée
+                            matrixFinal = matrixTestData[1]; //Matrice transformée
+                            //determineOptimalTraceback(sequence1,sequence2,matrixTestData[0],matrixFinal,match)
+                            console.log("juste voir si on rentre ici trop de fois =)")
+                        }
 
-            </select>
+                    }
+                    }
+                >
+                    <option value = "Needleman-Wunsch">Needleman-Wunsch</option>
+                    <option value = "Algorithme 2">Algoritddedddthme 2</option>
+                    <option value = "Algorithme 3">Algorithme 3</option>
+
+                </select>
+            </div>
+            <div style={{marginLeft: '10px'}}/>
+            <label>Variante : </label>
+            <div style={{marginLeft: '5px'}}/>
+            {extraParameters}
         </div>
 
     let FullMatrix =
@@ -491,6 +623,8 @@ export default function App(){
             </div>
         </div>
 
+
+
     let upElement =
         <div>
             <img src={sequenciaImage} alt="Title of the website"   />
@@ -510,6 +644,9 @@ export default function App(){
                 {leftOnPath}
                 <div style={{marginLeft: '5px'}}/>
                 {rightOnPath}
+                <div style={{marginLeft: '5px'}}/>
+                {resetValueButton}
+
             </div>
             <div style = {{ margin: '20px'}} />
             <label>Nombre de chemins optimaux existants : </label> {allPath.length}
@@ -524,6 +661,8 @@ export default function App(){
         <div style={{ marginLeft: '20px',marginTop: "20px",marginBottom: '50px'}}>
             <div style={{ position: 'relative'}}>
                 {upElement}
+
+
                 <div style={{
                     position: 'absolute',
                     top: '300px', // Positionne l'élément au milieu de la hauteur de l'écran
@@ -532,12 +671,41 @@ export default function App(){
                     fontFamily: 'monospace',
                 }}>
                     {resultDisplayElement}
+                    <div style={{
+                        fontSize: '2.1rem',
+                        position: 'relative',
+                        top: '100px', // Positionne l'élément au milieu de la hauteur de l'écran
+                        left: '00px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
+
+                        fontFamily: 'monospace',
+                    }}>
+                        Score :
+                        {finalScore}
+                    </div>
+
+                    <div style={{
+                        fontSize: '2.1rem',
+                        position: 'relative',
+                        top: '100px', // Positionne l'élément au milieu de la hauteur de l'écran
+                        left: '00px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
+
+                        fontFamily: 'monospace',
+                    }}>
+
+                        {matchString}
+                    </div>
+
+
                 </div>
+
+
+
             </div>
             {TwoMatrix}
+
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <DataTable allPath = {allPath} choosePathCounter = {choosePathCounter} allAlignedResult = {allAlignedResult}/>
-                <SubTable uniquePath = {optPath} modSequence1 = {allAlignedResult[pathCounter][0]} modSequence2 = {allAlignedResult[pathCounter][1]} transfMatrix = {matrixFinal} chooseCase = {chooseCase}/>
+                <SubTable uniquePath = {optPath} modSequence1 = {allAlignedResult[pathCounter][0]} modSequence2 = {allAlignedResult[pathCounter][1]} transfMatrix = {matrixFinal} chooseCase = {chooseCase} rawSequence1={sequence1} rawSequence2={sequence2}/>
             </div>
         </div>
     );

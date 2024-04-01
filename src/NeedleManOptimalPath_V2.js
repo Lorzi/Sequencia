@@ -8,7 +8,17 @@ export function determineArrowedMatrix(S1,S2,subMatrix,transfMatrix,match,gap,mi
         arrowedMatrix[i] = [];
         //ajout colonne
         for (let j = 0; j < x+1; j++) {
-            arrowedMatrix[i][j] = 0;
+            if (j===0){
+                arrowedMatrix[i][j] = "⬆";
+                if(i===0){
+                    arrowedMatrix[i][j] = "⮔"
+                }
+
+            }
+            else{
+                arrowedMatrix[i][j] = "⬅";
+            }
+
         }
     }
 
