@@ -17,7 +17,7 @@ export default function DataTable({allPath,choosePathCounter,allAlignedResult}) 
         counter++;
     }
     function handleClick(event, id) {
-        console.log(id);
+
         choosedId = id;
         choosePathCounter(choosedId);
 

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-
 export default function SubTable({uniquePath,modSequence1,modSequence2, transfMatrix, chooseCase,rawSequence1,rawSequence2}) {
 
     let choosedId = 0;
@@ -34,7 +33,7 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
 
 
         if(uniquePath[counterUniquePath][0] !== uniquePath[counterUniquePath-1][0] && uniquePath[counterUniquePath][1] === uniquePath[counterUniquePath-1][1]){
-            console.log("Vertical");
+
             //Mouvement Vertical
 
             if(oldSeq2.length-1 === counterSeq2) {
@@ -101,9 +100,7 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
         oldSeq1 = opeSeq1;
         oldSeq2 = opeSeq2;
         counterUniquePath--;
-        console.log(counterSeq1)
-        console.log(oldSeq1);
-        console.log(oldSeq2);
+
     }
 
 
@@ -217,7 +214,7 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
     //     oldSeq2 = opeSeq2;
     // }
     function handleClick(event, id) {
-        console.log(id);
+
         choosedId = id;
 
         chooseCase(uniquePath[id]);

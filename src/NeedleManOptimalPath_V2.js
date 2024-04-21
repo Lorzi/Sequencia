@@ -1,4 +1,4 @@
-export function determineArrowedMatrix(S1,S2,subMatrix,transfMatrix,match,gap,missmatch){
+export function determineArrowedMatrix(S1,S2,subMatrix,transfMatrix,match,gap,missmatch){ //Optimisation possible en combinant le fait de mettre les fleches et les path en meme temps ? comme dans SW
     let y = S1.length, x= S2.length;
 
     //CREATION MATRICE FLECHE INITIALISEE DE ZERO
@@ -46,9 +46,14 @@ export function determineArrowedMatrix(S1,S2,subMatrix,transfMatrix,match,gap,mi
             if(transfMatrix[y][x-1] + gap === transfMatrix[y][x]){
                 arrowWord = arrowWord + "←";
             }
+            else if(arrowWord.length === 0){
+                arrowWord = arrowWord + "‎ ";
+            }
             //TOTAL WORD + PUSH DANS LA MATRICE LES FLECHES
             arrowedMatrix[y][x] = arrowWord;
-
+            // if(arrowedMatrix.length === 100){
+            //     return arrowedMatrix;
+            // }
             //DECREMENTER X
             x-=1;
             }
@@ -61,7 +66,7 @@ export function determineArrowedMatrix(S1,S2,subMatrix,transfMatrix,match,gap,mi
     return arrowedMatrix;
 }
 
-export function findPaths(arrowedMatrix) {
+export function findPaths(arrowedMatrix,computeLimit) {
     const paths = []; // Liste pour stocker les chemins trouvés
     const queue = []; // File pour suivre les chemins
 
@@ -112,12 +117,15 @@ export function findPaths(arrowedMatrix) {
         if (arrows.includes("←")) {
             queue.push([[y, x - 1], ...path]); // Déplacement vers la gauche
         }
+        if (paths.length === computeLimit){
+            return(paths);
+        }
     }
-    console.log("Here is your all Path :");
-    console.log(paths)
+
     if (paths.length === 0){
         return([[[yMax, xMax]]]);
     }
+
     else{
         return paths;
     }

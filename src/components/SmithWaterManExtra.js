@@ -3,33 +3,38 @@ import {useState} from "react";
 import NeedlemanExtra from "./NeedlemanExtra";
 import {NeedleManWunschScript} from "../NeedleManWunschScript";
 
-export default function SmithWaterManExtra() {
-    function CheckBox() {
-        const [isChecked, setIsChecked] = useState(false);
-
-        const handleCheckBoxChange = () => {
-            setIsChecked(!isChecked);
-        };
-
-        return (
-            <div>
-                <select
-                    value ={"oui"}
-                    onChange = {(e) => {
-
-
-                        console.log("juste voir si on rentre ici trop de fois =)")
-
-
-                    }
-                    }
-                />
-            </div>
-        );
-    }
-    return(
+export default function SmithWaterManExtra({chooseSelectedVariant}) {
+    const variantSelector =
         <div>
-            <label>WATERMAN</label>
+            <select
+                onChange = {(e) => {
+
+                    chooseSelectedVariant(e.target.value)
+
+                    const selectedValue = e.target.value
+                    if(selectedValue === "default"){
+
+                        console.log("Variante par defaut choisie")
+                    }
+                    if(selectedValue === "LCS"){
+
+                        console.log("Variante LCS choisie")
+                    }
+
+                }
+                }
+
+            >
+                <option value = "default">default</option>
+                <option value = "LCS">LCS</option>
+                <option value = "wagnerf">Wagner-Fischer</option>
+            </select>
         </div>
-    )
+
+
+
+    return (
+        variantSelector
+    );
+
 }

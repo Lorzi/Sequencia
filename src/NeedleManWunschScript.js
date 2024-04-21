@@ -1,5 +1,6 @@
 export function NeedleManWunschScript(S1,S2,Match,Missmatch,Gap,operation_mm){
-    var operationMaxMin = Math.max;
+    let operationMaxMin = Math.max;
+
     /*# Create and return the Substitution matrix that will be needed in order to fulfill the transformed matrix*/
     function createSubMatrix(S1,S2,Match,Missmatch){
         let i =0,j=0;
@@ -19,7 +20,7 @@ export function NeedleManWunschScript(S1,S2,Match,Missmatch,Gap,operation_mm){
             subMatrix.push(line);
         }
         // eslint-disable-next-line no-restricted-globals
-        console.log(subMatrix)
+
         return subMatrix;
 
     }
