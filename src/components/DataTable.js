@@ -1,6 +1,14 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 
+/**
+ * Data table which gives information on all the optimal paths
+ * @param allPath
+ * @param choosePathCounter
+ * @param allAlignedResult
+ * @returns {Element}
+ * @constructor
+ */
 export default function DataTable({allPath,choosePathCounter,allAlignedResult}) {
 
     let choosedId = 0;
@@ -16,11 +24,15 @@ export default function DataTable({allPath,choosePathCounter,allAlignedResult}) 
         rows.push({id: counter, path: allPath[counter],result: allAlignedResult[counter][0] +" "+allAlignedResult[counter][1]})
         counter++;
     }
-    function handleClick(event, id) {
 
+    /**
+     * Allows you to select an optimal path in the table to display it in the matrix
+     * @param event
+     * @param id
+     */
+    function handleClick(event, id) {
         choosedId = id;
         choosePathCounter(choosedId);
-
     }
 
     return (
@@ -35,7 +47,7 @@ export default function DataTable({allPath,choosePathCounter,allAlignedResult}) 
                     },
                 }}
                 pageSizeOptions={[5, 10,20,50,100]}
-                disableMultipleSelection //Désactive la séléction multiple, on ne veut qu'un chemin a la fois
+                disableMultipleSelection //Disable multiple selection, we only want one path at a time
                 onCellClick={(rows,event) => handleClick(event, rows.id)}
                 rowHeight={30}
             />

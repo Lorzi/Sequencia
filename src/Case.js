@@ -1,3 +1,9 @@
+/**
+ * Box/case component
+ * @param props
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function Case(props){
 
     return(

@@ -8,12 +8,13 @@ import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
 import DataTable from "./components/DataTable"
 import SubTable from "./components/SubTable";
 import {Box, TextField} from "@mui/material";
-import CheckBox from "./components/NeedlemanExtra";
 import NeedlemanExtra from "./components/NeedlemanExtra";
 import SmithWaterManExtra from "./components/SmithWaterManExtra";
 import {SmithWatermanScript} from "./SmithWatermanScript";
-import {findPathSW} from "./SmithWatermanOptimalPath";
-import {determineArrowedMatrixSW2, findPathsSW} from "./SmithWatermanOptimalPath_V2";
+import {findPathsSW} from "./SmithWatermanOptimalPath_V2";
+import {blosum62} from "./components/variants/blosum62";
+
+
 
 /**
  * Heart of the application,
@@ -30,25 +31,27 @@ export default function App(){
     let [match,setMatch] = useState(1)
     let [missmatch ,setMissmatch] = useState(-1)
     let [gap,setGap]=useState(-2)
-    let [pathCounter, setPathCounter] = useState(0);
-    let [matchString, setMatchString] = useState(""); //Utile pour le LCS permet de faire un string de tout les caracteres ayuant un match
+    let [pathCounter, setPathCounter] = useState(0); //Counter that indicate which path in the allpath list we choose in the visualisation
+    let [matchString, setMatchString] = useState(""); //Useful for the LCS function, make a string of every character that match for the LCS
     const [selectedAlgorithm, setSelectedAlgorithm] = useState("Needleman-Wunsch");
     const [selectedVariant,setSelectedVariant] = useState("default");
-    const [operationMm,setOperationMm] = useState(0);
-    const [computeLimit, setComputeLimit] = useState(10000);
-    let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap,operationMm)//liste qui contient la matrice de Substitution et la matrice transformée
-    let matrixFinal = matrixTestData[1]; //Matrice transformée
-    let arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0],matrixFinal,match,gap,missmatch)
-    let allPath = findPaths(arrowedMatrix,computeLimit);
-    let optPath = allPath[pathCounter];
+    const [operationMm,setOperationMm] = useState(0); //Allows to change if we use a Max or Min in other class (Needleman-Wunsch or Smith-Waterman)
+    const [computeLimit, setComputeLimit] = useState(10000); //Maximum bound for the computation of result, help to avoid infinite generation and thus crash
+    const [blosumCheck, setBlosumCheck] = useState(false); //Check blosum option is activated
+    const [blosumCustom,setBlosumCustom] = useState(blosum62); //Custom matrix, by default blosum62
+    let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap,operationMm,blosumCheck,blosumCustom)//list that countain subsitution matrix and scoreMatrix
+    let matrixFinal = matrixTestData[1]; //Score Matrix, also knowned as transfMatrix in other class
+    let arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0],matrixFinal,match,gap,missmatch) //Matrix that contains the arrows and direction, important to generate paths
+    let allPath = findPaths(arrowedMatrix,computeLimit); //list that contains every possible path/alignement on this session
+    let optPath = allPath[pathCounter]; //one Path from allPath that as been chosen with the PathCounter
     const [finalScore, setFinalScore] = useState(0);
-
     const [chosenCase, setChosenCase] = useState([]);
-    const [extraParameters,setExtraParameters]= useState(); //SERT A QUOI ?
-    const [missmatchDisabled , setMissmatchDisabled] = useState(false)
+    const [extraParameters,setExtraParameters]= useState(); //Parameters that change with the aglorithm chosen. Make appearing choice of variants
+    const [missmatchDisabled , setMissmatchDisabled] = useState(false) //Allows to know if we have to disable or not the mismatch button, same for the next one
     const [matchDisabled , setMatchDisabled] = useState(false)
     const [gapDisabled , setGapDisabled] = useState(false)
-    const [colorVariantCase,setColorVariantCase] = useState([]);
+    const [colorVariantCase,setColorVariantCase] = useState([]); //Coloring or not for a variant (example green for the LCS)
+    //Merge every unique path for allPath in one list, very useful for displaying everypath on the arrowedmatrix (orange case)
     const mergedAllPath = allPath.reduce((merged, current) => {
         current.forEach(path => {
             if (!merged.includes(path)) {
@@ -58,14 +61,20 @@ export default function App(){
         return merged;
     }, []);
     if(selectedAlgorithm === "Smith-Waterman"){
-        matrixTestData = SmithWatermanScript(sequence1,sequence2,match,missmatch,gap)  //liste qui contient la matrice de Substitution et la matrice transformée
+        matrixTestData = SmithWatermanScript(sequence1,sequence2,match,missmatch,gap)
         matrixFinal = matrixTestData[1];
         arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0], matrixTestData[1],match,gap,missmatch);
         allPath = findPathsSW(arrowedMatrix,matrixTestData[2],matrixFinal,computeLimit);
         optPath = allPath[pathCounter];
     }
+    //INITIALISATION AREA END -------------------------------------------------------------------
 
-//INITIALISATION AREA END -------------------------------------------------------------------
+    /**
+     * Return the string sequence with the gaps "-"
+     * It useful to display the results and see where are the gaps.
+     * @param actualPath
+     * @returns {[string,string]}
+     */
     const alignmentResultResolver =(actualPath) => {
         let alignedSeq1 ="", alignedSeq2="";
 
@@ -89,6 +98,13 @@ export default function App(){
         }
         return([alignedSeq1,alignedSeq2]);
     }
+
+    /**
+     * Make a list of all aligned sequence of every path of the actual solution/actual alignment.
+     * Useful for display when we have multiple optimal path for a same pair of sequence
+     * @param allPath
+     * @returns {[]}
+     */
     const allAlignmentResultResolver = (allPath) =>{
         let result = [];
         for(let i=0;i<allPath.length;i++){
@@ -99,6 +115,10 @@ export default function App(){
     let allAlignedResult = allAlignmentResultResolver(allPath);
 
 
+    /**
+     * Determine the coordinates of the boxes to be colored for the LCS in the matrix display
+     * @param actualPath
+     */
     const matchStringResolver = (actualPath) => {
         let alignedSequences = alignmentResultResolver(optPath);
         let matchString = "";
@@ -116,8 +136,108 @@ export default function App(){
         }
         setMatchString(matchString);
         setColorVariantCase(coloredGreenCase);
-
     }
+
+    /**
+     * Supports left button execution -> decrement the pathcounter
+     */
+    const handleLeftButtonClick = () => {
+        if(pathCounter===0){
+            setPathCounter(allPath.length-1);
+        }
+        else{
+            setPathCounter(pathCounter-1);
+        }
+        setChosenCase([])
+        onDisplayPath();
+    };
+
+    /**
+     * Supports the choice of a specific path counter outside this class
+     */
+    const choosePathCounter = (chosenId) =>{
+        setPathCounter(chosenId);
+        setChosenCase([])
+    };
+
+    /**
+     * Allows the display of a specific "case"
+     */
+    const chooseCase = (chosenCase) =>{
+        setChosenCase(chosenCase);
+        onDisplayPath();
+    }
+    /**
+     * Function used for the variant selection
+     * @param selectedVariant
+     */
+    const chooseSelectedVariant = (selectedVariant) =>{
+        setSelectedVariant(selectedVariant);
+        setPathCounter(0);
+    };
+
+    /**
+     * Supports right button execution -> increment pathcounter
+     */
+    const handleRightButtonClick = () => {
+        if(pathCounter+1===allPath.length){
+            setPathCounter(0);
+        }
+        else{
+            setPathCounter(pathCounter+1);
+        }
+        setChosenCase([])
+        onDisplayPath();
+    };
+
+    /**
+     * Handle a button that put back the initial values of PathCounter, Match, Mismatch and Gap
+     */
+    const handleResetValueButtonClick = () => {
+        setPathCounter(0);
+        setMatch(1);
+        setMissmatch(-1);
+        setGap(-2);
+    }
+
+    /**
+     * Handle the custom matrix blosum file in .JSON input by the user
+     * @param e
+     */
+    const handleFileBlosumLoad = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        try{
+            reader.onload = function(e){
+                try {
+                    let matrixCustom2 = JSON.parse(e.target.result)
+                    setBlosumCustom(matrixCustom2);
+                }catch (jsonError){
+                    console.error("File is nbot in a JSON format");
+                }
+            };
+            reader.readAsText(file);
+        }
+        catch (error){
+            console.error("Bad file format used");
+        }
+    }
+
+
+    /**
+     * useEffect function call the OnDisplayPath() to refresh the visual display of the elements when one of the deps is modified.
+     * Same for the function checkVariant and its own deps.
+     */
+    useEffect(() => {
+        onDisplayPath(); // Exécuter onDisplayPath() lorsque pathCounter est mis à jour
+    }, [pathCounter,chosenCase,gap,colorVariantCase,selectedAlgorithm,blosumCheck,blosumCustom]);
+    useEffect(() => {
+        checkVariant(); // Exécuter onDisplayPath() lorsque pathCounter est mis à jour
+    }, [selectedVariant,pathCounter]);
+
+    /**
+     * Function allowing you to check which variant has been chosen by the user and graying/adapting the parameters accordingly
+     */
     const checkVariant = () => {
         if(matrixFinal[0].length === 0) {
             setFinalScore(0);
@@ -136,7 +256,17 @@ export default function App(){
                 setFinalScore(matrixFinal[sequence1.length][sequence2.length]);
                 setExtraParameters(<NeedlemanExtra chooseSelectedVariant = {chooseSelectedVariant}/>);
             }
+        }
+        if(blosumCheck){
+            setMissmatchDisabled(false);
+            setMatchDisabled(false);
+            setMatch(0);
+            setMissmatch(0);
+        }
 
+        else{
+            setMissmatchDisabled(true);
+            setMatchDisabled(true);
         }
 
         if(selectedVariant === "default"){
@@ -145,8 +275,8 @@ export default function App(){
             setGapDisabled(false);
             setMatchString("");
             setOperationMm(0);
-
         }
+
         else if(selectedVariant === "LCS"){
             setMissmatchDisabled(true);
             setMissmatch(0);
@@ -166,12 +296,17 @@ export default function App(){
             setGap(1);
             setGapDisabled(true);
             setOperationMm(1);
-
         }
 
-
+        else if(selectedVariant === "blosum"){
+            setMissmatch(0);
+            setMissmatchDisabled(true);
+            setMatch(0);
+            setGapDisabled(false);
+            setMatchDisabled(true);
+        }
     }
-    //Matrice affichée sous forme de bouton en html
+    //Matrix displayed as button matrix in html
     const [displayed_matrix,setDisplayedMatrix] = useState(
         <div className="matrix-row">
             {matrixFinal.map((x,xIndex)=> (
@@ -182,7 +317,7 @@ export default function App(){
         </div>
     );
 
-    //Matrice de flèches
+    //Arrow matrix as button matrix in html
     const [displayedArrowed_matrix,setDisplayedArrowedMatrix] = useState(
         <div className="matrix-row">
             {arrowedMatrix.map((x,xIndex)=> (
@@ -193,13 +328,13 @@ export default function App(){
         </div>
     );
 
-    //Composant affichage SEQUENCE MOT 2
+    //Display component SEQUENCE WORD 2
     const [displayedSeq,setDisplayedSeq] = useState(
         <div className="line">
             {LetterLine(sequence2)}
         </div>
     )
-    //Composant affichage SEQUENCE MOT 1
+    //Display component SEQUENCE WORD 1
     const [displayedOtherSeq,setDisplayedOtherSeq] = useState(
         <div className="column">
             <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -208,14 +343,17 @@ export default function App(){
         </div>
     )
 
-    /* Permet d'actualiser la matrice affichée avec les nouvelles informations et le chemin optimal */
 
+    /**
+     * Allows you to update the displayed matrix with new information and the optimal path.
+     * Display of the matrix and update of it each time this function is called.
+     */
     const onDisplayPath = () => {
-
         setExtraParameters(<NeedlemanExtra chooseSelectedVariant = {chooseSelectedVariant} />); //PERMET De mettre la variante par defaut sinon elle n'apparait qu'apres avoir cliquer 2 fois sur needleman
         checkVariant();
 
-        setDisplayedMatrix(displayed_matrix =>
+        //Updating the score matrix
+        setDisplayedMatrix(() =>
             <div className="matrix-row">
                 {matrixFinal.map((x,xIndex)=> (
                     <div className="matrix-line">
@@ -228,8 +366,8 @@ export default function App(){
                                         (colorVariantCase.some(coord => coord[0] === xIndex && coord[1] === yIndex)) && selectedVariant === "LCS" ? 'green' :
                                                                                      ((chosenCase[0] === xIndex && chosenCase[1] === yIndex)) ? 'darkred' :
                                                                                          (optPath.some(coord => coord[0] === xIndex && coord[1] === yIndex)) ? 'red' : 'white'
-                                    } //Si il est vrai qu'on trouve dans optPath des coord = aux index alors on le colorie en rouge
-                                    //Change de couleur en rouge si la case est retrouvé dans le chemin optimal
+                                    } //If it is true that we find coord =  indexes in optPath then we color it red
+                                    //Changes color to red if this box "case" is found in the optimal path
                                 />
                             ))}
                         </div>
@@ -238,8 +376,8 @@ export default function App(){
             </div>
         );
 
-        //Actualisation de la matrice fléchée
-        setDisplayedArrowedMatrix(displayedArrowed_matrix =>
+        //Updating the arrow matrix
+        setDisplayedArrowedMatrix(() =>
             <div className="matrix-row">
                 {arrowedMatrix.map((x,xIndex)=> (
                     <div className="matrix-line">
@@ -258,8 +396,8 @@ export default function App(){
             </div>
         );
 
-        //Actualisation de la Sequence 2 affichée
-        setDisplayedSeq(displayedSeq => (
+        //Updating the Sequence 2 display
+        setDisplayedSeq(() => (
             <div>
                 <Case
                     key = {["first-case"]}
@@ -280,8 +418,8 @@ export default function App(){
                 ))}
             </div>
         ))
-
-        setDisplayedOtherSeq(displayedOtherSeq => (
+        //Updating the Sequence 1 display
+        setDisplayedOtherSeq(() => (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div>
                     <Case
@@ -305,75 +443,24 @@ export default function App(){
         ))
     }
 
+    //Button that call onDisplayPath() in case the matrix don't update itself
     const displayPathButton =
         <button id={"displayed_button"} onClick={() => {
             onDisplayPath();
-            let aligned_components = alignmentResultResolver(pathCounter,optPath);
+
         }}>Display optimal path</button>
 
-    const handleLeftButtonClick = () => {
-        if(pathCounter===0){
-            setPathCounter(allPath.length-1);
-        }
-        else{
-            setPathCounter(pathCounter-1);
-        }
-        setChosenCase([])
-        onDisplayPath();
-    };
-
-    const choosePathCounter = (chosenId) =>{
-        setPathCounter(chosenId);
-        setChosenCase([])
-    };
-
-    const chooseCase = (chosenCase) =>{
-        setChosenCase(chosenCase);
-        onDisplayPath();
-    }
-    const chooseSelectedVariant = (selectedVariant) =>{
-        setSelectedVariant(selectedVariant);
-        setPathCounter(0);
-    };
-
-
-    const handleRightButtonClick = () => {
-        if(pathCounter+1===allPath.length){
-            setPathCounter(0);
-        }
-        else{
-            setPathCounter(pathCounter+1);
-        }
-        setChosenCase([])
-        onDisplayPath();
-    };
-
-    const handleResetValueButtonClick = () => {
-        setPathCounter(0);
-        setMatch(1);
-        setMissmatch(-1);
-        setGap(-2);
-    }
-
-
-    useEffect(() => {
-        onDisplayPath(); // Exécuter onDisplayPath() lorsque pathCounter est mis à jour
-    }, [pathCounter,chosenCase,gap,colorVariantCase,selectedAlgorithm]);
-    useEffect(() => {
-        checkVariant(); // Exécuter onDisplayPath() lorsque pathCounter est mis à jour
-    }, [selectedVariant,pathCounter]);
-
-
+    //Button that decrement the PathCounter
     const leftOnPath =
         <button onClick={() => handleLeftButtonClick()}>←</button>
-
+    //Button that increment the PathCounter
     const rightOnPath =
         <button onClick={() => handleRightButtonClick()}>→</button>
-
+    //Button that reset the value by default
     const resetValueButton =
         <button disabled = {gapDisabled} onClick={() => handleResetValueButtonClick()}>Reset value</button>
 
-    /*Composant contenant les box graphiques qui permettent d'entrer les informations (Sequence 1/Sequence 2)*/
+    //Component containing the graphic boxes which allow information to be entered as an input (Sequence 1/Sequence 2)*/
     const sequenceBox =
         <div style={{ display: 'flex', flexDirection: 'COLUMN' }}>
             <Box
@@ -392,12 +479,12 @@ export default function App(){
                     style={{
                         width: '300px',
                         padding: '5px',
-                        outline: 'none', // Supprimer la bordure par défaut sur le focus
-                        transition: 'box-shadow 0.3s', // Ajouter une transition pour un effet fluide
+                        outline: 'none',
+                        transition: 'box-shadow 0.3s',
                 }}
-                    onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'} // Ajouter le glow en focus
-                    onBlur={(e) => e.target.style.boxShadow = 'none'} // Supprimer le glow lorsque le focus est perdu
-                    inputProps={{maxLength: 15}} //LIMITER LE TEXTE ENTRE A 15
+                    onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'}
+                    onBlur={(e) => e.target.style.boxShadow = 'none'}
+                    inputProps={{maxLength: 15}} //Limit the length of the input text (here size of 15 characters)
                     onChange={(e) => {
                         setPathCounter(0)
                         setSequence1(e.target.value)
@@ -405,7 +492,7 @@ export default function App(){
                         onDisplayPath()
                     }
                     }
-                    onKeyUp={(e) => {
+                    onKeyUp={() => {
                         onDisplayPath()
                     }}/>
             </Box>
@@ -423,12 +510,12 @@ export default function App(){
                            style={{
                                width: '300px',
                                padding: '5px',
-                               outline: 'none', // Supprimer la bordure par défaut sur le focus
-                               transition: 'box-shadow 0.3s', // Ajouter une transition pour un effet fluide
+                               outline: 'none',
+                               transition: 'box-shadow 0.3s',
                            }}
-                           onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'} // Ajouter le glow en focus
-                           onBlur={(e) => e.target.style.boxShadow = 'none'} // Supprimer le glow lorsque le focus est perdu
-                           inputProps={{maxLength: 15}} //LIMITER LE TEXTE ENTRE A 15
+                           onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'}
+                           onBlur={(e) => e.target.style.boxShadow = 'none'}
+                           inputProps={{maxLength: 15}} //Limit the length of the input text (here size of 15 characters)
                            onChange={(e) => {
                                setPathCounter(0)
                                setSequence2(e.target.value)
@@ -436,7 +523,7 @@ export default function App(){
                                onDisplayPath()
                            }
                            }
-                           onKeyUp={(e) => {
+                           onKeyUp={() => {
 
                                onDisplayPath()
                            }}
@@ -444,7 +531,7 @@ export default function App(){
             </Box>
         </div>
 
-    /*Composant contenant les box graphiques qui permettent d'entrer les informations (Match/Mismatch/Gap)*/
+    //Component containing the graphic boxes which allow you to enter information (Match/Mismatch/Gap)
     const valueBox =
         <div>
             <label htmlFor="match" style={{marginLeft: '5px'}}>Match : </label>
@@ -455,18 +542,17 @@ export default function App(){
                 onChange={(e) => {
                     setPathCounter(0);
                     const newMatch = e.target.value
-                    setMatch(+newMatch) /*Le probeme est que en passant des nombre en argument c'est une chaine string qui se met a la place d'un number*/
+                    setMatch(+newMatch)
                     onDisplayPath()
                     setChosenCase([])
                 }
-
             }
-                onKeyUp={(e) => {
+                onKeyUp={() => {
                     onDisplayPath()
                     setChosenCase([])
-                }}
+                }
+            }
                 disabled={matchDisabled}
-
                 style={ { width: "50px", padding: "5px" }}
             />
             <label htmlFor="missmatch" style={{marginLeft: '5px'}}>Missmatch : </label>
@@ -478,17 +564,16 @@ export default function App(){
                     setPathCounter(0);
                     const newMissmatch = e.target.value
                     setMissmatch(+newMissmatch)
-
                     onDisplayPath()
                     setChosenCase([])
                 }
-                }
-                onKeyUp={(e) => {
+            }
+                onKeyUp={() => {
                     onDisplayPath()
                     setChosenCase([])
-                }}
+                }
+            }
                 disabled={missmatchDisabled}
-
                 style={{ width: "50px", padding: "5px" }}
             />
             <label htmlFor="gap" style={{marginLeft: '5px'}}>Gap : </label>
@@ -500,20 +585,17 @@ export default function App(){
                     setPathCounter(0);
                     const newGap = e.target.value
                     setGap(+newGap)
-
                     onDisplayPath()
                     setChosenCase([])
                 }
-                }
-                onKeyUp={(e) => {
+            }
+                onKeyUp={() => {
                     onDisplayPath()
                     setChosenCase([])
-                }}
+                }
+            }
                 disabled={gapDisabled}
-
-
                 style={ { width: "50px", padding: "5px" }}
-
             />
             <label htmlFor="gap" style={{marginLeft: '5px'}}>Compute Limit : </label>
             <input
@@ -526,14 +608,16 @@ export default function App(){
                     setComputeLimit(+newComputeLimit)
                     onDisplayPath()
                 }
-                }
-                onKeyUp={(e) => {
+            }
+                onKeyUp={() => {
                     onDisplayPath()
-                }}
+                }
+            }
                 style={ { width: "90px", padding: "5px" }}
             />
-        </div>
 
+        </div>
+    //HTML component which allows you to select the algorithm used
     const selector =
         <div style={{ display: 'flex'}}>
             <div>
@@ -573,8 +657,29 @@ export default function App(){
             <label>Variante : </label>
             <div style={{marginLeft: '5px'}}/>
             {extraParameters}
+
+            <div style={{marginLeft: '5px'}}/>
+            <label>
+                <input
+                    type="checkbox"
+                    checked={blosumCheck}
+                    onChange={() => {
+                        setPathCounter(0);
+                        setBlosumCheck(!blosumCheck);
+
+
+                    }}
+                />
+                BLOSUM et Custom (expérimental)
+            </label>
+            <div style={{marginLeft: '5px'}}/>
+            <input type="file" onChange={(e) =>{
+                handleFileBlosumLoad(e)
+            }
+            } />
         </div>
 
+    //HTML component representing the score matrix as well as its column and its sequence line aligned to it
     let FullMatrix =
     <div>
         {displayedSeq}
@@ -584,6 +689,7 @@ export default function App(){
         </div>
     </div>
 
+    //HTML component representing the arrowed matrix as well as its column and its sequence line aligned to it
     let FullMatrix2 =
         <div>
             {displayedSeq}
@@ -593,6 +699,7 @@ export default function App(){
             </div>
         </div>
 
+    //HTML component that merged the two matrix in one component
     let TwoMatrix =
         <div style={{ display: 'flex', position: 'relative'}}>
             <div style={{ marginLeft: '20px'}}/>
@@ -603,6 +710,7 @@ export default function App(){
             </div>
         </div>
 
+    //HTML ccomponent which brings together the result of the alignment of the two sequences
     let resultDisplayElement =
         <div>
             <div style={{
@@ -629,6 +737,7 @@ export default function App(){
             </div>
         </div>
 
+    //HTML component that arranges and brings together the upper part of the page
     let upElement =
         <div>
             <img src={sequenciaImage} alt="Title of the website"   />
@@ -659,6 +768,7 @@ export default function App(){
             <div style = {{ margin: '20px'}} />
         </div>
 
+        //Set of all the components in return for the final display on the page
         return (
         <div style={{ marginLeft: '20px',marginTop: "20px",marginBottom: '50px'}}>
             <div style={{ position: 'relative'}}>

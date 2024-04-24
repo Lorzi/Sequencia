@@ -1,5 +1,18 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
+
+/**
+ * Sub-table which allows information to be given on each character and on the operations assimilated to it
+ * @param uniquePath
+ * @param modSequence1
+ * @param modSequence2
+ * @param transfMatrix
+ * @param chooseCase
+ * @param rawSequence1
+ * @param rawSequence2
+ * @returns {Element}
+ * @constructor
+ */
 export default function SubTable({uniquePath,modSequence1,modSequence2, transfMatrix, chooseCase,rawSequence1,rawSequence2}) {
 
     let choosedId = 0;
@@ -15,7 +28,6 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
     ];
 
     let rows = [];
-    let counter = 1;
     let type = "";
     let oldSeq1 = rawSequence1;
     let oldSeq2 = rawSequence2;
@@ -60,7 +72,7 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
             counterSeq1--;
         }
         else if(uniquePath[counterUniquePath][0] === uniquePath[counterUniquePath-1][0] && uniquePath[counterUniquePath][1] !== uniquePath[counterUniquePath-1][1]){
-            //Mouvement Horizontal
+            //Horizontal move
 
             if(oldSeq1.length-1 === counterSeq1) {
                 opeSeq1 = oldSeq1.substring(0, counterSeq1 + 1) + oldSeq2.substring(counterSeq2, counterSeq2 + 1)
@@ -85,7 +97,7 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
             counterSeq2--;
         }
         else{
-            //Mouvement Diagonal
+            //Diagonal move
             type = "Match/Pass";
             if(oldSeq1[counterSeq1] !== oldSeq2[counterSeq2]){
                 type = "Substitution";
@@ -213,6 +225,11 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
     //     oldSeq1 = opeSeq1;
     //     oldSeq2 = opeSeq2;
     // }
+    /**
+     * Allows you to select a box in the table to display it in a dark color on the matrix to better visualize which box it is
+     * @param event
+     * @param id
+     */
     function handleClick(event, id) {
 
         choosedId = id;
@@ -234,7 +251,7 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
                     },
                 }}
                 pageSizeOptions={[20]}
-                disableMultipleSelection //Désactive la séléction multiple, on ne veut qu'un chemin a la fois
+                disableMultipleSelection //Disable multiple selection, we only want one boxe/case at a time
                 onCellClick={(rows,event) => handleClick(event, rows.id)}
                 rowHeight={30}
             />

@@ -1,7 +1,12 @@
 import * as React from 'react';
-import {useState} from "react";
 
-
+/**
+ * Allows you to give the component grouping together the variants associated with the choice of the Needleman-Wunsch algorithm
+ * Return this compossant as a selector
+ * @param chooseSelectedVariant
+ * @returns {Element}
+ * @constructor
+ */
 export default function NeedlemanExtra({chooseSelectedVariant}) {
 
     const variantSelector =
@@ -28,12 +33,12 @@ export default function NeedlemanExtra({chooseSelectedVariant}) {
                 <option value = "default">default</option>
                 <option value = "LCS">LCS</option>
                 <option value = "wagnerf">Wagner-Fischer</option>
+                <option value = "blosum">BLOSUM</option>
             </select>
     </div>
 
         return (
             variantSelector
-            //retourner ici les boutons Match MissMatch, Gap
         );
 
 }

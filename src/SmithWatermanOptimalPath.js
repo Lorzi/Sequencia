@@ -104,9 +104,6 @@ export function findPathSW(transfMatrix,maxScoreCoordList,S1,S2){
         let y = maxScoreCoordList[i][0];
         let x = maxScoreCoordList[i][1];
 
-        //transfMatrix[maxScoreCoordList[i][0]] x
-        //transfMatrix[maxScoreCoordList[i][1]] y
-
         while(tr!==0){
             let arrowWord ="";
             if(transfMatrix[y-1][x-1] === 0){
