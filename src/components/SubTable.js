@@ -240,7 +240,7 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
     }
 
     return (
-        <div style={{ height: 800, width: '50%' }}>
+        <div style={{ height: 600, width: '40%' }}>
             <DataGrid
                 rows={rows}
                 columns={columns}
@@ -250,7 +250,7 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
                         paginationModel: { page: 0, pageSize: 20 },
                     },
                 }}
-                pageSizeOptions={[20]}
+                pageSizeOptions={[5, 10,20,50,100]}
                 disableMultipleSelection //Disable multiple selection, we only want one boxe/case at a time
                 onCellClick={(rows,event) => handleClick(event, rows.id)}
                 rowHeight={30}

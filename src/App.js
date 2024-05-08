@@ -3,16 +3,29 @@ import {Case} from "./Case";
 import {Line} from "./Line";
 import {NeedleManWunschScript} from "./NeedleManWunschScript";
 import {LetterLine} from "./LetterLine";
-import sequenciaImage from "./glitch-goblin.png"
+import sequenciaImage from "./components/sequencia3.PNG"
 import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
 import DataTable from "./components/DataTable"
 import SubTable from "./components/SubTable";
-import {Box, TextField} from "@mui/material";
+import {
+    Box,
+    Button,
+    FormControl,
+    Grid,
+    Input,
+    InputLabel,
+    MenuItem,
+
+    Select,
+
+    TextField, ToggleButton, ToggleButtonGroup
+} from "@mui/material";
 import NeedlemanExtra from "./components/NeedlemanExtra";
 import SmithWaterManExtra from "./components/SmithWaterManExtra";
 import {SmithWatermanScript} from "./SmithWatermanScript";
 import {findPathsSW} from "./SmithWatermanOptimalPath_V2";
 import {blosum62} from "./components/variants/blosum62";
+import Gamemode from "./Gamemode";
 
 
 
@@ -39,6 +52,7 @@ export default function App(){
     const [computeLimit, setComputeLimit] = useState(10000); //Maximum bound for the computation of result, help to avoid infinite generation and thus crash
     const [blosumCheck, setBlosumCheck] = useState(false); //Check blosum option is activated
     const [blosumCustom,setBlosumCustom] = useState(blosum62); //Custom matrix, by default blosum62
+    const [gameModeCheck , setgameModeCheck] = useState(false);
     let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap,operationMm,blosumCheck,blosumCustom)//list that countain subsitution matrix and scoreMatrix
     let matrixFinal = matrixTestData[1]; //Score Matrix, also knowned as transfMatrix in other class
     let arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0],matrixFinal,match,gap,missmatch) //Matrix that contains the arrows and direction, important to generate paths
@@ -50,6 +64,8 @@ export default function App(){
     const [missmatchDisabled , setMissmatchDisabled] = useState(false) //Allows to know if we have to disable or not the mismatch button, same for the next one
     const [matchDisabled , setMatchDisabled] = useState(false)
     const [gapDisabled , setGapDisabled] = useState(false)
+    const [helpWindow, setHelpWindow] = useState(false);
+    const [helpIndex,setHelpIndex]=useState([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]) // Help for the index of the help windows
     const [colorVariantCase,setColorVariantCase] = useState([]); //Coloring or not for a variant (example green for the LCS)
     //Merge every unique path for allPath in one list, very useful for displaying everypath on the arrowedmatrix (orange case)
     const mergedAllPath = allPath.reduce((merged, current) => {
@@ -67,6 +83,12 @@ export default function App(){
         allPath = findPathsSW(arrowedMatrix,matrixTestData[2],matrixFinal,computeLimit);
         optPath = allPath[pathCounter];
     }
+    //New Test era _____________________________________________________________________________________________________
+
+
+
+
+
     //INITIALISATION AREA END -------------------------------------------------------------------
 
     /**
@@ -223,6 +245,15 @@ export default function App(){
         }
     }
 
+    const handleMouseOver = () => {
+        setHelpWindow(true);
+    };
+
+    const handleMouseOut = () => {
+        setHelpWindow(false);
+    };
+
+
 
     /**
      * useEffect function call the OnDisplayPath() to refresh the visual display of the elements when one of the deps is modified.
@@ -306,6 +337,7 @@ export default function App(){
             setMatchDisabled(true);
         }
     }
+
     //Matrix displayed as button matrix in html
     const [displayed_matrix,setDisplayedMatrix] = useState(
         <div className="matrix-row">
@@ -354,121 +386,149 @@ export default function App(){
 
         //Updating the score matrix
         setDisplayedMatrix(() =>
-            <div className="matrix-row">
-                {matrixFinal.map((x,xIndex)=> (
-                    <div className="matrix-line">
-                        <div>
-                            {x.map ((y,yIndex) => (
-                                <Case
-                                    key = {[xIndex,yIndex]}
-                                    value = {y}
-                                    color={
-                                        (colorVariantCase.some(coord => coord[0] === xIndex && coord[1] === yIndex)) && selectedVariant === "LCS" ? 'green' :
-                                                                                     ((chosenCase[0] === xIndex && chosenCase[1] === yIndex)) ? 'darkred' :
-                                                                                         (optPath.some(coord => coord[0] === xIndex && coord[1] === yIndex)) ? 'red' : 'white'
-                                    } //If it is true that we find coord =  indexes in optPath then we color it red
-                                    //Changes color to red if this box "case" is found in the optimal path
-                                />
-                            ))}
-                        </div>
-                    </div>
-                ))}
-            </div>
+            <Box sx={{ width: '100%', margin: '0' }}>
+
+                <Grid container spacing={0.5}>
+                    {matrixFinal.map((row, rowIndex) => (
+                        <Grid item xs={100} key={rowIndex}>
+                            <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
+                                {row.map((item, colIndex) => (
+
+                                    <Grid item  key={colIndex}>
+                                        <Case
+                                            key = {[rowIndex,colIndex]}
+                                            value = {item}
+                                            color={
+                                                (colorVariantCase.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) && selectedVariant === "LCS" ? 'green' :
+                                                    ((chosenCase[0] === rowIndex && chosenCase[1] === colIndex)) ? 'darkred' :
+                                                        (optPath.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) ? 'red' : 'white'
+                                            }
+                                            //If it is true that we find coord =  indexes in optPath then we color it red
+                                            //Changes color to red if this box "case" is found in the optimal path
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Grid>
+                    ))}
+                </Grid>
+            </Box>
         );
 
+
         //Updating the arrow matrix
-        setDisplayedArrowedMatrix(() =>
-            <div className="matrix-row">
-                {arrowedMatrix.map((x,xIndex)=> (
-                    <div className="matrix-line">
-                        <div>
-                            {x.map ((y,yIndex) => (
-                                <Case
-                                    key = {[xIndex,yIndex]}
-                                    value = {y}
-                                    color={mergedAllPath.some(coord => coord[0] === xIndex && coord[1] === yIndex) ? 'orange' : 'white'}
-                                    //Change de couleur en rouge si la case est retrouvé dans le chemin optimal
-                                />
-                            ))}
-                        </div>
-                    </div>
-                ))}
-            </div>
-        );
+        setDisplayedArrowedMatrix(() => (
+            <Box sx={{ width: '100%', margin: '0' }}>
+                <Grid container spacing={0.5} >
+                    {arrowedMatrix.map((row, rowIndex) => (
+                        <Grid item xs={12} key={rowIndex}>
+                            <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
+                                {row.map((item, colIndex) => (
+                                    <Grid item key={colIndex}>
+                                        <Case
+                                            key={[rowIndex, colIndex]}
+                                            value={item}
+                                            color={mergedAllPath.some(coord => coord[0] === rowIndex && coord[1] === colIndex) ? 'orange' : 'white'}
+                                            // Change la couleur en orange si la case est retrouvée dans le chemin optimal
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Grid>
+                    ))}
+                </Grid>
+            </Box>
+        ));
 
         //Updating the Sequence 2 display
         setDisplayedSeq(() => (
-            <div>
-                <Case
-                    key = {["first-case"]}
-                    value = {"-"}
-                    color = {'light_blue'}
-                />
-                <Case
-                    key = {["first-case"]}
-                    value = {"-"}
-                    color = {'light_blue'}
-                />
-                {sequence2.split('').map ((y,yIndex) => (
-                    <Case
-                        key = {[yIndex]}
-                        value = {y}
-                        color = {'light_blue'}
-                    />
-                ))}
-            </div>
-        ))
+            <Box sx={{ width: '100%', margin: '0' }}>
+                <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
+                    <Grid item>
+                        <Case key={["first-case"]} value={"-"} color={'light_blue'} />
+                    </Grid>
+                    <Grid item>
+                        <Case key={["second-case"]} value={"-"} color={'light_blue'} />
+                    </Grid>
+                    {sequence2.split('').map((item, index) => (
+                        <Grid item key={index}>
+                            <Case key={[index]} value={item} color={'light_blue'} />
+                        </Grid>
+                    ))}
+                </Grid>
+            </Box>
+        ));
         //Updating the Sequence 1 display
         setDisplayedOtherSeq(() => (
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div>
-                    <Case
-                        key = {["first-case"]}
-                        value = {"-"}
-                        color = {'light_blue'}
-                    />
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {sequence1.split('').map ((y,yIndex) => (
-
-                        <Case
-                            key = {[yIndex]}
-                            value = {y}
-                            color = {'light_blue'}
-                        />
-
+            <Box sx={{ width: '100%', margin: '0' }}>
+                <Grid container direction="column" spacing={0.5}>
+                    <Grid item>
+                        <Case key={["first-case"]} value={"-"} color={'light_blue'} />
+                    </Grid>
+                    {sequence1.split('').map((item, index) => (
+                        <Grid item key={index}>
+                            <Case key={[index]} value={item} color={'light_blue'} />
+                        </Grid>
                     ))}
-                </div>
-                </div>
-            </div>
-        ))
+                </Grid>
+            </Box>
+        ));
     }
 
     //Button that call onDisplayPath() in case the matrix don't update itself
     const displayPathButton =
-        <button id={"displayed_button"} onClick={() => {
+        <Button id={"displayed_button"} variant="outlined" style={{
+            width: '200px',
+            height: '55px',
+            outline: 'none',
+            transition: 'box-shadow 0.3s',
+        }} onClick={() => {
             onDisplayPath();
 
-        }}>Display optimal path</button>
+        }}>Force update</Button>
 
     //Button that decrement the PathCounter
     const leftOnPath =
-        <button onClick={() => handleLeftButtonClick()}>←</button>
+        <Button variant="outlined" color="secondary" style ={{
+            height: '55px'
+        }} onClick={() => handleLeftButtonClick()}>←</Button>
     //Button that increment the PathCounter
     const rightOnPath =
-        <button onClick={() => handleRightButtonClick()}>→</button>
+        <Button variant="outlined" color="secondary" style ={{
+            height: '55px'
+        }} onClick={() => handleRightButtonClick()}>→</Button>
     //Button that reset the value by default
     const resetValueButton =
-        <button disabled = {gapDisabled} onClick={() => handleResetValueButtonClick()}>Reset value</button>
+        <div style={{ position: 'relative' }}>
+        <Button
+            variant="outlined"
+            style ={{
+                height: '55px',
+                width: "310px"
+            }}
+            disabled = {gapDisabled}
+            onClick={() => handleResetValueButtonClick()}
+            onMouseOver={() => {
+                handleMouseOver()
+                setHelpIndex([false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false])
+            }}
+            onMouseOut={() => {
+                handleMouseOut()
+                setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+            }}
+        >Reset value</Button>
+            {helpWindow && helpIndex[7] && (
+                <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
+                    Remet les valeur de match, mismatch et gap aux valeurs par défaut (respectivement : 1 ,-1 ,-2). Ces valeurs sont généralement les plus couramment utilisées
+                </div>
+            )}
+        </div>
 
     //Component containing the graphic boxes which allow information to be entered as an input (Sequence 1/Sequence 2)*/
     const sequenceBox =
-        <div style={{ display: 'flex', flexDirection: 'COLUMN' }}>
+        <div style={{ display: 'flex', flexDirection: 'COLUMN', gap:'5px'}}>
             <Box
-                sx={{
-                    '& > :not(style)': { m: 1, width: '25ch' },
-                }}
-                noValidate
-                autoComplete="off"
+                sx={{'& > :not(style)': { m: 1},}} //Make the alignment better
             >
                 <TextField
                     id="sequence1"
@@ -478,13 +538,13 @@ export default function App(){
                     value={sequence1}
                     style={{
                         width: '300px',
-                        padding: '5px',
+
+
                         outline: 'none',
                         transition: 'box-shadow 0.3s',
                 }}
                     onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'}
-                    onBlur={(e) => e.target.style.boxShadow = 'none'}
-                    inputProps={{maxLength: 15}} //Limit the length of the input text (here size of 15 characters)
+                    inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 1000 characters)
                     onChange={(e) => {
                         setPathCounter(0)
                         setSequence1(e.target.value)
@@ -496,26 +556,30 @@ export default function App(){
                         onDisplayPath()
                     }}/>
             </Box>
-
+            <div style={{marginLeft: '0px', margin: '0px'}}/>
             <Box
-                sx={{
-                    '& > :not(style)': { m: 1, width: '25ch' },
-                }}
-                noValidate
-                autoComplete="off"
+                sx={{'& > :not(style)': { m: 1},}} //Make the alignment better
             >
+                <div style={{ position: 'relative' }}>
                 <TextField id="sequence2" label="Sequence 2" variant="outlined"
                            type="text"
                            value={sequence2}
                            style={{
                                width: '300px',
-                               padding: '5px',
+
                                outline: 'none',
                                transition: 'box-shadow 0.3s',
                            }}
+                           onMouseOver={() => {
+                               handleMouseOver()
+                               setHelpIndex([true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                           }}
+                           onMouseOut={() => {
+                               handleMouseOut()
+                               setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                           }}
                            onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'}
-                           onBlur={(e) => e.target.style.boxShadow = 'none'}
-                           inputProps={{maxLength: 15}} //Limit the length of the input text (here size of 15 characters)
+                           inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 15 characters)
                            onChange={(e) => {
                                setPathCounter(0)
                                setSequence2(e.target.value)
@@ -528,6 +592,12 @@ export default function App(){
                                onDisplayPath()
                            }}
                 />
+                    {helpWindow && helpIndex[0] && (
+                        <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
+                            Ceci est l'espace reservé aux séquences. Il est possible de choisir les deux séquences que l'on va aligner. La séquence 1 et la séquence 2. La plupart du temps on met des séquence d'ADN ou de protéines mais cet outil permet plus de possibilités comme le travail sur les chaines de caractères, etc... Alors n'hésitez pas à tester avec ce que vous voulez !
+                        </div>
+                    )}
+                </div>
             </Box>
         </div>
 
@@ -597,128 +667,191 @@ export default function App(){
                 disabled={gapDisabled}
                 style={ { width: "50px", padding: "5px" }}
             />
-            <label htmlFor="gap" style={{marginLeft: '5px'}}>Compute Limit : </label>
-            <input
-                type="number"
-                id="computeLimit"
-                value={computeLimit}
-                onChange={(e) => {
-                    setPathCounter(0);
-                    const newComputeLimit = e.target.value
-                    setComputeLimit(+newComputeLimit)
-                    onDisplayPath()
-                }
-            }
-                onKeyUp={() => {
-                    onDisplayPath()
-                }
-            }
-                style={ { width: "90px", padding: "5px" }}
-            />
+
 
         </div>
     //HTML component which allows you to select the algorithm used
     const selector =
-        <div style={{ display: 'flex'}}>
+        <div style={{ display: 'flex', flexDirection: 'COLUMN',gap:'10px' }}>
+            <Box
+                sx={{'& > :not(style)': { m: 1}}}
+            >
             <div>
-                <label>Choix de l'algorithme : </label>
-                <select
+                <FormControl fullWidth>
+                    <div style={{ position: 'relative' }}>
+                    <InputLabel id="algorithm-choice">Algorithme</InputLabel>
+                    <Select
 
-                    value ={selectedAlgorithm}
-                    onChange = {(e) => {
-                        setPathCounter(0);
-                        setSelectedAlgorithm(e.target.value)
-                        const selectedValue = e.target.value
-                        if(selectedValue === "Needleman-Wunsch"){
-                            setExtraParameters(<NeedlemanExtra chooseSelectedVariant = {chooseSelectedVariant}/>);
-                           // setMatrixTestData(NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap,operationMm)); //liste qui contient la matrice de Substitution et la matrice transformée
-                            matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap,operationMm);
-                            matrixFinal = matrixTestData[1]; //Matrice transformée
-                            setSelectedVariant("default")
+                        value ={selectedAlgorithm}
+                        label = "Algorithm"
+                        variant="outlined"
+                        style={{
+
+                            width: '300px',
+                            height: '56px',
+                            outline: 'none',
+                            transition: 'box-shadow 0.3s',
+                        }}
+                        onMouseOver={() => {
+                            handleMouseOver()
+                            setHelpIndex([false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                        }}
+                        onMouseOut={() => {
+                            handleMouseOut()
+                            setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                        }}
+                        //onClick={() =>{setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])}}
+                        onChange = {(e) => {
+                            setPathCounter(0);
+                            setSelectedAlgorithm(e.target.value)
+                            const selectedValue = e.target.value
+                            if(selectedValue === "Needleman-Wunsch"){
+                                setExtraParameters(<NeedlemanExtra chooseSelectedVariant = {chooseSelectedVariant}/>);
+                               // setMatrixTestData(NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap,operationMm)); //liste qui contient la matrice de Substitution et la matrice transformée
+                                matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap,operationMm);
+                                matrixFinal = matrixTestData[1]; //Matrice transformée
+                                setSelectedVariant("default")
+
+                            }
+                            if(selectedValue === "Smith-Waterman"){
+                                setExtraParameters(<SmithWaterManExtra chooseSelectedVariant ={chooseSelectedVariant}/>);
+                                //setMatrixTestData(SmithWatermanScript(sequence1,sequence2,match,missmatch,gap,operationMm)); //liste qui contient la matrice de Substitution et la matrice transformée
+                                matrixTestData = SmithWatermanScript(sequence1,sequence2,match,missmatch,gap,operationMm);
+                                matrixFinal = matrixTestData[1]; //Matrice transformée
+                                setSelectedVariant("default")
+                            }
 
                         }
-                        if(selectedValue === "Smith-Waterman"){
-                            setExtraParameters(<SmithWaterManExtra chooseSelectedVariant ={chooseSelectedVariant}/>);
-                            //setMatrixTestData(SmithWatermanScript(sequence1,sequence2,match,missmatch,gap,operationMm)); //liste qui contient la matrice de Substitution et la matrice transformée
-                            matrixTestData = SmithWatermanScript(sequence1,sequence2,match,missmatch,gap,operationMm);
-                            matrixFinal = matrixTestData[1]; //Matrice transformée
-                            setSelectedVariant("default")
                         }
-
-                    }
-                    }
-                >
-                    <option value = "Needleman-Wunsch">Needleman-Wunsch</option>
-                    <option value = "Smith-Waterman">Smith-Waterman</option>
-                    <option value = "Algorithme 3">Algorithme 3</option>
-                </select>
+                    >
+                        <MenuItem  value = "Needleman-Wunsch">Needleman-Wunsch</MenuItem >
+                        <MenuItem  value = "Smith-Waterman">Smith-Waterman</MenuItem >
+                    </Select>
+                        {helpWindow && helpIndex[1] && (
+                            <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
+                                Permet de choisir l'algorithme que l'on va utiliser pour notre alignement. On a deux choix : un algorithme d'alignement global maximal (Needleman-Wunsch), donc ici on va traiter toute les données d'un coup. Ou alors on a un algorithme d'alignement local minimal (Smith-Waterman), donc ici on va plutot s'interesser a de petits fragments similaires au lieu de tout traiter d'un coup.
+                            </div>
+                        )}
+                    </div>
+                </FormControl>
             </div>
-            <div style={{marginLeft: '10px'}}/>
-            <label>Variante : </label>
-            <div style={{marginLeft: '5px'}}/>
+            </Box>
+                <Box sx={{'& > :not(style)': { m: 1 }}}>
             {extraParameters}
+                </Box>
 
-            <div style={{marginLeft: '5px'}}/>
-            <label>
-                <input
-                    type="checkbox"
-                    checked={blosumCheck}
-                    onChange={() => {
-                        setPathCounter(0);
-                        setBlosumCheck(!blosumCheck);
-
-
-                    }}
-                />
-                BLOSUM et Custom (expérimental)
-            </label>
-            <div style={{marginLeft: '5px'}}/>
-            <input type="file" onChange={(e) =>{
-                handleFileBlosumLoad(e)
-            }
-            } />
         </div>
 
+    let blosumDisplay =
+        <Box
+            sx={{'& > :not(style)': { m: 1}}}
+        >
+        <div style={{marginLeft: '5px'}}/>
+    <label>
+        <input
+            type="checkbox"
+            checked={blosumCheck}
+            onChange={() => {
+                setPathCounter(0);
+                setBlosumCheck(!blosumCheck);
+
+
+            }}
+        />
+
+        BLOSUM et Custom (expérimental)
+    </label>
+
+    <div style={{marginLeft: '5px'}}/>
+    <input type="file" onChange={(e) =>{
+        handleFileBlosumLoad(e)
+    }
+    } />
+        </Box>
     //HTML component representing the score matrix as well as its column and its sequence line aligned to it
-    let FullMatrix =
-    <div>
-        {displayedSeq}
-        <div style={{ display: 'flex' }}>
-            {displayedOtherSeq}
-            {displayed_matrix}
+    let FullMatrix = (
+        <div>
+            <div style={{ marginBottom: '0.25rem' }}>
+                {displayedSeq}
+            </div>
+            <div className="horizontal-matrix" style={{ display: 'flex', flexDirection: 'row', gap: '0.25rem' }}>
+                <React.Fragment>
+                    <Grid item >
+                        {displayedOtherSeq}
+                    </Grid>
+                    <Grid item>
+                        {displayed_matrix}
+                    </Grid>
+
+                </React.Fragment>
+            </div>
         </div>
-    </div>
+    );
 
     //HTML component representing the arrowed matrix as well as its column and its sequence line aligned to it
-    let FullMatrix2 =
+    let FullMatrix2 =(
         <div>
-            {displayedSeq}
-            <div style={{ display: 'flex' }}>
-                {displayedOtherSeq}
-                {displayedArrowed_matrix}
+            <div style={{ marginBottom: '0.25rem', flexWrap: 'nowrap' }}>
+                {displayedSeq}
+            </div>
+            <div className="fullMatrix2" style={{ display: 'flex', flexDirection: 'row', gap: '0.25rem' }}>
+                <React.Fragment>
+                    <Grid item>
+                        {displayedOtherSeq}
+                    </Grid>
+                    <Grid item>
+                        {displayedArrowed_matrix}
+                    </Grid>
+
+                </React.Fragment>
             </div>
         </div>
+    );
 
     //HTML component that merged the two matrix in one component
     let TwoMatrix =
         <div style={{ display: 'flex', position: 'relative'}}>
             <div style={{ marginLeft: '20px'}}/>
-            {FullMatrix}
-            <hr style={{ border: '2px solid #ccc', margin: '20px ' }} />
-            <div style={{ marginLeft: '20px', position: 'absolute', top: '0px', left: '750px', zIndex: '2' }}>
-            {FullMatrix2}
+            <div style={{ position: 'relative' }}>
+            <Box
+                component="section"
+                sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 600, height: 600, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}
+                onMouseOver={() => {
+                    handleMouseOver()
+                    setHelpIndex([false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false])
+                }}
+                onMouseOut={() => {
+                    handleMouseOut()
+                    setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                }}
+            >
+                {FullMatrix}
+            </Box>
+                {helpWindow && helpIndex[9] && (
+                    <div style={{opacity: 1, width: '300px', position: 'absolute', top: '-250px', left: '-150px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
+                        La première matrice est la matrice des scores, elle indique chaque score à chaque étape pour enfin arriver au score final. On voit également un affichage en rouge d'un chemin optimal (un alignement optimal qui donne le meilleur score). La deuxième matrice à droite est la matrice qui représente l'ensemble de tout les chemins optimaux et leur directions sous forme de flèches. C'est grâce à cette matrice qu'on peut observer l'ensemble des alignement optimaux (cases oranges).
+                    </div>
+                )}
+            </div>
+            <div style={{ marginLeft: '850px', position: 'absolute', top: '0px', zIndex: '2' }}>
+                <Box component="section" sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 600, height: 600, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'  }}   >
+                    {FullMatrix2}
+                </Box>
             </div>
         </div>
 
+
+
+
     //HTML ccomponent which brings together the result of the alignment of the two sequences
     let resultDisplayElement =
-        <div>
+        <Box component="section" sx={{ p: 2, border: '5px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 500, height: 100, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'  }}  >
             <div style={{
                 display: 'flex',
             }}>
                 {[...allAlignedResult[pathCounter][0]].map((char, index) => (
                     <div key={index} style={{
-                        fontSize: '2.1rem',
+                        fontSize: '2.5rem',
                         fontFamily: 'monospace',
                         marginRight: '10px', // Espacement entre les caractères
                     }}>{char}</div>
@@ -729,62 +862,380 @@ export default function App(){
             }}>
                 {[...allAlignedResult[pathCounter][1]].map((char, index) => (
                     <div key={index} style={{
-                        fontSize: '2.1rem',
+                        fontSize: '2.5rem',
                         fontFamily: 'monospace',
                         marginRight: '10px', // Espacement entre les caractères
                     }}>{char}</div>
                 ))}
             </div>
+        </Box>
+
+
+//TEST ZONE---------------------------------------------------------------
+
+    let blosumComp =
+
+        <div style={{ position: 'relative' }}>
+            <div style = {{ display: 'flex', flexDirection: 'column', margin: '8px', gap: '27px'}}>
+                <ToggleButtonGroup
+                    value={blosumCheck}
+                    exclusive
+                    style={{
+                        width: '200px',
+                        height: '55px',
+                        outline: 'none',
+                        transition: 'box-shadow 0.3s',
+                    }}
+                    onMouseOver={() => {
+                        handleMouseOver()
+                        setHelpIndex([false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                    }}
+                    onMouseOut={() => {
+                        handleMouseOut()
+                        setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                    }}
+                    onChange={() => {
+                        setPathCounter(0);
+                        setBlosumCheck(!blosumCheck);
+                    }}
+
+                    aria-label="toggle-button-group"
+                >
+                    <ToggleButton value={true} aria-label="activated">
+                        BLOSUM CUSTOM
+                    </ToggleButton>
+                    <ToggleButton value={false} aria-label="deactivated">
+                        Désactivé
+                    </ToggleButton>
+                </ToggleButtonGroup>
+
+                <Input type="file" style={{
+                    width: '200px',
+                    height: '55px',
+                    outline: 'none',
+                    transition: 'box-shadow 0.3s',
+                }} onChange={(e) =>{
+                    handleFileBlosumLoad(e)
+                }
+                } />
+            </div>
+            {helpWindow && helpIndex[3] && (
+                <div style={{width: '400px', position: 'absolute', top: '140px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
+                    Le BLOSUM CUSTOM est une option permettant soit d'utiliser une matrice blosum62 pré-enregistrée dans l'outil, ou soit upload sa propre matrice de score customisée. Le principe est que par exemple, si on a un "R" qui est aligné avec un "A", on aimerait que cet alignement spécifique ait un score de 2 et avec les matrices custom c'est tout a fait possible. On peut personnaliser le score de chaque alignement spécifique. Néanmoins, il faut que le fichier ait une extension en .JSON et qu'il soit représenté sous forme de dictionnaire javascript.
+                </div>
+            )}
         </div>
 
-    //HTML component that arranges and brings together the upper part of the page
-    let upElement =
-        <div>
-            <img src={sequenciaImage} alt="Title of the website"   />
-            <div style = {{ margin: '20px'}} />
-            <label><strong>Outil de visualisation d'alignement de séquences réalisé par BOIVIN Lorentz dans le cadre du projet de Master 1 à l'Université de Mons.</strong></label>
-            <div style = {{ margin: '20px'}} />
-            {sequenceBox}
-            <div style = {{ margin: '20px'}} />
-            {selector}
-            <div style = {{ margin: '20px'}} />
-            {valueBox}
-            <div style = {{ margin: '20px'}} />
+    let modeComp =
+        <Box
+            sx={{'& > :not(style)': { m: 1},}} //Make the alignment better
+        >
+        <ToggleButtonGroup
+            value={true}
+            exclusive
 
+            onChange={() => {
+                console.log("Mode blabla")
+            }}
+
+            aria-label="toggle-button-group"
+        >
+            <div style = {{ display: 'flex', flexDirection: 'column', margin: '0px', gap: '27px'}}>
+                <ToggleButton value={!gameModeCheck} aria-label="activated"
+                              onChange={() => {
+                                  setgameModeCheck(false)
+                              }}
+                              style={{
+                                  width: '100px',
+                                  height: '55px',
+                                  outline: 'none',
+                                  transition: 'box-shadow 0.3s',
+                              }}>
+                    Normal
+                </ToggleButton>
+                <ToggleButton value={gameModeCheck} aria-label="deactivated"
+                              onChange={() => {
+                                  setgameModeCheck(true)
+                              }}
+                              style={{
+                                  width: '100px',
+                                  height: '55px',
+                                  outline: 'none',
+                                  transition: 'box-shadow 0.3s',
+                              }}>
+                    Mode Jeu
+                </ToggleButton>
+            </div>
+        </ToggleButtonGroup>
+            </Box>
+
+    let computeLimitComp =
+        <div style={{ position: 'relative' }}>
+        <TextField
+            label={ "Compute limit"}
+            type="number"
+            id="computeLimit"
+            value={computeLimit}
+            onMouseOver={() => {
+                handleMouseOver()
+                setHelpIndex([false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+            }}
+            onMouseOut={() => {
+                handleMouseOut()
+                setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+            }}
+            onChange={(e) => {
+                setPathCounter(0);
+                const newComputeLimit = e.target.value
+                if (newComputeLimit <= 0) {
+                    setComputeLimit(1)
+                    onDisplayPath()
+                }
+                else{
+                    setComputeLimit(+newComputeLimit)
+                    onDisplayPath()
+                }
+
+            }
+            }
+            onKeyUp={() => {
+                onDisplayPath()
+            }
+            }
+            style={ { width: "200px" }}
+        />
+            {helpWindow && helpIndex[2] && (
+                <div style={{width: '400px', position: 'absolute', top: '140px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
+                     La valeur "Compute limit" est une limite empechant le calcul des chemins optimaux au delà de cette limite. Il se peut que l'alignement que vous faites contiennent un nombre de chemins optimaux beaucoup trop élévée pour le navigateur. Cette limite intervient pour éviter les crash en cas de génération trop élévée. Vous pouvez adapter cette limite selon vos besoin mais attention aux pertes de performances. Le bouton Force Update permet de forcer l'actualisation des matrices si il existe un cas exceptionnel ou l'affichage plante.
+                </div>
+            )}
+        </div>
+    let changePathButton =
+
+        <Box
+            sx={{'& > :not(style)': { m: 1},}} //Make the alignment better
+        >
+            <div style={{ display: 'flex', flexDirection: 'COLUMN', gap:'26px' }}>
+                {computeLimitComp}
+                <div style = {{ display: 'flex', flexDirection: 'row', margin: '0px', gap: '5px'}}>
+                    {displayPathButton}
+                </div>
+            </div>
+        </Box>
+
+    let paramButton =
+        <Box
+            sx={{'& > :not(style)': { m: 1},}} //Make the alignment better
+        >
+        <div style={{ display: 'flex', flexDirection: 'COLUMN', gap:'27px' }}>
+
+        <div style = {{ display: 'flex', flexDirection: 'row', margin: '0px', gap: '5px'}}>
+            <div style={{ position: 'relative' }}>
+            <TextField
+                type="number"
+                id="match"
+                label = "Match"
+                variant="outlined"
+                value={match}
+                onMouseOver={() => {
+                    handleMouseOver()
+                    setHelpIndex([false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                }}
+                onMouseOut={() => {
+                    handleMouseOut()
+                    setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                }}
+
+                onChange={(e) => {
+                    setPathCounter(0);
+                    const newMatch = e.target.value
+                    setMatch(+newMatch)
+                    onDisplayPath()
+                    setChosenCase([])
+                }
+                }
+                onKeyUp={() => {
+                    onDisplayPath()
+                    setChosenCase([])
+                }
+                }
+                disabled={matchDisabled}
+                style={{
+                    width: '100px',
+                    height: '55px',
+                    outline: 'none',
+                    transition: 'box-shadow 0.3s',
+                }}
+            />
+                {helpWindow && helpIndex[4] && (
+                    <div style={{  position: 'absolute', top: '55px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
+                        Valeur du Match. Cette valeur est ajouté au score final à chaque fois que l'on aligne deux caractère qui sont égaux dans l'alignement.
+                    </div>
+                )}
+            </div>
+            <div style={{ position: 'relative' }}>
+            <TextField
+                type="number"
+                id="missmatch"
+                label = "Mismatch"
+                variant="outlined"
+                value={missmatch}
+                onMouseOver={() => {
+                    handleMouseOver()
+                    setHelpIndex([false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                }}
+                onMouseOut={() => {
+                    handleMouseOut()
+                    setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                }}
+                onChange={(e) => {
+                    setPathCounter(0);
+                    const newMissmatch = e.target.value
+                    setMissmatch(+newMissmatch)
+                    onDisplayPath()
+                    setChosenCase([])
+                }
+                }
+                onKeyUp={() => {
+                    onDisplayPath()
+                    setChosenCase([])
+                }
+                }
+                disabled={missmatchDisabled}
+                style={{
+                    width: '100px',
+                    height: '55px',
+                    outline: 'none',
+                    transition: 'box-shadow 0.3s',
+                }}
+            />
+                {helpWindow && helpIndex[5] && (
+                    <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
+                        Valeur du Mismatch. Cette valeur est ajouté au score final à chaque fois que l'on aligne deux caractère différent dans l'alignement.
+                    </div>
+                )}
+            </div>
+
+            <div style={{ position: 'relative' }}>
+                <TextField
+                    label = "Gap"
+                    variant="outlined"
+                    type="number"
+                    id="gap"
+                    value={gap}
+                    onMouseOver={() => {
+                        handleMouseOver()
+                        setHelpIndex([false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                    }}
+                    onMouseOut={() => {
+                        handleMouseOut()
+                        setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                    }}
+                    onChange={(e) => {
+                        setPathCounter(0);
+                        const newGap = e.target.value
+                        setGap(+newGap)
+                        onDisplayPath()
+                        setChosenCase([])
+                    }
+
+                    }
+                    onKeyUp={() => {
+                        onDisplayPath()
+                        setChosenCase([])
+                    }
+                    }
+                    disabled={gapDisabled}
+                    style={{
+                        width: '100px',
+                        height: '55px',
+                        outline: 'none',
+                        transition: 'box-shadow 0.3s',
+                    }}
+                />
+                {helpWindow && helpIndex[6] && (
+                    <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
+                        Valeur de l'écart. Cette valeur est ajouté au score final à chaque fois que l'on introduit un écart dans l'alignement.
+                    </div>
+                )}
+            </div>
+
+
+
+        </div>
+            {resetValueButton}
+
+        </div>
+</Box>
+    let paramPathComp =
+        <div style={{ position: 'relative' }}>
+        <Box component="section"
+             onMouseOver={() => {
+                 handleMouseOver()
+                 setHelpIndex([false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false])
+             }}
+             onMouseOut={() => {
+                 handleMouseOut()
+                 setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+             }}
+             sx={{ p: 2, border: '1px solid',borderRadius: '16px',borderColor: 'secondary.main' , overflowX: 'false' ,width: 350, height: 108, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}  >
             <div style = {{ display: 'flex', flexDirection: 'row'}}>
-                {displayPathButton}
-                <div style={{marginLeft: '5px'}}/>
                 {leftOnPath}
                 <div style={{marginLeft: '5px'}}/>
                 {rightOnPath}
-                <div style={{marginLeft: '5px'}}/>
-                {resetValueButton}
-
             </div>
-            <div style = {{ margin: '20px'}} />
+            <div style = {{ margin: '3px'}} />
             <label>Nombre de chemins optimaux existants : </label> {allPath.length}
-            <div style = {{ margin: '20px'}} />
+            <div style = {{ margin: '10px'}} />
             <label>Index du chemin actuel : </label> {pathCounter}
-            <div style = {{ margin: '20px'}} />
-        </div>
 
-        //Set of all the components in return for the final display on the page
-        return (
-        <div style={{ marginLeft: '20px',marginTop: "20px",marginBottom: '50px'}}>
-            <div style={{ position: 'relative'}}>
-                {upElement}
-                <div style={{
-                    position: 'absolute',
-                    top: '300px', // Positionne l'élément au milieu de la hauteur de l'écran
-                    left: '780px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
-                    transform: 'translateY(-50%)', // Centre l'élément verticalement
-                    fontFamily: 'monospace',
-                }}>
+        </Box >
+            {helpWindow && helpIndex[10] && (
+                <div style={{width: '300px', position: 'absolute', top: '-80px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
+                Permet de naviguer entre les chemins optimaux.
+                </div>
+            )}
+        </div>
+    let elementFirstLine =
+        <Box  >
+            <Grid container spacing={1}>
+                <Grid item>
+                    {sequenceBox}
+                </Grid>
+                <Grid item>
+                    {selector}
+                </Grid>
+                <Grid item>
+                    {paramButton}
+                </Grid>
+                <Grid item>
+                    {changePathButton}
+                </Grid>
+                <Grid item>
+                    {blosumComp}
+                </Grid>
+                <Grid item>
+                    {modeComp}
+                </Grid>
+            </Grid>
+        </Box>
+
+    let elementSecondLine =
+        <Box >
+            <Grid container spacing={5}>
+                <Grid item>
+                    {paramPathComp}
+
+                </Grid>
+                <Grid item>
                     {resultDisplayElement}
+                </Grid>
+                <Grid item>
+                    <div>
                     <div style={{
                         fontSize: '2.1rem',
                         position: 'relative',
-                        top: '100px', // Positionne l'élément au milieu de la hauteur de l'écran
+                        top: '20px', // Positionne l'élément au milieu de la hauteur de l'écran
                         left: '00px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
 
                         fontFamily: 'monospace',
@@ -792,23 +1243,67 @@ export default function App(){
                         Score :
                         {finalScore}
                     </div>
-
                     <div style={{
                         fontSize: '2.1rem',
                         position: 'relative',
-                        top: '100px', // Positionne l'élément au milieu de la hauteur de l'écran
+                        top: '20px', // Positionne l'élément au milieu de la hauteur de l'écran
                         left: '00px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
                         fontFamily: 'monospace',
                     }}>
                         {matchString}
                     </div>
+                    </div>
+                </Grid>
+            </Grid>
+        </Box>
+
+//HTML component that arranges and brings together the upper part of the page
+    let upElement =
+        <div>
+            <img src={sequenciaImage} alt="Sequencia"   />
+            <div style = {{ margin: '20px'}} />
+
+            <label><strong>Outil de visualisation d'alignement de séquences réalisé par BOIVIN Lorentz dans le cadre du projet de Master 1 à l'Université de Mons.</strong> Une des fonctionnalités principales de cet outil est d'aligner des séquences d'ADN et protéines dans le domaine de la biologie et de la bio-informatique. Néanmoins il permet également de travailler sur des chaines de caractères. Celui-ci a pour objectif de rendre l'alignement de séquence plus compréhensible et visuel. Vous pouvez rentrez 2 séquences, choisir l'algorithme d'alignement que vous voulez, certaines de ses variantes et aussi modifier les paramètres. Un mode jeu est également disponible en appuyant sur le bouton à droite "Mode jeu". L'alignement de séquence a pour but de comparer les similarités mais aussi d'organiser les éléments des séquences d'une telle manière à maximiser leur ressemblance.</label>
+            <div style = {{ margin: '20px'}} />
+            {elementFirstLine}
+
+            <div style = {{ margin: '20px'}} />
+
+
+        </div>
+    let downElement = <div></div>
+    if(gameModeCheck){
+        downElement = <Gamemode></Gamemode>
+    }
+    else{
+        downElement =
+            <div>
+                <div style={{ display: 'flex', justifyContent: 'center' , gap: '100vh',marginTop: '60px'  }}>
+                    {elementSecondLine}
+                </div>
+                <div style = {{ marginLeft: '130px',marginTop: '60px'}} >
+                    {TwoMatrix}
+                </div>
+                <div style = {{ margin: '20px'}} />
+                <div style = {{ margin: '20px'}} />
+                <div style={{ display: 'flex', justifyContent: 'center' , gap: '100px',marginTop: '60px' }}>
+                    <DataTable allPath = {allPath} choosePathCounter = {choosePathCounter} allAlignedResult = {allAlignedResult}/>
+                    <SubTable uniquePath = {optPath} modSequence1 = {allAlignedResult[pathCounter][0]} modSequence2 = {allAlignedResult[pathCounter][1]} transfMatrix = {matrixFinal} chooseCase = {chooseCase} rawSequence1={sequence1} rawSequence2={sequence2}/>
                 </div>
             </div>
-            {TwoMatrix}
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <DataTable allPath = {allPath} choosePathCounter = {choosePathCounter} allAlignedResult = {allAlignedResult}/>
-                <SubTable uniquePath = {optPath} modSequence1 = {allAlignedResult[pathCounter][0]} modSequence2 = {allAlignedResult[pathCounter][1]} transfMatrix = {matrixFinal} chooseCase = {chooseCase} rawSequence1={sequence1} rawSequence2={sequence2}/>
+    }
+
+
+
+//end TEST ZONE---------------------------------------------------------------
+        //Set of all the components in return for the final display on the page
+        return (
+        <div style={{ marginLeft: '20px',marginTop: "20px",marginBottom: '50px',marginRight:"20px" }}>
+            <div style={{ position: 'relative'}}>
+                {upElement}
             </div>
+            <hr style={{ borderTop: '1px solid #ccc' }} />
+            {downElement}
         </div>
     );
 }

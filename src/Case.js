@@ -1,3 +1,5 @@
+import {Paper} from "@mui/material";
+
 /**
  * Box/case component
  * @param props
@@ -7,13 +9,19 @@
 export function Case(props){
 
     return(
-
-        <button
-            className="box"
-            style={{backgroundColor: props.color , width: '40px', height: '40px',}}>
+        //<Grow in={true} timeout={2000} >
+        <Paper
+            sx={{
+                backgroundColor: props.color,
+                padding: '8px',
+                textAlign: 'center',
+                color: 'text.secondary',
+                width: '24px',
+                height: '24px',
+            }}
+        >
             {props.value}
-        </button>
+        </Paper>
 
     )
-    //console.log(props.key);
 }

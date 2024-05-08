@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 
 /**
  * Allows you to give the component grouping together the variants associated with the choice of the Needleman-Wunsch algorithm
@@ -11,30 +12,41 @@ export default function NeedlemanExtra({chooseSelectedVariant}) {
 
     const variantSelector =
         <div>
-            <select
-                onChange = {(e) => {
+            <FormControl fullWidth>
+                <InputLabel id="needleman-extra">Variante</InputLabel>
+                <Select
+                    label = "Variante"
+                    variant="outlined"
+                    style={{
+                        width: '300px',
+                        height: '56px',
+                        padding: '10px',
+                        outline: 'none',
+                        transition: 'box-shadow 0.3s',
+                    }}
+                    onChange = {(e) => {
 
-                    chooseSelectedVariant(e.target.value)
+                        chooseSelectedVariant(e.target.value)
 
-                    const selectedValue = e.target.value
-                    if(selectedValue === "default"){
+                        const selectedValue = e.target.value
+                        if(selectedValue === "default"){
 
-                        console.log("Variante par defaut choisie")
+                            console.log("Variante par defaut choisie")
+                        }
+                        if(selectedValue === "LCS"){
+
+                            console.log("Variante LCS choisie")
+                        }
+
                     }
-                    if(selectedValue === "LCS"){
-
-                        console.log("Variante LCS choisie")
                     }
 
-                }
-                }
-
-            >
-                <option value = "default">default</option>
-                <option value = "LCS">LCS</option>
-                <option value = "wagnerf">Wagner-Fischer</option>
-                <option value = "blosum">BLOSUM</option>
-            </select>
+                >
+                    <MenuItem  value = "default">default</MenuItem >
+                    <MenuItem  value = "LCS">LCS</MenuItem >
+                    <MenuItem  value = "wagnerf">Wagner-Fischer</MenuItem >
+                </Select>
+            </FormControl>
     </div>
 
         return (

@@ -23,7 +23,7 @@ export function determineArrowedMatrix(S1,S2,subMatrix,transfMatrix,match,gap,mi
             if (j===0){
                 arrowedMatrix[i][j] = "⬆";
                 if(i===0){
-                    arrowedMatrix[i][j] = "⮔"
+                    arrowedMatrix[i][j] = "○"
                 }
 
             }

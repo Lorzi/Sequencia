@@ -36,7 +36,7 @@ export default function DataTable({allPath,choosePathCounter,allAlignedResult}) 
     }
 
     return (
-        <div style={{ height: 400, width: '50%' }}>
+        <div style={{ height: 600, width: '40%' }}>
             <DataGrid
                 rows={rows}
                 columns={columns}
