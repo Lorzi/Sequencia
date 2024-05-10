@@ -602,74 +602,7 @@ export default function App(){
         </div>
 
     //Component containing the graphic boxes which allow you to enter information (Match/Mismatch/Gap)
-    const valueBox =
-        <div>
-            <label htmlFor="match" style={{marginLeft: '5px'}}>Match : </label>
-            <input
-                type="number"
-                id="match"
-                value={match}
-                onChange={(e) => {
-                    setPathCounter(0);
-                    const newMatch = e.target.value
-                    setMatch(+newMatch)
-                    onDisplayPath()
-                    setChosenCase([])
-                }
-            }
-                onKeyUp={() => {
-                    onDisplayPath()
-                    setChosenCase([])
-                }
-            }
-                disabled={matchDisabled}
-                style={ { width: "50px", padding: "5px" }}
-            />
-            <label htmlFor="missmatch" style={{marginLeft: '5px'}}>Missmatch : </label>
-            <input
-                type="number"
-                id="missmatch"
-                value={missmatch}
-                onChange={(e) => {
-                    setPathCounter(0);
-                    const newMissmatch = e.target.value
-                    setMissmatch(+newMissmatch)
-                    onDisplayPath()
-                    setChosenCase([])
-                }
-            }
-                onKeyUp={() => {
-                    onDisplayPath()
-                    setChosenCase([])
-                }
-            }
-                disabled={missmatchDisabled}
-                style={{ width: "50px", padding: "5px" }}
-            />
-            <label htmlFor="gap" style={{marginLeft: '5px'}}>Gap : </label>
-            <input
-                type="number"
-                id="gap"
-                value={gap}
-                onChange={(e) => {
-                    setPathCounter(0);
-                    const newGap = e.target.value
-                    setGap(+newGap)
-                    onDisplayPath()
-                    setChosenCase([])
-                }
-            }
-                onKeyUp={() => {
-                    onDisplayPath()
-                    setChosenCase([])
-                }
-            }
-                disabled={gapDisabled}
-                style={ { width: "50px", padding: "5px" }}
-            />
 
-
-        </div>
     //HTML component which allows you to select the algorithm used
     const selector =
         <div style={{ display: 'flex', flexDirection: 'COLUMN',gap:'10px' }}>
@@ -742,32 +675,6 @@ export default function App(){
 
         </div>
 
-    let blosumDisplay =
-        <Box
-            sx={{'& > :not(style)': { m: 1}}}
-        >
-        <div style={{marginLeft: '5px'}}/>
-    <label>
-        <input
-            type="checkbox"
-            checked={blosumCheck}
-            onChange={() => {
-                setPathCounter(0);
-                setBlosumCheck(!blosumCheck);
-
-
-            }}
-        />
-
-        BLOSUM et Custom (expérimental)
-    </label>
-
-    <div style={{marginLeft: '5px'}}/>
-    <input type="file" onChange={(e) =>{
-        handleFileBlosumLoad(e)
-    }
-    } />
-        </Box>
     //HTML component representing the score matrix as well as its column and its sequence line aligned to it
     let FullMatrix = (
         <div>
@@ -853,7 +760,7 @@ export default function App(){
                     <div key={index} style={{
                         fontSize: '2.5rem',
                         fontFamily: 'monospace',
-                        marginRight: '10px', // Espacement entre les caractères
+                        marginRight: '10px',
                     }}>{char}</div>
                 ))}
             </div>
@@ -864,7 +771,7 @@ export default function App(){
                     <div key={index} style={{
                         fontSize: '2.5rem',
                         fontFamily: 'monospace',
-                        marginRight: '10px', // Espacement entre les caractères
+                        marginRight: '10px',
                     }}>{char}</div>
                 ))}
             </div>
@@ -933,11 +840,6 @@ export default function App(){
         <ToggleButtonGroup
             value={true}
             exclusive
-
-            onChange={() => {
-                console.log("Mode blabla")
-            }}
-
             aria-label="toggle-button-group"
         >
             <div style = {{ display: 'flex', flexDirection: 'column', margin: '0px', gap: '27px'}}>
@@ -1271,7 +1173,7 @@ export default function App(){
 
 
         </div>
-    let downElement = <div></div>
+    let downElement
     if(gameModeCheck){
         downElement = <Gamemode></Gamemode>
     }

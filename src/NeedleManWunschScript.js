@@ -63,11 +63,11 @@ export function NeedleManWunschScript(S1,S2,Match,Missmatch,Gap,operation_mm,blo
     let subMatrix;
     if (blosumCheck){
         subMatrix = createSubMatrixBLOSUM(S1,S2,blosumCustom); //Put instead of custom score the matrix entry
-        console.log(subMatrix)
+
     }
     else{
         subMatrix = createSubMatrix(S1,S2,Match,Missmatch);
-        console.log(subMatrix)
+
     }
 
     const transfMatrix = createTransfMatrix(S1,S2,subMatrix,Gap);
