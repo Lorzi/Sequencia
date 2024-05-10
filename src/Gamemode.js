@@ -38,6 +38,7 @@ export default function Gamemode(){
     let[helpSeq2,setHelpSeq2] = useState("");
     let[helpMatrixCoord,setHelpMatrixCoord] = useState([]);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         const mergedAllPath = allPath.reduce((merged, current) => {
             current.forEach(path => {
@@ -191,9 +192,7 @@ export default function Gamemode(){
             setHelpMatrixCoord([[[finalMatrix[yPoint-1][xPoint]],[finalMatrix[yPoint-1][xPoint+1]]],[[finalMatrix[yPoint][xPoint]],["?"]]])
         }
     }
-    useEffect(() => {
-        generateHelpMatrix();
-    }, []);
+
 
 
     const resetGamemode1Param = () =>{
@@ -307,6 +306,7 @@ export default function Gamemode(){
     useEffect(() => {
         change()
     }, [visibleCase,gamemode,sequence1,sequence2]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         resetGamemode2Param()
         resetGamemode1Param()
@@ -499,11 +499,11 @@ export default function Gamemode(){
             )}
             {(xPoint !== 0 && yPoint !== 0) && (
                 <div>
-                <span style={{color: 'lime'}}>TOP VALUE</span> = <span style={{color: 'lime'}}>{yPoint === 0 ? "0" : finalMatrix[yPoint-1][xPoint]}</span> + <span style={{color: 'orange'}}>{gap + " (gap) "}</span> = ?
-                    <div/>
-                    <span style={{color: 'aqua'}}>DIAGONAL VALUE</span> = <span style={{color: 'aqua'}}>{(yPoint === 0 || xPoint===0) ? "0" : finalMatrix[yPoint-1][xPoint-1]}</span> + {sequence1[yPoint-1] === sequence2[xPoint-1] ? <span style={{color: 'green'}}>{match + " (match)"}</span> : <span style={{color: 'red'}}>{mismatch + " (mismatch) "}</span>} = ?
+                <span style={{color: 'lime'}}>TOP VALUE</span> = <span style={{color: 'lime'}}>{yPoint === 0 ? "0" : finalMatrix[yPoint-1][xPoint]}</span> + <span style={{color: 'orange'}}>{gap + " (gap) "}</span> = <span> {finalMatrix[yPoint-1][xPoint] + gap} </span>
+                <div/>
+                    <span style={{color: 'aqua'}}>DIAGONAL VALUE</span> = <span style={{color: 'aqua'}}>{(yPoint === 0 || xPoint===0) ? "0" : finalMatrix[yPoint-1][xPoint-1]}</span> + {sequence1[yPoint-1] === sequence2[xPoint-1] ? <span style={{color: 'green'}}>{match + " (match)"}  <span style={{color: 'black'}}>= { finalMatrix[yPoint-1][xPoint-1] + match}</span> </span>  : <span style={{color: 'red'}}>{mismatch + " (mismatch) "} <span style={{color: 'black'}}>= { finalMatrix[yPoint-1][xPoint-1] + mismatch}</span></span>}
                         <div/>
-                        <span style={{color: 'fuchsia'}}>LEFT VALUE</span> = <span style={{color: 'fuchsia'}}>{yPoint === 0 ? "0" : finalMatrix[yPoint][xPoint-1]}</span> + <span style={{color: 'orange'}}>{gap + " (gap) "}</span> = ?
+                        <span style={{color: 'fuchsia'}}>LEFT VALUE</span> = <span style={{color: 'fuchsia'}}>{yPoint === 0 ? "0" : finalMatrix[yPoint][xPoint-1]}</span> + <span style={{color: 'orange'}}>{gap + " (gap) "}</span> = <span> {finalMatrix[yPoint][xPoint-1] + gap} </span>
                 </div>
                 )}
             </div>
