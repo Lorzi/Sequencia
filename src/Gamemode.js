@@ -7,7 +7,6 @@ import {LetterLine} from "./LetterLine";
 import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
 
 export default function Gamemode(){
-
     let [sequence1,setSequence1] = useState("");
     let [sequence2,setSequence2] = useState("");
     let [match,setMatch] = useState(1);
@@ -38,7 +37,7 @@ export default function Gamemode(){
     let[helpSeq2,setHelpSeq2] = useState("");
     let[helpMatrixCoord,setHelpMatrixCoord] = useState([]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
     useEffect(() => {
         const mergedAllPath = allPath.reduce((merged, current) => {
             current.forEach(path => {
@@ -49,6 +48,7 @@ export default function Gamemode(){
             return merged;
         }, []);
         setOptimizedCasesList(mergedAllPath);
+        // eslint-disable-next-line
     }, [gamemode,greenCasesList]);
 
     const [displayed_matrix,setDisplayedMatrix] = useState(
@@ -304,9 +304,11 @@ export default function Gamemode(){
     }
 
     useEffect(() => {
+        // eslint-disable-next-line
         change()
+        // eslint-disable-next-line
     }, [visibleCase,gamemode,sequence1,sequence2]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     useEffect(() => {
         resetGamemode2Param()
         resetGamemode1Param()
@@ -317,8 +319,10 @@ export default function Gamemode(){
             setGameModeActivation(true);
         }
         else{
+            // eslint-disable-next-line
             setGameModeActivation(false);
         }
+        // eslint-disable-next-line
     }, [sequence1,sequence2,match,mismatch,gap]);
 
     function leftDiagUpCheck(gameMode2Coord){

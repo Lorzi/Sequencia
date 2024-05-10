@@ -259,13 +259,16 @@ export default function App(){
      * useEffect function call the OnDisplayPath() to refresh the visual display of the elements when one of the deps is modified.
      * Same for the function checkVariant and its own deps.
      */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     useEffect(() => {
         onDisplayPath(); // Exécuter onDisplayPath() lorsque pathCounter est mis à jour
+        // eslint-disable-next-line
     }, [pathCounter,chosenCase,gap,colorVariantCase,selectedAlgorithm,blosumCheck,blosumCustom]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     useEffect(() => {
+        // eslint-disable-next-line
         checkVariant(); // Exécuter onDisplayPath() lorsque pathCounter est mis à jour
+        // eslint-disable-next-line
     }, [selectedVariant,pathCounter]);
 
     /**
