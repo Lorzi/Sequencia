@@ -1,7 +1,7 @@
 import * as React from "react";
 import {NeedleManWunschScript} from "./NeedleManWunschScript";
 import {useEffect, useState} from "react";
-import {Box, Button, Grid, TextField} from "@mui/material";
+import {Box, Button, Grid, Input, TextField, ToggleButton, ToggleButtonGroup} from "@mui/material";
 import {Case} from "./Case";
 import {LetterLine} from "./LetterLine";
 import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
@@ -25,7 +25,7 @@ export default function Gamemode(){
     const [visibleCase, setVisibleCase] = useState([]);
     let finalMatrix = matrix[1];
     let [gameModeActivation,setGameModeActivation] = useState(true);
-    const [gamemode,setGamemode] = useState(true);
+    const [gamemode,setGamemode] = useState(false);
     let [greenCasesList,setGreenCasesList] = useState([]);
     let [redCasesList,setRedCasesList] = useState([]);
     let [optimizedCasesList,setOptimizedCasesList] = useState([]);
@@ -36,6 +36,7 @@ export default function Gamemode(){
     let[helpSeq1, setHelpSeq1] = useState("");
     let[helpSeq2,setHelpSeq2] = useState("");
     let[helpMatrixCoord,setHelpMatrixCoord] = useState([]);
+
 
     // eslint-disable-next-line
     useEffect(() => {
@@ -523,7 +524,6 @@ export default function Gamemode(){
 
                     fontFamily: 'Arial',
                 }}>
-                    Remplissage matrice score : Aide
                 </div>
             </Grid>
             <Grid item>
@@ -535,38 +535,6 @@ export default function Gamemode(){
                     {helpText1}
                 </div>
                     </Box>
-            </Grid>
-            <Grid item>
-                <Box
-                    component="section"
-                    sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 650, height: 700, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}>
-                    <div style={{ fontSize: '1.3rem', textAlign: 'center', marginBottom: '20px' }}>
-                        Explications :
-                    </div>
-                    <div style={{fontSize: '1.2em', textAlign: 'left' }}>
-                        <div style={{ marginTop: '10px' }}>
-                            Pour le remplissage des matrice,
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                            La première étape est de remplir la première ligne. Celle-ci est la somme cumulative des gaps à chaque itérations.
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                            Ensuite, on calcule 3 valeurs : "TOP VALUE","DIAGONAL VALUE" et "LEFT VALUE" selon la position de la case.
-                            <div/>
-                            - TOP VALUE est la valeur au dessus de notre case recherchée + la valeur du gap.
-                            <div/>
-                            - HORIZONTAL VALUE est la valeur qui se situe en diagonal par rapport à notre case recherchée + la valeur du match si les 2 caractères associé des séquences sont égaux ou la valeur du mismatch sinon.
-                            <div/>
-                            - LEFT VALUE est la valeur à gauche de notre case recherchée + la valeur du gap.
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                            La dernière étape s'agit de prendre la valeur maximale parmis ces 3 valeurs.
-                        </div>
-                        <div style={{ marginTop: '20px' }}>
-                            Un petit outil visuel a été élaboré au dessus de ces explications afin de mieux comprendre d'où viennent les valeurs. L'aide commence à partir de la deuxième ligne dans la matrice.
-                        </div>
-                    </div>
-                </Box>
             </Grid>
 
         </Grid>
@@ -581,7 +549,6 @@ export default function Gamemode(){
 
                     fontFamily: 'Arial',
                 }}>
-                    Découverte chemin optimal : Aide
                 </div>
             </Grid>
             <Grid item>
@@ -590,39 +557,6 @@ export default function Gamemode(){
                     sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 650 ,height: 150, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}>
                     <div style={{ display: 'flex', flexDirection: 'row', gap:'0px'}}>
                         {fullHelp2}
-                    </div>
-                </Box>
-            </Grid>
-            <Grid item>
-                <Box
-                    component="section"
-                    sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 650, height: 700, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}>
-                    <div style={{ fontSize: '1.3rem', textAlign: 'center', marginBottom: '20px' }}>
-                        Explications :
-                    </div>
-                    <div style={{fontSize: '1.2em', textAlign: 'left' }}>
-                        <div style={{ marginTop: '10px' }}>
-                            Pour trouver un chemin optimal,
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                            La méthode consiste à soustraire la valeur de la case actuelle pour chaque case possible :
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                            Soustraire à la case du haut, pour que l'on accepte cette case du haut comme solution, il faut que le résultat de la soustraction (case actuelle - case du haut) soit égal au gap
-                            <div/>
-                            <div style={{ marginTop: '10px' }}>
-                            Soustraire à la case diagonale (haut a gauche), pour que l'on accepte cette case diagonale comme solution, il faut que le résultat de la soustraction (case actuelle - case diagonale) soit égal au match (et qu'il y ait un match) ou au mismatch (et qu'il y ait un mismatch).
-                            <div/></div>
-                                <div style={{ marginTop: '10px' }}>
-                                    Soustraire à la case de gauche, pour que l'on accepte cette case de gauche comme solution, il faut que le résultat de la soustraction (case actuelle - case de gauche) soit égal au gap.
-                            <div/></div>
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                            La dernière étape s'agit de cliquer sur une case qui est "acceptée" après nos calculs.
-                        </div>
-                        <div style={{ marginTop: '20px' }}>
-                            Un petit calculateur a été élaboré au dessus de ces explications afin de mieux visualiser le calcul qui permet de déterminer quel case est acceptée ou pas.
-                        </div>
                     </div>
                 </Box>
             </Grid>
@@ -710,7 +644,6 @@ export default function Gamemode(){
                                onChange={(e) => {
 
                                    setSequence2(e.target.value)
-
                                }
                                }
                     />
@@ -780,12 +713,56 @@ export default function Gamemode(){
             </div>
         </div>
 
+    const gameModeTitle =
+        <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            fontSize: '20px',
+            position: 'relative',
+            top: '0px', // Positionne l'élément au milieu de la hauteur de l'écran
+            left: '00px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
+
+            fontFamily: 'Arial',
+        }}>
+            {gamemode ? "Découverte chemin optimal" : "Remplissage matrice score"}
+        </div>
+
+    let gameModeButtons =
+
+        <div style = {{ display: 'flex', flexDirection: 'row', gap: '0px'}}>
+            <ToggleButtonGroup
+                value={gamemode}
+                exclusive
+                style={{
+                    width: '200px',
+                    height: '55px',
+                    outline: 'none',
+                    transition: 'box-shadow 0.3s',
+                }}
+                onChange={() => {
+                    setGamemode(!gamemode);
+                }}
+                aria-label="toggle-button-group"
+            >
+                <ToggleButton value={false} aria-label="activated">
+                    Mode 1
+                </ToggleButton>
+                <ToggleButton value={true} aria-label="deactivated">
+                    Mode 2
+                </ToggleButton>
+            </ToggleButtonGroup>
+        </div>
+
+
     const rightElement =
         <Box >
             <Grid container direction="column"  spacing={4}>
                 <Grid item>
+                    {gameModeTitle}
+                </Grid>
+                <Grid item>
                     <div style = {{ display: 'flex', flexDirection: 'row', margin: '0px', gap: '15px'}}>
-                    {switchGamemode}
+                    {gameModeButtons}
                     {resetGameButton}
                     </div>
                 </Grid>
@@ -806,11 +783,11 @@ export default function Gamemode(){
                 </Grid>
                 <Grid item>
                     <div style={{
-                        fontSize: '2.1rem',
+                        fontSize: '23px',
                         position: 'relative',
                         top: '20px', // Positionne l'élément au milieu de la hauteur de l'écran
                         left: '00px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
-
+                        color: 'dimgrey',
                         fontFamily: 'Arial',
                     }}>
                         Bonnes réponses : {goodAnswerCounter}
@@ -825,24 +802,14 @@ export default function Gamemode(){
             </Grid>
         </Box>
 
-    const gameModeTitle =
-        <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            fontSize: '2.5rem',
-            position: 'relative',
-            top: '20px', // Positionne l'élément au milieu de la hauteur de l'écran
-            left: '00px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
 
-            fontFamily: 'Arial',
-        }}>
-            {gamemode ? "Découverte chemin optimal" : "Remplissage matrice score"}
-        </div>
+
+
 
     return (
         <div>
-            {gameModeTitle}
-            <div style={{ display: 'flex', justifyContent: 'center' , gap: '10Vh',marginTop: '60px'  }}>
+
+            <div style={{ display: 'flex', justifyContent: 'center' , gap: '10Vh',marginTop: '30px'  }}>
             <Box
                 component="section"
                 sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 1200, height: 700, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}
@@ -858,52 +825,25 @@ export default function Gamemode(){
 
             </div>
             </Box>
-                <Box
-                    component="section"
-                    sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 500, height: 700, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}>
-                    <div style={{ fontSize: '1.3rem', textAlign: 'center', marginBottom: '20px' }}>
-                        Explications :
-                    </div>
-                    <div style={{fontSize: '1.2em', textAlign: 'left' }}>
-                        <div style={{ marginTop: '10px' }}>
-                            Bienvenue dans le mode jeu.
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                        Dans ce mode, vous trouverez deux modes de jeu différents basés sur l'algorithme de Needleman-Wunsch :
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                        - Un mode de jeu "Remplissage matrice score" où le but est de comprendre comment on crée la matrice de score.
-                        <div/>
-                        - Et un mode de jeu "Découverte chemin optimal" où le but est de trouver un chemin optimal (effectuer le traceback) en se trompant le moins possible.
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                            Il suffit de remplir les champs de séquence 1 et séquence 2 pour commencer à jouer.
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                        Des indications et explications sur la manière d'obtenir les résultats afin de vous aider se trouvent en bas de la page.
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                            Pour jouer au mode "Remplissage matrice score", il suffit d'entrer sa réponse dans le champs prévu à cet effet et soumettre la réponse à chaque itération en appuyant sur le bouton. Si une erreur a été faite, la case deviendra colorée, sinon elle restera blanche.
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                             Pour jouer au mode "Découverte chemin optimal", il suffit de cliquer directement sur les cases bleues dans la matrice. Si vous avez trouvé la bonne case, elle deviendra verte, sinon, elle deviendra rouge.
-                        </div>
-                        <div style={{ marginTop: '20px' }}>
-                        Bon amusement !
-                        </div>
-                    </div>
-                </Box>
+
             </div>
             <div style={{ display: 'flex', justifyContent: 'center' , gap: '20Vh',marginTop: '20px'  }}>
             <Box component="section"
                  sx={{ p: 2,justifyContent: 'center',borderRadius: '16px', overflowX: 'auto' }}>
-                <Grid container direction="row"  spacing={30}>
-                    <Grid item>
-                        {helperElem1}
+                <Grid container direction="column"  spacing={0} alignItems="center">
+                    <Grid item style={{ width: '80%' }}>
+                        <hr style={{ borderTop: '1px solid #ccc', width: '100%' }} />
                     </Grid>
                     <Grid item>
-                        {helperElem2}
+                        <label  style={{ textAlign: 'center', fontSize: '25px', color: 'dimgrey'  }}>AIDE</label>
                     </Grid>
+                    <Grid item style={{ width: '80%' }}>
+                        <hr style={{ borderTop: '1px solid #ccc', width: '40%' }} />
+                    </Grid>
+                    <Grid item>
+                        {gamemode ? helperElem2 : helperElem1}
+                    </Grid>
+
                 </Grid>
             </Box>
             </div>

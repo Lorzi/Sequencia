@@ -406,7 +406,7 @@ export default function App(){
                                             color={
                                                 (colorVariantCase.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) && selectedVariant === "LCS" ? 'green' :
                                                     ((chosenCase[0] === rowIndex && chosenCase[1] === colIndex)) ? 'darkred' :
-                                                        (optPath.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) ? 'red' : 'white'
+                                                        (optPath.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) ? 'dodgerblue' : 'white'
                                             }
                                             //If it is true that we find coord =  indexes in optPath then we color it red
                                             //Changes color to red if this box "case" is found in the optimal path

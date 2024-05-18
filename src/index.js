@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import WelcomePage from "./pages/WelcomePage";
 import GameModePage from "./pages/GameModePage";
+import HelpAndInfoPage from "./pages/HelpAndInfoPage";
 
 const router = createBrowserRouter([
     {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
     {
         path: "game",
         element: <GameModePage/>,
+    },
+    {
+        path: "help",
+        element: <HelpAndInfoPage/>,
     },
 ]);
 
