@@ -1,25 +1,38 @@
 import React from 'react'
 import sequenciaImage from "../components/sequencia10.png";
 import {Box, Button, Grid} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 
 export default function WelcomePage(){
+    const navigate = useNavigate();
+
+    const handleNavigate = (path) => {
+        navigate(path);
+    };
 
     const normalModeButton =
-        <Button variant="outlined" style ={{
+        <Button variant="outlined"
+                onClick={() => handleNavigate('/app')}
+                style ={{
             height: '100px', width: '450px', fontSize: '24px'
         }}>
+
             Mode normal
         </Button>
 
     const gameModeButton =
-        <Button variant="outlined" style ={{
+        <Button variant="outlined"
+                onClick={() => handleNavigate('/game')}
+                style ={{
             height: '100px', width: '450px' , fontSize: '24px'
         }}>
             Mode jeu
         </Button>
 
     const helpModeButton =
-        <Button variant="outlined" style ={{
+        <Button variant="outlined"
+                onClick={() => handleNavigate('/help')}
+                style ={{
             height: '100px', width: '450px', fontSize: '24px'
         }}>
             Aide et informations

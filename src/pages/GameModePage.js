@@ -2,9 +2,14 @@ import React from 'react'
 import Gamemode from "../Gamemode";
 import {Box, Button, Grid} from "@mui/material";
 import sequenciaImage from "../components/sequencia10.png";
+import {useNavigate} from "react-router-dom";
 export default function GameModePage(){
+    const navigate = useNavigate();
+
     const GoBackToMenuButton =
-        <Button variant="outlined" style ={{
+        <Button variant="outlined"
+                onClick={() => navigate('/')}
+                style ={{
             height: '60px', width: '200px' , fontSize: '18px', position: 'absolute',marginLeft: '30px'
         }}>
             Menu principal

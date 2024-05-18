@@ -1,7 +1,7 @@
 import * as React from "react";
 import {NeedleManWunschScript} from "./NeedleManWunschScript";
 import {useEffect, useState} from "react";
-import {Box, Button, Grid, Input, TextField, ToggleButton, ToggleButtonGroup} from "@mui/material";
+import {Box, Button, Grid, TextField, ToggleButton, ToggleButtonGroup} from "@mui/material";
 import {Case} from "./Case";
 import {LetterLine} from "./LetterLine";
 import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
@@ -211,18 +211,6 @@ export default function Gamemode(){
         setRedCasesList([]);
         setClickableCases([[sequence1.length,sequence2.length]]);
         resetCommonParam();
-    }
-
-    const handleSwitchGamemodeButton = () =>{
-        if(gamemode){
-            resetGamemode1Param();
-        }
-        else{
-            resetGamemode2Param();
-        }
-
-
-        setGamemode(!gamemode);
     }
     const handleResetButton = () =>{
         resetGamemode1Param();
@@ -592,13 +580,6 @@ export default function Gamemode(){
                 onClick={() =>
             handleSubmitAnswerButtonClick()
         }>Soumettre réponse</Button>
-
-    const switchGamemode =
-        <Button variant="outlined" style ={{
-            height: '55px'
-        }} onClick={() =>
-            handleSwitchGamemodeButton()
-        }>Changer mode de jeu</Button>
 
     const resetGameButton =
         <Button variant="outlined" style ={{
