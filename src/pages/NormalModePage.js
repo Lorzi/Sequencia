@@ -1,9 +1,9 @@
 import React from 'react'
-import Gamemode from "../Gamemode";
 import {Box, Button, Grid} from "@mui/material";
-import sequenciaImage from "../components/sequencia10.png";
+import App from "../App";
 import {useNavigate} from "react-router-dom";
-export default function GameModePage(){
+import sequenciaImage from "../components/sequencia10.png";
+export default function NormalModePage() {
     const navigate = useNavigate();
 
     const GoBackToMenuButton =
@@ -16,7 +16,6 @@ export default function GameModePage(){
         </Button>
 
     return(
-
         <Box sx={{ width: '100%', margin: '0 auto' , marginTop: '30px' }}>
             {GoBackToMenuButton}
             <Grid container  spacing={0.5} direction="column" alignItems="center" >
@@ -28,14 +27,13 @@ export default function GameModePage(){
                         <hr style={{ borderTop: '1px solid #ccc', height: '80%' }} />
                     </Grid>
                     <Grid item style={{marginTop:'25.5px', marginLeft: '10px'}}>
-                        <label  style={{ textAlign: 'center', fontSize: '27px', color: 'dimgrey'  }}>MODE JEU</label>
+                        <label  style={{ textAlign: 'center', fontSize: '27px', color: 'dimgrey'  }}>MODE CLASSIC</label>
                     </Grid>
                 </div>
                 <Grid item>
-                    <Gamemode/>
+                    <App/>
                 </Grid>
             </Grid>
         </Box>
-
     );
 }

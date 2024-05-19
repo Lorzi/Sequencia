@@ -3,7 +3,6 @@ import {Case} from "./Case";
 import {Line} from "./Line";
 import {NeedleManWunschScript} from "./NeedleManWunschScript";
 import {LetterLine} from "./LetterLine";
-import sequenciaImage from "./components/sequencia3.PNG"
 import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
 import DataTable from "./components/DataTable"
 import SubTable from "./components/SubTable";
@@ -25,7 +24,6 @@ import SmithWaterManExtra from "./components/SmithWaterManExtra";
 import {SmithWatermanScript} from "./SmithWatermanScript";
 import {findPathsSW} from "./SmithWatermanOptimalPath_V2";
 import {blosum62} from "./components/variants/blosum62";
-import Gamemode from "./Gamemode";
 
 
 
@@ -52,7 +50,6 @@ export default function App(){
     const [computeLimit, setComputeLimit] = useState(10000); //Maximum bound for the computation of result, help to avoid infinite generation and thus crash
     const [blosumCheck, setBlosumCheck] = useState(false); //Check blosum option is activated
     const [blosumCustom,setBlosumCustom] = useState(blosum62); //Custom matrix, by default blosum62
-    const [gameModeCheck , setgameModeCheck] = useState(false);
     let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap,operationMm,blosumCheck,blosumCustom)//list that countain subsitution matrix and scoreMatrix
     let matrixFinal = matrixTestData[1]; //Score Matrix, also knowned as transfMatrix in other class
     let arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0],matrixFinal,match,gap,missmatch) //Matrix that contains the arrows and direction, important to generate paths
@@ -482,7 +479,7 @@ export default function App(){
 
     //Button that call onDisplayPath() in case the matrix don't update itself
     const displayPathButton =
-        <Button id={"displayed_button"} variant="outlined" style={{
+        <Button id={"displayed_button"} variant="contained" style={{
             width: '200px',
             height: '55px',
             outline: 'none',
@@ -506,7 +503,7 @@ export default function App(){
     const resetValueButton =
         <div style={{ position: 'relative' }}>
         <Button
-            variant="outlined"
+            variant="contained"
             style ={{
                 height: '55px',
                 width: "310px"
@@ -722,35 +719,36 @@ export default function App(){
 
     //HTML component that merged the two matrix in one component
     let TwoMatrix =
-        <div style={{ display: 'flex', position: 'relative'}}>
-            <div style={{ marginLeft: '20px'}}/>
-            <div style={{ position: 'relative' }}>
-            <Box
-                component="section"
-                sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 600, height: 600, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}
-                onMouseOver={() => {
-                    handleMouseOver()
-                    setHelpIndex([false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false])
-                }}
-                onMouseOut={() => {
-                    handleMouseOut()
-                    setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
-                }}
-            >
-                {FullMatrix}
-            </Box>
+        <Box sx={{ width: '100%', margin: '0 auto' , marginTop: '30px' }}>
+            <Grid container  spacing={20} direction="row" alignItems="center" >
+                <Grid item>
+                    <Box
+                        component="section"
+                        sx={{ p: 2, border: '4px solid grey',borderRadius: '16px', overflowX: 'auto' ,width: 600, height: 600, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}
+                        onMouseOver={() => {
+                            handleMouseOver()
+                            setHelpIndex([false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false])
+                        }}
+                        onMouseOut={() => {
+                            handleMouseOut()
+                            setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                        }}
+                    >
+                        {FullMatrix}
+                    </Box>
                 {helpWindow && helpIndex[9] && (
                     <div style={{opacity: 1, width: '300px', position: 'absolute', top: '-250px', left: '-150px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
                         La première matrice est la matrice des scores, elle indique chaque score à chaque étape pour enfin arriver au score final. On voit également un affichage en rouge d'un chemin optimal (un alignement optimal qui donne le meilleur score). La deuxième matrice à droite est la matrice qui représente l'ensemble de tout les chemins optimaux et leur directions sous forme de flèches. C'est grâce à cette matrice qu'on peut observer l'ensemble des alignement optimaux (cases oranges).
                     </div>
                 )}
-            </div>
-            <div style={{ marginLeft: '850px', position: 'absolute', top: '0px', zIndex: '2' }}>
-                <Box component="section" sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 600, height: 600, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'  }}   >
-                    {FullMatrix2}
-                </Box>
-            </div>
-        </div>
+                </Grid>
+                <Grid item>
+                    <Box component="section" sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 600, height: 600, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'  }}   >
+                        {FullMatrix2}
+                    </Box>
+                </Grid>
+            </Grid>
+        </Box>
 
 
 
@@ -785,96 +783,7 @@ export default function App(){
 
 //TEST ZONE---------------------------------------------------------------
 
-    let blosumComp =
 
-        <div style={{ position: 'relative' }}>
-            <div style = {{ display: 'flex', flexDirection: 'column', margin: '8px', gap: '27px'}}>
-                <ToggleButtonGroup
-                    value={blosumCheck}
-                    exclusive
-                    style={{
-                        width: '200px',
-                        height: '55px',
-                        outline: 'none',
-                        transition: 'box-shadow 0.3s',
-                    }}
-                    onMouseOver={() => {
-                        handleMouseOver()
-                        setHelpIndex([false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
-                    }}
-                    onMouseOut={() => {
-                        handleMouseOut()
-                        setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
-                    }}
-                    onChange={() => {
-                        setPathCounter(0);
-                        setBlosumCheck(!blosumCheck);
-                    }}
-
-                    aria-label="toggle-button-group"
-                >
-                    <ToggleButton value={true} aria-label="activated">
-                        BLOSUM CUSTOM
-                    </ToggleButton>
-                    <ToggleButton value={false} aria-label="deactivated">
-                        Désactivé
-                    </ToggleButton>
-                </ToggleButtonGroup>
-
-                <Input type="file" style={{
-                    width: '200px',
-                    height: '55px',
-                    outline: 'none',
-                    transition: 'box-shadow 0.3s',
-                }} onChange={(e) =>{
-                    handleFileBlosumLoad(e)
-                }
-                } />
-            </div>
-            {helpWindow && helpIndex[3] && (
-                <div style={{width: '400px', position: 'absolute', top: '140px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
-                    Le BLOSUM CUSTOM est une option permettant soit d'utiliser une matrice blosum62 pré-enregistrée dans l'outil, ou soit upload sa propre matrice de score customisée. Le principe est que par exemple, si on a un "R" qui est aligné avec un "A", on aimerait que cet alignement spécifique ait un score de 2 et avec les matrices custom c'est tout a fait possible. On peut personnaliser le score de chaque alignement spécifique. Néanmoins, il faut que le fichier ait une extension en .JSON et qu'il soit représenté sous forme de dictionnaire javascript.
-                </div>
-            )}
-        </div>
-
-    let modeComp =
-        <Box
-            sx={{'& > :not(style)': { m: 1},}} //Make the alignment better
-        >
-        <ToggleButtonGroup
-            value={true}
-            exclusive
-            aria-label="toggle-button-group"
-        >
-            <div style = {{ display: 'flex', flexDirection: 'column', margin: '0px', gap: '27px'}}>
-                <ToggleButton value={!gameModeCheck} aria-label="activated"
-                              onChange={() => {
-                                  setgameModeCheck(false)
-                              }}
-                              style={{
-                                  width: '100px',
-                                  height: '55px',
-                                  outline: 'none',
-                                  transition: 'box-shadow 0.3s',
-                              }}>
-                    Normal
-                </ToggleButton>
-                <ToggleButton value={gameModeCheck} aria-label="deactivated"
-                              onChange={() => {
-                                  setgameModeCheck(true)
-                              }}
-                              style={{
-                                  width: '100px',
-                                  height: '55px',
-                                  outline: 'none',
-                                  transition: 'box-shadow 0.3s',
-                              }}>
-                    Mode Jeu
-                </ToggleButton>
-            </div>
-        </ToggleButtonGroup>
-            </Box>
 
     let computeLimitComp =
         <div style={{ position: 'relative' }}>
@@ -1118,12 +1027,8 @@ export default function App(){
                 <Grid item>
                     {changePathButton}
                 </Grid>
-                <Grid item>
-                    {blosumComp}
-                </Grid>
-                <Grid item>
-                    {modeComp}
-                </Grid>
+
+
             </Grid>
         </Box>
 
@@ -1166,50 +1071,36 @@ export default function App(){
 
 //HTML component that arranges and brings together the upper part of the page
     let upElement =
-        <div>
-            <img src={sequenciaImage} alt="Sequencia"   />
-            <div style = {{ margin: '20px'}} />
-
-            <label><strong>Outil de visualisation d'alignement de séquences réalisé par BOIVIN Lorentz dans le cadre du projet de Master 1 à l'Université de Mons.</strong> Une des fonctionnalités principales de cet outil est d'aligner des séquences d'ADN et protéines dans le domaine de la biologie et de la bio-informatique. Néanmoins il permet également de travailler sur des chaines de caractères. Celui-ci a pour objectif de rendre l'alignement de séquence plus compréhensible et visuel. Vous pouvez rentrez 2 séquences, choisir l'algorithme d'alignement que vous voulez, certaines de ses variantes et aussi modifier les paramètres. Un mode jeu est également disponible en appuyant sur le bouton à droite "Mode jeu". L'alignement de séquence a pour but de comparer les similarités mais aussi d'organiser les éléments des séquences d'une telle manière à maximiser leur ressemblance.</label>
-            <div style = {{ margin: '20px'}} />
+        <Grid container  spacing={0.5} direction="column" alignItems="center" >
             {elementFirstLine}
+        </Grid>
 
-            <div style = {{ margin: '20px'}} />
-
-
-        </div>
-    let downElement
-    if(gameModeCheck){
-        downElement = <Gamemode></Gamemode>
-    }
-    else{
-        downElement =
-            <div>
-                <div style={{ display: 'flex', justifyContent: 'center' , gap: '100vh',marginTop: '60px'  }}>
+    let downElement =
+        <Box sx={{ width: '100%', margin: '0 auto' , marginTop: '30px' }}>
+            <Grid container  spacing={0.5} direction="column" alignItems="center" >
+                <Grid item>
                     {elementSecondLine}
-                </div>
-                <div style = {{ marginLeft: '130px',marginTop: '60px'}} >
+                </Grid>
+                <Grid item>
                     {TwoMatrix}
-                </div>
-                <div style = {{ margin: '20px'}} />
-                <div style = {{ margin: '20px'}} />
-                <div style={{ display: 'flex', justifyContent: 'center' , gap: '100px',marginTop: '60px' }}>
-                    <DataTable allPath = {allPath} choosePathCounter = {choosePathCounter} allAlignedResult = {allAlignedResult}/>
-                    <SubTable uniquePath = {optPath} modSequence1 = {allAlignedResult[pathCounter][0]} modSequence2 = {allAlignedResult[pathCounter][1]} transfMatrix = {matrixFinal} chooseCase = {chooseCase} rawSequence1={sequence1} rawSequence2={sequence2}/>
-                </div>
-            </div>
-    }
-
-
+                </Grid>
+                <Grid item>
+                    <div style={{ display: 'flex', justifyContent: 'center' , gap: '100px',marginTop: '60px' }}>
+                        <DataTable allPath = {allPath} choosePathCounter = {choosePathCounter} allAlignedResult = {allAlignedResult}/>
+                        <SubTable uniquePath = {optPath} modSequence1 = {allAlignedResult[pathCounter][0]} modSequence2 = {allAlignedResult[pathCounter][1]} transfMatrix = {matrixFinal} chooseCase = {chooseCase} rawSequence1={sequence1} rawSequence2={sequence2}/>
+                    </div>
+                </Grid>
+            </Grid>
+        </Box>
 
 //end TEST ZONE---------------------------------------------------------------
         //Set of all the components in return for the final display on the page
         return (
-        <div style={{ marginLeft: '20px',marginTop: "20px",marginBottom: '50px',marginRight:"20px" }}>
+        <div style={{ marginLeft: '20px',marginTop: '20px',marginBottom: '50px',marginRight:'20px' }}>
             <div style={{ position: 'relative'}}>
                 {upElement}
             </div>
-            <hr style={{ borderTop: '1px solid #ccc' }} />
+            <hr style={{ borderTop: '1px solid #ccc'}} />
             {downElement}
         </div>
     );

@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {
     createBrowserRouter,
@@ -10,6 +9,8 @@ import {
 import WelcomePage from "./pages/WelcomePage";
 import GameModePage from "./pages/GameModePage";
 import HelpAndInfoPage from "./pages/HelpAndInfoPage";
+import NormalModePage from "./pages/NormalModePage";
+import BlosumModePage from "./pages/BlosumModePage";
 
 const router = createBrowserRouter([
     {
@@ -18,7 +19,7 @@ const router = createBrowserRouter([
     },
     {
         path: "app",
-        element: <App/>,
+        element: <NormalModePage/>,
     },
     {
         path: "game",
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
     {
         path: "help",
         element: <HelpAndInfoPage/>,
+    },
+    {
+        path: "blosum",
+        element: <BlosumModePage/>,
     },
 ]);
 

@@ -14,7 +14,7 @@ export default function WelcomePage(){
         <Button variant="outlined"
                 onClick={() => handleNavigate('/app')}
                 style ={{
-            height: '100px', width: '450px', fontSize: '24px'
+            height: '80px', width: '450px', fontSize: '24px'
         }}>
 
             Mode normal
@@ -24,7 +24,7 @@ export default function WelcomePage(){
         <Button variant="outlined"
                 onClick={() => handleNavigate('/game')}
                 style ={{
-            height: '100px', width: '450px' , fontSize: '24px'
+            height: '80px', width: '450px' , fontSize: '24px'
         }}>
             Mode jeu
         </Button>
@@ -33,19 +33,31 @@ export default function WelcomePage(){
         <Button variant="outlined"
                 onClick={() => handleNavigate('/help')}
                 style ={{
-            height: '100px', width: '450px', fontSize: '24px'
+            height: '80px', width: '450px', fontSize: '24px'
         }}>
             Aide et informations
         </Button>
 
+    const blosumModeButton =
+        <Button variant="outlined"
+                onClick={() => handleNavigate('/blosum')}
+                style ={{
+                    height: '80px', width: '450px', fontSize: '24px'
+                }}>
+            Mode Blosum et custom
+        </Button>
+
     const buttonBox =
         <Box sx={{ width: '100%', margin: '0 auto' ,border: '4px solid  gredy' }}>
-            <Grid container  spacing={7} direction="column" alignItems="center" >
+            <Grid container  spacing={6} direction="column" alignItems="center" >
                 <Grid item>
                     {normalModeButton}
                 </Grid>
                 <Grid item>
                     {gameModeButton}
+                </Grid>
+                <Grid item>
+                    {blosumModeButton}
                 </Grid>
                 <Grid item>
                     {helpModeButton}
@@ -54,7 +66,7 @@ export default function WelcomePage(){
         </Box>
 
     return(
-        <Box sx={{ width: '60%', margin: '0 auto' ,border: '4px solid  grdey', marginTop: '30px' }}>
+        <Box sx={{ width: '60%', margin: '0 auto' ,border: '4px solid  grdey', marginTop: '20px', marginBottom:'20px' }}>
             <Grid container  spacing={0.5} direction="column" alignItems="center" >
                 <Grid item>
                     <img src={sequenciaImage} alt="Sequencia" style={{ width: '600px', height: 'auto', justifyContent: 'center'}}   />

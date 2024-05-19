@@ -1,9 +1,10 @@
-import React from 'react'
-import Gamemode from "../Gamemode";
+import {useNavigate} from "react-router-dom";
 import {Box, Button, Grid} from "@mui/material";
 import sequenciaImage from "../components/sequencia10.png";
-import {useNavigate} from "react-router-dom";
-export default function GameModePage(){
+import React from "react";
+import Blosum from "../Blosum";
+
+export default function BlosumModePage(){
     const navigate = useNavigate();
 
     const GoBackToMenuButton =
@@ -28,11 +29,11 @@ export default function GameModePage(){
                         <hr style={{ borderTop: '1px solid #ccc', height: '80%' }} />
                     </Grid>
                     <Grid item style={{marginTop:'25.5px', marginLeft: '10px'}}>
-                        <label  style={{ textAlign: 'center', fontSize: '27px', color: 'dimgrey'  }}>MODE JEU</label>
+                        <label  style={{ textAlign: 'center', fontSize: '27px', color: 'dimgrey'  }}>BLOSUM</label>
                     </Grid>
                 </div>
                 <Grid item>
-                    <Gamemode/>
+                    <Blosum/>
                 </Grid>
             </Grid>
         </Box>
