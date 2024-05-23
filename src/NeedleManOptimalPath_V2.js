@@ -1,3 +1,5 @@
+import {addPathsToQueue} from "./utils";
+
 /**
  * Function that determines the arrow matrix and returns it in list form
  * The arrow matrix is a list of arrow that indicate which direction can be taken by a path in a traceback.
@@ -116,15 +118,7 @@ export function findPaths(arrowedMatrix,computeLimit) {
 
         let arrows = arrowedMatrix[y][x].toString();
         // Explore les directions possibles selon les flèches de la case
-        if (arrows.includes("↖")) {
-            queue.push([[y - 1, x - 1], ...path]); // Déplacement en diagonale
-        }
-        if (arrows.includes("↑")) {
-            queue.push([[y - 1, x], ...path]); // Déplacement vers le haut
-        }
-        if (arrows.includes("←")) {
-            queue.push([[y, x - 1], ...path]); // Déplacement vers la gauche
-        }
+        addPathsToQueue(queue, path, y, x, arrows);
         if (paths.length === computeLimit){
             return(paths);
         }

@@ -3,8 +3,13 @@ import {Box, Button, Grid} from "@mui/material";
 import sequenciaImage from "../components/sequencia10.png";
 import React from "react";
 import Blosum from "../Blosum";
+import {useAdjustedZoom} from "./pagesUtils";
+
 
 export default function BlosumModePage(){
+    //Allows the resize of the windows and adapt the page with it
+    useAdjustedZoom();
+
     const navigate = useNavigate();
 
     const GoBackToMenuButton =
@@ -16,7 +21,10 @@ export default function BlosumModePage(){
             Menu principal
         </Button>
 
+
     return(
+
+
 
         <Box sx={{ width: '100%', margin: '0 auto' , marginTop: '30px' }}>
             {GoBackToMenuButton}

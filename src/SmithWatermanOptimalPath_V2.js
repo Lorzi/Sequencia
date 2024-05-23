@@ -1,3 +1,5 @@
+import {addPathsToQueue} from "./utils";
+
 /**
  * Allows you to find the optimal paths in the arrow matrix for the Smith-Waterman algorithm.
  * @param arrowedMatrix
@@ -37,15 +39,7 @@ export function findPathsSW(arrowedMatrix,maxScoreList,transfMatrix,computeLimit
             let arrows = arrowedMatrix[y][x].toString();
 
             //Explore possible directions according to the arrows in the box
-            if (arrows.includes("↖")) {
-                queue.push([[y - 1, x - 1], ...path]); //Diagonal movement
-            }
-            if (arrows.includes("↑")) {
-                queue.push([[y - 1, x], ...path]); //Move up
-            }
-            if (arrows.includes("←")) {
-                queue.push([[y, x - 1], ...path]); //Move left
-            }
+            addPathsToQueue(queue, path, y, x, arrows);
         }
     }
         if (paths.length === 0) {

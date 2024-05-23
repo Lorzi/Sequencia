@@ -3,8 +3,12 @@ import Gamemode from "../Gamemode";
 import {Box, Button, Grid} from "@mui/material";
 import sequenciaImage from "../components/sequencia10.png";
 import {useNavigate} from "react-router-dom";
+import {useAdjustedZoom} from "./pagesUtils";
 export default function GameModePage(){
     const navigate = useNavigate();
+
+    //Allows the resize of the windows and adapt the page with it
+    useAdjustedZoom();
 
     const GoBackToMenuButton =
         <Button variant="outlined"

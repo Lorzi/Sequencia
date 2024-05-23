@@ -2,8 +2,12 @@ import React from 'react'
 import sequenciaImage from "../components/sequencia10.png";
 import {Box, Button, Grid} from "@mui/material";
 import {useNavigate} from "react-router-dom";
+import {useAdjustedZoom} from "./pagesUtils";
 
 export default function WelcomePage(){
+    //Allows the resize of the windows and adapt the page with it
+    useAdjustedZoom();
+
     const navigate = useNavigate();
 
     const handleNavigate = (path) => {

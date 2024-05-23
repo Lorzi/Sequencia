@@ -5,7 +5,7 @@ import createSubMatrix, {createSubMatrixBLOSUM} from "./components/subMatrixGene
  * @param S1
  * @param S2
  * @param Match
- * @param Missmatch
+ * @param Mismatch
  * @param Gap
  * @param operation_mm Max or Min
  * @param blosumCheck Usage or not of the custom score matrix
@@ -13,7 +13,7 @@ import createSubMatrix, {createSubMatrixBLOSUM} from "./components/subMatrixGene
  * @returns {([]|[])[]}
  * @constructor
  */
-export function NeedleManWunschScript(S1,S2,Match,Missmatch,Gap,operation_mm,blosumCheck,blosumCustom){
+export function NeedleManWunschScript(S1,S2,Match,Mismatch,Gap,operation_mm,blosumCheck,blosumCustom){
     let operationMaxMin = Math.max;
     // Create and return the Substitution matrix that will be needed in order to fulfill the transformed matrix
     if(operation_mm ===0){
@@ -66,7 +66,7 @@ export function NeedleManWunschScript(S1,S2,Match,Missmatch,Gap,operation_mm,blo
 
     }
     else{
-        subMatrix = createSubMatrix(S1,S2,Match,Missmatch);
+        subMatrix = createSubMatrix(S1,S2,Match,Mismatch);
 
     }
 
@@ -75,4 +75,7 @@ export function NeedleManWunschScript(S1,S2,Match,Missmatch,Gap,operation_mm,blo
     return([subMatrix,transfMatrix]);
 
 }
+//Put off the comment to start tests
+//module.exports(NeedleManWunschScript);
+
 

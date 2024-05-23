@@ -8,7 +8,11 @@ import documentation3 from "./documentation_images/documentation3.jpg"
 import documentation4 from "./documentation_images/documentation4.jpg"
 import documentation5 from "./documentation_images/documentation5.jpg"
 import documentation6 from "./documentation_images/documentation6.jpg"
+import {useAdjustedZoom} from "./pagesUtils";
 export default function HelpAndInfoPage() {
+
+    //Allows the resize of the windows and adapt the page with it
+    useAdjustedZoom();
 
     const navigate = useNavigate();
 

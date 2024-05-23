@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {Case} from "./Case";
 import {NeedleManWunschScript} from "./NeedleManWunschScript";
 import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
 import {
@@ -9,6 +8,7 @@ import {
     TextField
 } from "@mui/material";
 import {blosum62} from "./components/variants/blosum62";
+import {DisplayedMatrix, DisplayedOtherSeq, DisplayedSeq} from "./utils";
 /**
  * Heart of the application,
  * allows you to launch the program, takes care of the display and placement of the different elements on the page.
@@ -95,70 +95,21 @@ export default function Blosum(){
     const onDisplayPath = () => {
 
         //Updating the score matrix
-        setDisplayedMatrix(() =>
-            <Box sx={{ width: '100%', margin: '0' }}>
-
-                <Grid container spacing={0.5}>
-                    {matrixFinal.map((row, rowIndex) => (
-                        <Grid item xs={100} key={rowIndex}>
-                            <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
-                                {row.map((item, colIndex) => (
-                                    <Grid item  key={colIndex}>
-                                        <Case
-                                            key = {[rowIndex,colIndex]}
-                                            value = {item}
-                                            color={
-                                                (colorVariantCase.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) && selectedVariant === "LCS" ? 'green' :
-                                                    ((chosenCase[0] === rowIndex && chosenCase[1] === colIndex)) ? 'darkred' :
-                                                        (optPath.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) ? 'dodgerblue' : 'white'
-                                            }
-                                            //If it is true that we find coord =  indexes in optPath then we color it red
-                                            //Changes color to red if this box "case" is found in the optimal path
-                                        />
-                                    </Grid>
-                                ))}
-                            </Grid>
-                        </Grid>
-                    ))}
-                </Grid>
-            </Box>
+        setDisplayedMatrix(
+            <DisplayedMatrix
+                matrixFinal={matrixFinal}
+                colorVariantCase={colorVariantCase}
+                selectedVariant={selectedVariant}
+                chosenCase={chosenCase}
+                optPath={optPath}
+            />
         );
 
         //Updating the Sequence 2 display
-        setDisplayedSeq(() => (
-            <Box sx={{ width: '100%', margin: '0' }}>
-                <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
-                    <Grid item>
-                        <Case key={["first-case"]} value={"-"} color={'light_blue'} />
-                    </Grid>
-                    <Grid item>
-                        <Case key={["second-case"]} value={"-"} color={'light_blue'} />
-                    </Grid>
-                    {sequence2.split('').map((item, index) => (
-                        <Grid item key={index}>
-                            <Case key={[index]} value={item} color={'light_blue'} />
-                        </Grid>
-                    ))}
-                </Grid>
-            </Box>
-        ));
+        setDisplayedSeq(<DisplayedSeq sequence2={sequence2} />);
         //Updating the Sequence 1 display
-        setDisplayedOtherSeq(() => (
-            <Box sx={{ width: '100%', margin: '0' }}>
-                <Grid container direction="column" spacing={0.5}>
-                    <Grid item>
-                        <Case key={["first-case"]} value={"-"} color={'light_blue'} />
-                    </Grid>
-                    {sequence1.split('').map((item, index) => (
-                        <Grid item key={index}>
-                            <Case key={[index]} value={item} color={'light_blue'} />
-                        </Grid>
-                    ))}
-                </Grid>
-            </Box>
-        ));
+        setDisplayedOtherSeq(<DisplayedOtherSeq sequence1={sequence1} />);
     }
-
     //HTML component representing the score matrix as well as its column and its sequence line aligned to it
     let FullMatrix = (
         <div>
@@ -264,14 +215,6 @@ export default function Blosum(){
 
                                    outline: 'none',
                                    transition: 'box-shadow 0.3s',
-                               }}
-                               onMouseOver={() => {
-                                   handleMouseOver()
-                                   setHelpIndex([true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
-                               }}
-                               onMouseOut={() => {
-                                   handleMouseOut()
-                                   setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
                                }}
                                onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'}
                                inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 15 characters)

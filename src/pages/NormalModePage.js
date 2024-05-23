@@ -3,8 +3,12 @@ import {Box, Button, Grid} from "@mui/material";
 import App from "../App";
 import {useNavigate} from "react-router-dom";
 import sequenciaImage from "../components/sequencia10.png";
+import {useAdjustedZoom} from "./pagesUtils";
 export default function NormalModePage() {
     const navigate = useNavigate();
+
+    //Allows the resize of the windows and adapt the page with it
+    useAdjustedZoom();
 
     const GoBackToMenuButton =
         <Button variant="outlined"

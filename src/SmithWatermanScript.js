@@ -5,12 +5,12 @@ import createSubMatrix from "./components/subMatrixGenerator";
  * @param S1
  * @param S2
  * @param Match
- * @param Missmatch
+ * @param Mismatch
  * @param Gap
  * @returns {(*|[])[]}
  * @constructor
  */
-export function SmithWatermanScript(S1,S2,Match,Missmatch,Gap) {
+export function SmithWatermanScript(S1,S2,Match,Mismatch,Gap) {
 
     /**
      * Create and return the transformed matrix (score matrix) that will help to find the best path possible, this is also the matrix that should be displayed on the screen
@@ -52,7 +52,7 @@ export function SmithWatermanScript(S1,S2,Match,Missmatch,Gap) {
         }
         return [transfMatrix,maxCoordList]
     }
-    const subMatrix = createSubMatrix(S1,S2,Match,Missmatch);
+    const subMatrix = createSubMatrix(S1,S2,Match,Mismatch);
     const transfMatrixResult = createTransfMatrix(S1,S2,subMatrix,Gap);
     const transfMatrix = transfMatrixResult[0];
     const maxCoordList = transfMatrixResult[1];

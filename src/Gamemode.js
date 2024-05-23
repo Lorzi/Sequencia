@@ -3,8 +3,8 @@ import {NeedleManWunschScript} from "./NeedleManWunschScript";
 import {useEffect, useState} from "react";
 import {Box, Button, Grid, TextField, ToggleButton, ToggleButtonGroup} from "@mui/material";
 import {Case} from "./Case";
-import {LetterLine} from "./LetterLine";
 import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
+import {DisplayedOtherSeq, DisplayedSeq, mergePaths} from "./utils";
 
 export default function Gamemode(){
     let [sequence1,setSequence1] = useState("");
@@ -14,7 +14,6 @@ export default function Gamemode(){
     let [gap,setGap] = useState(-2);
     let matrix = NeedleManWunschScript(sequence1,sequence2,match,mismatch,gap,0,false);
     const [answeredValue,setAnsweredValue] = useState(0);
-
     let [xPoint,setXPoint] = useState(0);
     let [yPoint,setYPoint] = useState(0);
     let [goodAnswerCounter,setGoodAnswerCounter]=useState(0);
@@ -36,31 +35,27 @@ export default function Gamemode(){
     let[helpSeq1, setHelpSeq1] = useState("");
     let[helpSeq2,setHelpSeq2] = useState("");
     let[helpMatrixCoord,setHelpMatrixCoord] = useState([]);
+    const [displayedSeq,setDisplayedSeq] = useState();   //Display component SEQUENCE WORD 2
+    const [displayedOtherSeq,setDisplayedOtherSeq] = useState();  //Display component SEQUENCE WORD 1
+    const [displayed_matrix,setDisplayedMatrix] = useState();
+    const [displayedHelpMatrix,setDisplayedHelpMatrix] = useState();
 
-
+    /**
+     * useEffect allowing you to create the optimal list of all paths
+     */
     // eslint-disable-next-line
     useEffect(() => {
-        const mergedAllPath = allPath.reduce((merged, current) => {
-            current.forEach(path => {
-                if (!merged.includes(path)) {
-                    merged.push(path);
-                }
-            });
-            return merged;
-        }, []);
+        const mergedAllPath = mergePaths(allPath); // //Merge every unique path for allPath in one list, very useful for displaying everypath on the arrowedmatrix (orange case)
         setOptimizedCasesList(mergedAllPath);
         // eslint-disable-next-line
     }, [gamemode,greenCasesList]);
 
-    const [displayed_matrix,setDisplayedMatrix] = useState(
-        <Box>
-        </Box>
-    );
-    const [displayedHelpMatrix,setDisplayedHelpMatrix] = useState(
-        <Box>
-        </Box>
-    );
 
+
+    /**
+     * UI component: Display of sequence 2 fraction useful for displaying the help matrix
+     * @type {React.JSX.Element}
+     */
     const displayedHelpSeq2 =
         <Box sx={{ width: '100%', margin: '0' }}>
             <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
@@ -78,6 +73,10 @@ export default function Gamemode(){
             </Grid>
         </Box>
 
+    /**
+     * UI component: Display of sequence 1 fraction useful for displaying the help matrix
+     * @type {React.JSX.Element}
+     */
     const displayedHelpSeq1 =
         <Box sx={{ width: '100%', margin: '0' }}>
             <Grid container direction="column" spacing={0.5}>
@@ -92,35 +91,23 @@ export default function Gamemode(){
             </Grid>
         </Box>
 
-    const [displayedSeq,setDisplayedSeq] = useState(
-        <div className="line">
-            {LetterLine(sequence2)}
-        </div>
-    )
-    //Display component SEQUENCE WORD 1
-    const [displayedOtherSeq,setDisplayedOtherSeq] = useState(
-        <div className="column">
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {LetterLine(sequence1)}
-            </div>
-        </div>
-    )
 
+    /**
+     * Function that manages clicking a case during game mode number 2
+     * @param y
+     * @param x
+     */
     const handlePaperAnswerButtonClick = (y,x) =>{
-        console.log(optimizedCasesList)
-        console.log(y,x)
+
         setGoodAnswerCounter(greenCasesList.length)
         setBadAnswerCounter(redCasesList.length)
         if (optimizedCasesList.some(optimizedCases => optimizedCases[0] === y && optimizedCases[1] === x)) {
             setGreenCasesList([...greenCasesList, [y, x]]);
             setGameMode2Coord([y,x]);
-
             if(y === 0 && x === 0){
-
                 setClickableCases([[]])
                 setGreenCasesList([...greenCasesList, [0, 0]]);
                 setGameMode2Coord([y,x]);
-
             }
             else if(y === 0 && x > 0){
                 setClickableCases([[y,x-1]])
@@ -135,23 +122,26 @@ export default function Gamemode(){
         else if (optimizedCasesList.length === 0) {
             setGreenCasesList([...greenCasesList, [y, x]]);
             setGameMode2Coord([y,x]);
-
         }
         else {
             if (y !== sequence1.length || x !== sequence2.length){
                 setRedCasesList([...redCasesList, [y, x]]);
             }
-
         }
         setVisibleCase([...visibleCase, [yPoint, xPoint]]);
-
     };
 
+    /**
+     * Reset the goods and bads answers to start a new game.
+     */
     const resetCommonParam = () =>{
         setGoodAnswerCounter(0);
         setBadAnswerCounter(0);
     }
 
+    /**
+     * Generates the help matrix for the game mode
+     */
     const generateHelpMatrix = () =>{
         if(sequence1[yPoint-1] === undefined){
             setHelpSeq1("-")
@@ -164,38 +154,28 @@ export default function Gamemode(){
         }
         else{
             setHelpSeq2(sequence2[xPoint-1])
-
         }
-
-
-
-
         if(yPoint ===0 && xPoint !== 0 && xPoint !== sequence2.length){
             setHelpMatrixCoord([[[""],[""]],[[finalMatrix[yPoint+1][xPoint]],["?"]]])
-
         }
-
         else if(yPoint ===0 && xPoint === sequence2.length){
-
             setHelpMatrixCoord([[[""],[finalMatrix[yPoint][0]]],[[""],["?"]]])
         }
         else if(yPoint !==0 && xPoint === sequence2.length){
             setHelpMatrixCoord([[[""],[finalMatrix[yPoint][0]]],[[""],["?"]]])
-
         }
-
         else if (yPoint ===0 && xPoint === 0){
             setHelpMatrixCoord([[[""],[""]],[["0"],["?"]]])
-
         }
         else{
-
             setHelpMatrixCoord([[[finalMatrix[yPoint-1][xPoint]],[finalMatrix[yPoint-1][xPoint+1]]],[[finalMatrix[yPoint][xPoint]],["?"]]])
         }
     }
 
 
-
+    /**
+     * Reset parameters for Game mode 1
+     */
     const resetGamemode1Param = () =>{
         setClickableCases([]);
         setGoodAnswerCoord([]);
@@ -206,21 +186,30 @@ export default function Gamemode(){
         setVisibleCase([]);
         resetCommonParam();
     }
+    /**
+     * Reset parameters for Game mode 2
+     */
     const resetGamemode2Param = () =>{
         setGreenCasesList([[sequence1.length,sequence2.length]]);
         setRedCasesList([]);
         setClickableCases([[sequence1.length,sequence2.length]]);
         resetCommonParam();
     }
+    /**
+     * Reset the parameters of every gamemode by clicking on the associate button.
+     */
     const handleResetButton = () =>{
         resetGamemode1Param();
         resetGamemode2Param();
     }
 
+    /**
+     * Manage user entries by clicking on the button.
+     * This function manages the entire game mode number 1 and compares the entered answers
+     * with the real answers and continues the game accordingly.
+     */
     const handleSubmitAnswerButtonClick = () =>{
-
         setVisibleCase([...visibleCase, [yPoint, xPoint]]);
-
         if(answeredValue === finalMatrix[yPoint][xPoint]){
             let newGoodAnswerCounter= goodAnswerCounter;
             newGoodAnswerCounter +=1 ;
@@ -232,7 +221,6 @@ export default function Gamemode(){
         }
         else {
             if(xPoint >= finalMatrix[0].length-1 && yPoint >= finalMatrix.length-1){ //If it's the end of the game
-
             }
             else{
                 let newBadAnswerCounter=badAnswerCounter;
@@ -243,10 +231,7 @@ export default function Gamemode(){
                 setNumberOfCase(newNumberOfCase);
 
             }
-
         }
-
-
         if(xPoint >= finalMatrix[0].length-1){
             if (yPoint >= finalMatrix.length-1)
             {
@@ -258,7 +243,6 @@ export default function Gamemode(){
                         setGoodAnswerCoord([...goodAnswerCoord, [yPoint, xPoint]]);
                         let newNumberOfCase = numberOfCase +1;
                         setNumberOfCase(newNumberOfCase);
-
                     }
                     else{
                         let newBadAnswerCounter=badAnswerCounter;
@@ -267,13 +251,8 @@ export default function Gamemode(){
                         setBadAnswerCoord([...badAnswerCoord, [yPoint, xPoint]]);
                         let newNumberOfCase = numberOfCase +1;
                         setNumberOfCase(newNumberOfCase);
-
                     }
                 }
-
-
-
-
                 if(xPoint !== finalMatrix[0].length){
                     let newX = xPoint +1;
                     setXPoint(newX)
@@ -289,15 +268,20 @@ export default function Gamemode(){
             let newX = xPoint +1;
             setXPoint(newX)
         }
-
     }
 
+    /**
+     * useEffect that allows the update (call change()) if one of the dependances value changes.
+     */
     useEffect(() => {
         // eslint-disable-next-line
         change()
         // eslint-disable-next-line
     }, [visibleCase,gamemode,sequence1,sequence2]);
 
+    /**
+     * useEffect that reset the whole parameters of the gameMode in case of changement in the dependances (to avoid unexpected behaviour)
+     */
     useEffect(() => {
         resetGamemode2Param()
         resetGamemode1Param()
@@ -314,6 +298,11 @@ export default function Gamemode(){
         // eslint-disable-next-line
     }, [sequence1,sequence2,match,mismatch,gap]);
 
+    /**
+     *
+     * @param gameMode2Coord
+     * @returns {(*|number)[]|number[]|*[]|(number|*)[]}
+     */
     function leftDiagUpCheck(gameMode2Coord){
         let y = gameMode2Coord[0];
         let x = gameMode2Coord[1];
@@ -339,6 +328,10 @@ export default function Gamemode(){
     }
 
 
+    /**
+     * This functions updates the components everytime there is an action or that one of the dependance of the
+     * useEffect has changed.
+     */
     const change =() =>{
 
         generateHelpMatrix();
@@ -370,38 +363,10 @@ export default function Gamemode(){
                 </Grid>
             </Box>
         );
-        setDisplayedSeq(() => (
-            <Box sx={{ width: '100%', margin: '0' }}>
-                <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
-                    <Grid item>
-                        <Case key={["first-case"]} value={"-"} color={'light_blue'} />
-                    </Grid>
-                    <Grid item>
-                        <Case key={["second-case"]} value={"-"} color={'light_blue'} />
-                    </Grid>
-                    {sequence2.split('').map((item, index) => (
-                        <Grid item key={index}>
-                            <Case key={[index]} value={item} color={'light_blue'} />
-                        </Grid>
-                    ))}
-                </Grid>
-            </Box>
-        ));
+        //Updating the Sequence 2 display
+        setDisplayedSeq(<DisplayedSeq sequence2={sequence2} />);
         //Updating the Sequence 1 display
-        setDisplayedOtherSeq(() => (
-            <Box sx={{ width: '100%', margin: '0' }}>
-                <Grid container direction="column" spacing={0.5}>
-                    <Grid item>
-                        <Case key={["first-case"]} value={"-"} color={'light_blue'} />
-                    </Grid>
-                    {sequence1.split('').map((item, index) => (
-                        <Grid item key={index}>
-                            <Case key={[index]} value={item} color={'light_blue'} />
-                        </Grid>
-                    ))}
-                </Grid>
-            </Box>
-        ));
+        setDisplayedOtherSeq(<DisplayedOtherSeq sequence1={sequence1} />);
 
         setDisplayedHelpMatrix(() => (
             <Box sx={{ width: '100%', margin: '0' }}>
@@ -429,6 +394,11 @@ export default function Gamemode(){
 
 
     }
+
+    /**
+     * UI component: Complete displayed matrix made up of other elements
+     * @type {React.JSX.Element}
+     */
     let FullMatrix = (
         <div>
             <div style={{ marginBottom: '0.25rem' }}>
@@ -447,6 +417,10 @@ export default function Gamemode(){
             </div>
         </div>
     );
+    /**
+     * UI component: Help of the game mode 2
+     * @type {React.JSX.Element}
+     */
     let fullHelp2 = (
         <div style={{fontSize: '1.5rem', marginTop: '9px'}}>
             <div>
@@ -460,6 +434,11 @@ export default function Gamemode(){
             </div>
         </div>
     );
+
+    /**
+     * UI component: Help matrix of the game mode 1
+     * @type {React.JSX.Element}
+     */
     let fullHelpMatrix = (
         <div>
             <div style={{ marginBottom: '0.25rem' }}>
@@ -478,6 +457,11 @@ export default function Gamemode(){
             </div>
         </div>
     );
+
+    /**
+     * UI component: Help text of the game mode 1
+     * @type {React.JSX.Element}
+     */
     let helpText1 =
         <div style={{fontSize: '1.3rem', marginTop: '25px'}}>
             {xPoint === 0 && (
@@ -501,6 +485,10 @@ export default function Gamemode(){
                 )}
             </div>
 
+    /**
+     * UI component: Complete help of gamemode 1 (matrix + text)
+     * @type {React.JSX.Element}
+     */
     let helperElem1 =
         <Grid container direction="column"  spacing={4}>
             <Grid item>
@@ -526,6 +514,11 @@ export default function Gamemode(){
             </Grid>
 
         </Grid>
+
+    /**
+     * UI component: Complete help of the game mode 2
+     * @type {React.JSX.Element}
+     */
     let helperElem2 =
         <Grid container direction="column"  spacing={4}>
             <Grid item>
@@ -551,6 +544,10 @@ export default function Gamemode(){
 
         </Grid>
 
+    /**
+     * UI component: Input for the user guess the answer
+     * @type {React.JSX.Element}
+     */
     let inputAnswer =
         <TextField
             label = "Votre réponse"
@@ -572,6 +569,11 @@ export default function Gamemode(){
                 transition: 'box-shadow 0.3s',
             }}
         />
+
+    /**
+     * UI component: Submit answer button
+     * @type {React.JSX.Element}
+     */
     const submitAnswerButton =
         <Button variant="outlined" style ={{
             height: '55px'
@@ -581,6 +583,10 @@ export default function Gamemode(){
             handleSubmitAnswerButtonClick()
         }>Soumettre réponse</Button>
 
+    /**
+     * UI component: Reset game parameters button
+     * @type {React.JSX.Element}
+     */
     const resetGameButton =
         <Button variant="outlined" style ={{
             height: '55px',
@@ -589,6 +595,10 @@ export default function Gamemode(){
             handleResetButton()
         }>Restart</Button>
 
+    /**
+     * UI component: Display component of the sequences input
+     * @type {React.JSX.Element}
+     */
     const sequenceBox =
         <div style={{ display: 'flex', flexDirection: 'COLUMN', gap:'5px'}}>
                 <TextField
@@ -599,8 +609,6 @@ export default function Gamemode(){
                     value={sequence1}
                     style={{
                         width: '300px',
-
-
                         outline: 'none',
                         transition: 'box-shadow 0.3s',
                     }}
@@ -608,8 +616,7 @@ export default function Gamemode(){
                     inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 1000 characters)
                     onChange={(e) => {
                         setSequence1(e.target.value)
-                    }
-                    }
+                    }}
                 />
             <div style={{marginLeft: '0px', margin: '0px'}}/>
                     <TextField id="sequence2" label="Sequence 2" variant="outlined"
@@ -617,7 +624,6 @@ export default function Gamemode(){
                                value={sequence2}
                                style={{
                                    width: '300px',
-
                                    outline: 'none',
                                    transition: 'box-shadow 0.3s',
                                }}
@@ -625,10 +631,14 @@ export default function Gamemode(){
                                onChange={(e) => {
 
                                    setSequence2(e.target.value)
-                               }
-                               }
+                               }}
                     />
         </div>
+
+    /**
+     * UI component: Parameters textfield input for changing the value of the Match, Mismatch and Gap
+     * @type {React.JSX.Element}
+     */
     let paramButton =
         <div style = {{ display: 'flex', flexDirection: 'row', margin: '0px', gap: '5px'}}>
             <div style={{ position: 'relative' }}>
@@ -694,6 +704,10 @@ export default function Gamemode(){
             </div>
         </div>
 
+    /**
+     * UI component: Game mode title
+     * @type {React.JSX.Element}
+     */
     const gameModeTitle =
         <div style={{
             display: 'flex',
@@ -708,6 +722,10 @@ export default function Gamemode(){
             {gamemode ? "Découverte chemin optimal" : "Remplissage matrice score"}
         </div>
 
+    /**
+     * UI component: Buttons that allows to change when being clicked on the gamemode
+     * @type {React.JSX.Element}
+     */
     let gameModeButtons =
 
         <div style = {{ display: 'flex', flexDirection: 'row', gap: '0px'}}>
@@ -722,6 +740,7 @@ export default function Gamemode(){
                 }}
                 onChange={() => {
                     setGamemode(!gamemode);
+                    handleResetButton();
                 }}
                 aria-label="toggle-button-group"
             >
@@ -734,7 +753,10 @@ export default function Gamemode(){
             </ToggleButtonGroup>
         </div>
 
-
+    /**
+     * UI component: Right part of the game component
+     * @type {React.JSX.Element}
+     */
     const rightElement =
         <Box >
             <Grid container direction="column"  spacing={4}>
@@ -784,12 +806,8 @@ export default function Gamemode(){
         </Box>
 
 
-
-
-
     return (
         <div>
-
             <div style={{ display: 'flex', justifyContent: 'center' , gap: '10Vh',marginTop: '30px'  }}>
             <Box
                 component="section"

@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Case} from "./Case";
-import {Line} from "./Line";
 import {NeedleManWunschScript} from "./NeedleManWunschScript";
-import {LetterLine} from "./LetterLine";
 import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
 import DataTable from "./components/DataTable"
 import SubTable from "./components/SubTable";
@@ -11,19 +9,19 @@ import {
     Button,
     FormControl,
     Grid,
-    Input,
     InputLabel,
     MenuItem,
-
+    Alert,
     Select,
-
-    TextField, ToggleButton, ToggleButtonGroup
-} from "@mui/material";
+    TextField
+}
+from "@mui/material";
 import NeedlemanExtra from "./components/NeedlemanExtra";
 import SmithWaterManExtra from "./components/SmithWaterManExtra";
 import {SmithWatermanScript} from "./SmithWatermanScript";
 import {findPathsSW} from "./SmithWatermanOptimalPath_V2";
 import {blosum62} from "./components/variants/blosum62";
+import {DisplayedMatrix, DisplayedOtherSeq, DisplayedSeq, mergePaths} from "./utils";
 
 
 
@@ -48,7 +46,9 @@ export default function App(){
     const [selectedVariant,setSelectedVariant] = useState("default");
     const [operationMm,setOperationMm] = useState(0); //Allows to change if we use a Max or Min in other class (Needleman-Wunsch or Smith-Waterman)
     const [computeLimit, setComputeLimit] = useState(10000); //Maximum bound for the computation of result, help to avoid infinite generation and thus crash
+    //eslint-disable-next-line
     const [blosumCheck, setBlosumCheck] = useState(false); //Check blosum option is activated
+    //eslint-disable-next-line
     const [blosumCustom,setBlosumCustom] = useState(blosum62); //Custom matrix, by default blosum62
     let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap,operationMm,blosumCheck,blosumCustom)//list that countain subsitution matrix and scoreMatrix
     let matrixFinal = matrixTestData[1]; //Score Matrix, also knowned as transfMatrix in other class
@@ -64,15 +64,7 @@ export default function App(){
     const [helpWindow, setHelpWindow] = useState(false);
     const [helpIndex,setHelpIndex]=useState([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]) // Help for the index of the help windows
     const [colorVariantCase,setColorVariantCase] = useState([]); //Coloring or not for a variant (example green for the LCS)
-    //Merge every unique path for allPath in one list, very useful for displaying everypath on the arrowedmatrix (orange case)
-    const mergedAllPath = allPath.reduce((merged, current) => {
-        current.forEach(path => {
-            if (!merged.includes(path)) {
-                merged.push(path);
-            }
-        });
-        return merged;
-    }, []);
+    const mergedAllPath = mergePaths(allPath); // //Merge every unique path for allPath in one list, very useful for displaying everypath on the arrowedmatrix (orange case)
     if(selectedAlgorithm === "Smith-Waterman"){
         matrixTestData = SmithWatermanScript(sequence1,sequence2,match,missmatch,gap)
         matrixFinal = matrixTestData[1];
@@ -89,8 +81,8 @@ export default function App(){
     //INITIALISATION AREA END -------------------------------------------------------------------
 
     /**
-     * Return the string sequence with the gaps "-"
-     * It useful to display the results and see where are the gaps.
+     * Return the 2 strings sequences with the gaps "-" in a list of 2 elements
+     * It's useful to display the results and see where are the gaps.
      * @param actualPath
      * @returns {[string,string]}
      */
@@ -219,29 +211,6 @@ export default function App(){
         setGap(-2);
     }
 
-    /**
-     * Handle the custom matrix blosum file in .JSON input by the user
-     * @param e
-     */
-    const handleFileBlosumLoad = (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        try{
-            reader.onload = function(e){
-                try {
-                    let matrixCustom2 = JSON.parse(e.target.result)
-                    setBlosumCustom(matrixCustom2);
-                }catch (jsonError){
-                    console.error("File is nbot in a JSON format");
-                }
-            };
-            reader.readAsText(file);
-        }
-        catch (error){
-            console.error("Bad file format used");
-        }
-    }
-
     const handleMouseOver = () => {
         setHelpWindow(true);
     };
@@ -341,41 +310,13 @@ export default function App(){
     }
 
     //Matrix displayed as button matrix in html
-    const [displayed_matrix,setDisplayedMatrix] = useState(
-        <div className="matrix-row">
-            {matrixFinal.map((x,xIndex)=> (
-                <div className="matrix-line">
-                    {Line(x,xIndex)}
-                </div>
-            ))}
-        </div>
-    );
-
+    const [displayed_matrix,setDisplayedMatrix] = useState();
     //Arrow matrix as button matrix in html
-    const [displayedArrowed_matrix,setDisplayedArrowedMatrix] = useState(
-        <div className="matrix-row">
-            {arrowedMatrix.map((x,xIndex)=> (
-                <div className="matrix-line">
-                    {Line(x,xIndex)}
-                </div>
-            ))}
-        </div>
-    );
-
+    const [displayedArrowed_matrix,setDisplayedArrowedMatrix] = useState();
     //Display component SEQUENCE WORD 2
-    const [displayedSeq,setDisplayedSeq] = useState(
-        <div className="line">
-            {LetterLine(sequence2)}
-        </div>
-    )
+    const [displayedSeq,setDisplayedSeq] = useState();
     //Display component SEQUENCE WORD 1
-    const [displayedOtherSeq,setDisplayedOtherSeq] = useState(
-        <div className="column">
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {LetterLine(sequence1)}
-            </div>
-        </div>
-    )
+    const [displayedOtherSeq,setDisplayedOtherSeq] = useState();
 
 
     /**
@@ -387,35 +328,14 @@ export default function App(){
         checkVariant();
 
         //Updating the score matrix
-        setDisplayedMatrix(() =>
-            <Box sx={{ width: '100%', margin: '0' }}>
-
-                <Grid container spacing={0.5}>
-                    {matrixFinal.map((row, rowIndex) => (
-                        <Grid item xs={100} key={rowIndex}>
-                            <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
-                                {row.map((item, colIndex) => (
-
-                                    <Grid item  key={colIndex}>
-                                        <Case
-                                            key = {[rowIndex,colIndex]}
-                                            value = {item}
-                                            color={
-                                                (colorVariantCase.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) && selectedVariant === "LCS" ? 'green' :
-                                                    ((chosenCase[0] === rowIndex && chosenCase[1] === colIndex)) ? 'darkred' :
-                                                        (optPath.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) ? 'dodgerblue' : 'white'
-                                            }
-                                            //If it is true that we find coord =  indexes in optPath then we color it red
-                                            //Changes color to red if this box "case" is found in the optimal path
-                                        />
-                                    </Grid>
-                                ))}
-                            </Grid>
-                        </Grid>
-                    ))}
-                </Grid>
-            </Box>
-        );
+        setDisplayedMatrix(
+            <DisplayedMatrix
+                matrixFinal={matrixFinal}
+                colorVariantCase={colorVariantCase}
+                selectedVariant={selectedVariant}
+                chosenCase={chosenCase}
+                optPath={optPath}
+        />);
 
 
         //Updating the arrow matrix
@@ -443,38 +363,9 @@ export default function App(){
         ));
 
         //Updating the Sequence 2 display
-        setDisplayedSeq(() => (
-            <Box sx={{ width: '100%', margin: '0' }}>
-                <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
-                    <Grid item>
-                        <Case key={["first-case"]} value={"-"} color={'light_blue'} />
-                    </Grid>
-                    <Grid item>
-                        <Case key={["second-case"]} value={"-"} color={'light_blue'} />
-                    </Grid>
-                    {sequence2.split('').map((item, index) => (
-                        <Grid item key={index}>
-                            <Case key={[index]} value={item} color={'light_blue'} />
-                        </Grid>
-                    ))}
-                </Grid>
-            </Box>
-        ));
+        setDisplayedSeq(<DisplayedSeq sequence2={sequence2} />);
         //Updating the Sequence 1 display
-        setDisplayedOtherSeq(() => (
-            <Box sx={{ width: '100%', margin: '0' }}>
-                <Grid container direction="column" spacing={0.5}>
-                    <Grid item>
-                        <Case key={["first-case"]} value={"-"} color={'light_blue'} />
-                    </Grid>
-                    {sequence1.split('').map((item, index) => (
-                        <Grid item key={index}>
-                            <Case key={[index]} value={item} color={'light_blue'} />
-                        </Grid>
-                    ))}
-                </Grid>
-            </Box>
-        ));
+        setDisplayedOtherSeq(<DisplayedOtherSeq sequence1={sequence1} />);
     }
 
     //Button that call onDisplayPath() in case the matrix don't update itself
@@ -520,8 +411,10 @@ export default function App(){
             }}
         >Reset value</Button>
             {helpWindow && helpIndex[7] && (
-                <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
-                    Remet les valeur de match, mismatch et gap aux valeurs par défaut (respectivement : 1 ,-1 ,-2). Ces valeurs sont généralement les plus couramment utilisées
+                <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999 }}>
+                    <Alert  severity="info">
+                        Remet les valeur de match, mismatch et gap aux valeurs par défaut (respectivement : 1 ,-1 ,-2). Ces valeurs sont généralement les plus couramment utilisées
+                    </Alert>
                 </div>
             )}
         </div>
@@ -595,8 +488,10 @@ export default function App(){
                            }}
                 />
                     {helpWindow && helpIndex[0] && (
-                        <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
-                            Ceci est l'espace reservé aux séquences. Il est possible de choisir les deux séquences que l'on va aligner. La séquence 1 et la séquence 2. La plupart du temps on met des séquence d'ADN ou de protéines mais cet outil permet plus de possibilités comme le travail sur les chaines de caractères, etc... Alors n'hésitez pas à tester avec ce que vous voulez !
+                        <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999}}>
+                            <Alert severity="info">
+                                Ceci est l'espace reservé aux séquences. Il est possible de choisir les deux séquences que l'on va aligner. La séquence 1 et la séquence 2. La plupart du temps on met des séquence d'ADN ou de protéines mais cet outil permet plus de possibilités comme le travail sur les chaines de caractères, etc... Alors n'hésitez pas à tester avec ce que vous voulez !
+                            </Alert>
                         </div>
                     )}
                 </div>
@@ -663,8 +558,11 @@ export default function App(){
                         <MenuItem  value = "Smith-Waterman">Smith-Waterman</MenuItem >
                     </Select>
                         {helpWindow && helpIndex[1] && (
-                            <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
-                                Permet de choisir l'algorithme que l'on va utiliser pour notre alignement. On a deux choix : un algorithme d'alignement global maximal (Needleman-Wunsch), donc ici on va traiter toute les données d'un coup. Ou alors on a un algorithme d'alignement local minimal (Smith-Waterman), donc ici on va plutot s'interesser a de petits fragments similaires au lieu de tout traiter d'un coup.
+
+                            <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999 }}>
+                                <Alert severity="info">
+                                    Permet de choisir l'algorithme que l'on va utiliser pour notre alignement. On a deux choix : un algorithme d'alignement global maximal (Needleman-Wunsch), donc ici on va traiter toute les données d'un coup. Ou alors on a un algorithme d'alignement local minimal (Smith-Waterman), donc ici on va plutot s'interesser a de petits fragments similaires au lieu de tout traiter d'un coup.
+                                </Alert>
                             </div>
                         )}
                     </div>
@@ -737,8 +635,10 @@ export default function App(){
                         {FullMatrix}
                     </Box>
                 {helpWindow && helpIndex[9] && (
-                    <div style={{opacity: 1, width: '300px', position: 'absolute', top: '-250px', left: '-150px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
-                        La première matrice est la matrice des scores, elle indique chaque score à chaque étape pour enfin arriver au score final. On voit également un affichage en rouge d'un chemin optimal (un alignement optimal qui donne le meilleur score). La deuxième matrice à droite est la matrice qui représente l'ensemble de tout les chemins optimaux et leur directions sous forme de flèches. C'est grâce à cette matrice qu'on peut observer l'ensemble des alignement optimaux (cases oranges).
+                    <div style={{opacity: 1, width: '300px', position: 'absolute', top: '0px', left: '0px', padding: '15px', zIndex: 999 }}>
+                        <Alert severity="info">
+                            La première matrice est la matrice des scores, elle indique chaque score à chaque étape pour enfin arriver au score final. On voit également un affichage en rouge d'un chemin optimal (un alignement optimal qui donne le meilleur score). La deuxième matrice à droite est la matrice qui représente l'ensemble de tout les chemins optimaux et leur directions sous forme de flèches. C'est grâce à cette matrice qu'on peut observer l'ensemble des alignement optimaux (cases oranges).
+                        </Alert>
                     </div>
                 )}
                 </Grid>
@@ -781,7 +681,7 @@ export default function App(){
         </Box>
 
 
-//TEST ZONE---------------------------------------------------------------
+
 
 
 
@@ -821,8 +721,10 @@ export default function App(){
             style={ { width: "200px" }}
         />
             {helpWindow && helpIndex[2] && (
-                <div style={{width: '400px', position: 'absolute', top: '140px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
-                     La valeur "Compute limit" est une limite empechant le calcul des chemins optimaux au delà de cette limite. Il se peut que l'alignement que vous faites contiennent un nombre de chemins optimaux beaucoup trop élévée pour le navigateur. Cette limite intervient pour éviter les crash en cas de génération trop élévée. Vous pouvez adapter cette limite selon vos besoin mais attention aux pertes de performances. Le bouton Force Update permet de forcer l'actualisation des matrices si il existe un cas exceptionnel ou l'affichage plante.
+                <div style={{width: '400px', position: 'absolute', top: '140px', left: '0px', padding: '15px', zIndex: 999 }}>
+                    <Alert severity="info">
+                        La valeur "Compute limit" est une limite empechant le calcul des chemins optimaux au delà de cette limite. Il se peut que l'alignement que vous faites contiennent un nombre de chemins optimaux beaucoup trop élévée pour le navigateur. Cette limite intervient pour éviter les crash en cas de génération trop élévée. Vous pouvez adapter cette limite selon vos besoin mais attention aux pertes de performances. Le bouton Force Update permet de forcer l'actualisation des matrices si il existe un cas exceptionnel ou l'affichage plante.
+                    </Alert>
                 </div>
             )}
         </div>
@@ -884,8 +786,10 @@ export default function App(){
                 }}
             />
                 {helpWindow && helpIndex[4] && (
-                    <div style={{  position: 'absolute', top: '55px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
-                        Valeur du Match. Cette valeur est ajouté au score final à chaque fois que l'on aligne deux caractère qui sont égaux dans l'alignement.
+                    <div style={{  position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999, width : '200px'}}>
+                        <Alert severity="info">
+                            Valeur du Match. Cette valeur est ajouté au score final à chaque fois que l'on aligne deux caractère qui sont égaux dans l'alignement.
+                        </Alert>
                     </div>
                 )}
             </div>
@@ -926,8 +830,10 @@ export default function App(){
                 }}
             />
                 {helpWindow && helpIndex[5] && (
-                    <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
-                        Valeur du Mismatch. Cette valeur est ajouté au score final à chaque fois que l'on aligne deux caractère différent dans l'alignement.
+                    <div style={{ width : '200px',position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999 }}>
+                        <Alert severity="info">
+                            Valeur du Mismatch. Cette valeur est ajouté au score final à chaque fois que l'on aligne deux caractère différent dans l'alignement.
+                        </Alert>
                     </div>
                 )}
             </div>
@@ -970,14 +876,13 @@ export default function App(){
                     }}
                 />
                 {helpWindow && helpIndex[6] && (
-                    <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
-                        Valeur de l'écart. Cette valeur est ajouté au score final à chaque fois que l'on introduit un écart dans l'alignement.
+                    <div style={{ width : '200px',position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999 }}>
+                        <Alert severity="info">
+                            Valeur de l'écart. Cette valeur est ajouté au score final à chaque fois que l'on introduit un écart dans l'alignement.
+                        </Alert>
                     </div>
                 )}
             </div>
-
-
-
         </div>
             {resetValueButton}
 
@@ -1007,8 +912,10 @@ export default function App(){
 
         </Box >
             {helpWindow && helpIndex[10] && (
-                <div style={{width: '300px', position: 'absolute', top: '-80px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
-                Permet de naviguer entre les chemins optimaux.
+                <div style={{width: '300px', position: 'absolute', top: '-80px', left: '0px', padding: '15px', zIndex: 999 }}>
+                    <Alert severity="info">
+                        Permet de naviguer entre les chemins optimaux.
+                    </Alert>
                 </div>
             )}
         </div>
@@ -1093,7 +1000,7 @@ export default function App(){
             </Grid>
         </Box>
 
-//end TEST ZONE---------------------------------------------------------------
+
         //Set of all the components in return for the final display on the page
         return (
         <div style={{ marginLeft: '20px',marginTop: '20px',marginBottom: '50px',marginRight:'20px' }}>
