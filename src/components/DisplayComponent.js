@@ -2,6 +2,11 @@ import {Box, Grid} from "@mui/material";
 import {Case} from "./Case";
 import * as React from "react";
 
+/**
+ * UI Component: display the letters of the Sequence 2 in the matrix
+ * @param sequence2
+ * @returns {React.JSX.Element}
+ */
 export const displaySeq2 = (sequence2) => (
     <Box sx={{ width: '100%', margin: '0' }}>
         <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
@@ -20,6 +25,11 @@ export const displaySeq2 = (sequence2) => (
     </Box>
 );
 
+/**
+ * UI Component: display the letters of the Sequence 1 in the matrix
+ * @param sequence1
+ * @returns {React.JSX.Element}
+ */
 export const displaySeq1 = (sequence1) => (
     <Box sx={{ width: '100%', margin: '0' }}>
         <Grid container direction="column" spacing={0.5}>

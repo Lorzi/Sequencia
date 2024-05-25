@@ -495,8 +495,8 @@ export default function Gamemode(){
                 <div style={{
                     fontSize: '1.4rem',
                     position: 'relative',
-                    top: '20px', // Positionne l'élément au milieu de la hauteur de l'écran
-                    left: '00px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
+                    top: '20px',
+                    left: '00px',
 
                     fontFamily: 'Arial',
                 }}>
@@ -525,8 +525,8 @@ export default function Gamemode(){
                 <div style={{
                     fontSize: '1.4rem',
                     position: 'relative',
-                    top: '20px', // Positionne l'élément au milieu de la hauteur de l'écran
-                    left: '00px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
+                    top: '20px',
+                    left: '00px',
 
                     fontFamily: 'Arial',
                 }}>
@@ -627,7 +627,7 @@ export default function Gamemode(){
                                    outline: 'none',
                                    transition: 'box-shadow 0.3s',
                                }}
-                               inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 15 characters)
+                               inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 1000 characters)
                                onChange={(e) => {
 
                                    setSequence2(e.target.value)
@@ -714,8 +714,8 @@ export default function Gamemode(){
             justifyContent: 'center',
             fontSize: '20px',
             position: 'relative',
-            top: '0px', // Positionne l'élément au milieu de la hauteur de l'écran
-            left: '00px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
+            top: '0px',
+            left: '00px',
 
             fontFamily: 'Arial',
         }}>
@@ -788,8 +788,8 @@ export default function Gamemode(){
                     <div style={{
                         fontSize: '23px',
                         position: 'relative',
-                        top: '20px', // Positionne l'élément au milieu de la hauteur de l'écran
-                        left: '00px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
+                        top: '20px',
+                        left: '00px',
                         color: 'dimgrey',
                         fontFamily: 'Arial',
                     }}>

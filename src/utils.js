@@ -19,7 +19,7 @@ export function addPathsToQueue(queue, path, y, x, arrows) {
 }
 
 /**
- * Permet de merger tout les path optimaux en une seule liste de chemins optimaux
+ * Allows to merge all the optimal paths into a single list of optimal paths
  * @param allPath
  * @returns {*}
  */
@@ -34,6 +34,12 @@ export const mergePaths = (allPath) => {
     }, []);
 };
 
+/**
+ * UI Component: display the letters of the Sequence 2 in the matrix
+ * @param sequence2
+ * @returns {React.JSX.Element}
+ * @constructor
+ */
 export const DisplayedSeq = ({ sequence2 }) => (
     <Box sx={{ width: '100%', margin: '0' }}>
         <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
@@ -52,6 +58,12 @@ export const DisplayedSeq = ({ sequence2 }) => (
     </Box>
 );
 
+/**
+ * UI Component: display the letters of the Sequence 1 in the matrix
+ * @param sequence1
+ * @returns {React.JSX.Element}
+ * @constructor
+ */
 export const DisplayedOtherSeq = ({ sequence1 }) => (
     <Box sx={{ width: '100%', margin: '0' }}>
         <Grid container direction="column" spacing={0.5}>
@@ -67,7 +79,16 @@ export const DisplayedOtherSeq = ({ sequence1 }) => (
     </Box>
 );
 
-
+/**
+ * UI Component: final matrix that will be displayed on the screen
+ * @param matrixFinal
+ * @param colorVariantCase
+ * @param selectedVariant
+ * @param chosenCase
+ * @param optPath
+ * @returns {React.JSX.Element}
+ * @constructor
+ */
 export const DisplayedMatrix = ({ matrixFinal, colorVariantCase, selectedVariant, chosenCase, optPath }) => (
     <Box sx={{ width: '100%', margin: '0' }}>
         <Grid container spacing={0.5}>

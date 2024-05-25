@@ -3,7 +3,7 @@ import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 
 /**
  * Allows you to give the component grouping together the variants associated with the choice of the Needleman-Wunsch algorithm
- * Return this compossant as a selector
+ * Return this component as a selector
  * @param chooseSelectedVariant
  * @returns {Element}
  * @constructor

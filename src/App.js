@@ -141,7 +141,7 @@ export default function App(){
         while(count !== actualPath.length-1){
             if (alignedSequences[0][count] === alignedSequences[1][count]){
                 matchString+=alignedSequences[0][count];
-                coloredGreenCase.push(actualPath[count+1]); //Push dans une liste les coordonnées des cases qu'on doit colorier pour mettre en évidence le LCS
+                coloredGreenCase.push(actualPath[count+1]); //Push into a list the coordinates of the boxes that must be colored to highlight the LCS
                 count++;
             }
             else{
@@ -230,13 +230,13 @@ export default function App(){
      */
 
     useEffect(() => {
-        onDisplayPath(); // Exécuter onDisplayPath() lorsque pathCounter est mis à jour
+        onDisplayPath(); // Run onDisplayPath() when pathCounter is updated
         // eslint-disable-next-line
     }, [pathCounter,chosenCase,gap,colorVariantCase,selectedAlgorithm,blosumCheck,blosumCustom]);
 
     useEffect(() => {
         // eslint-disable-next-line
-        checkVariant(); // Exécuter onDisplayPath() lorsque pathCounter est mis à jour
+        checkVariant(); // Run onDisplayPath() when pathCounter is updated
         // eslint-disable-next-line
     }, [selectedVariant,pathCounter]);
 
@@ -319,7 +319,7 @@ export default function App(){
      * Display of the matrix and update of it each time this function is called.
      */
     const onDisplayPath = () => {
-        setExtraParameters(<NeedlemanExtra chooseSelectedVariant = {chooseSelectedVariant} />); //PERMET De mettre la variante par defaut sinon elle n'apparait qu'apres avoir cliquer 2 fois sur needleman
+        setExtraParameters(<NeedlemanExtra chooseSelectedVariant = {chooseSelectedVariant} />); //ALLOWS you to set the default variant otherwise it only appears after clicking twice on needleman
         checkVariant();
 
         //Updating the score matrix
@@ -346,7 +346,7 @@ export default function App(){
                                             key={[rowIndex, colIndex]}
                                             value={item}
                                             color={mergedAllPath.some(coord => coord[0] === rowIndex && coord[1] === colIndex) ? 'orange' : 'white'}
-                                            // Change la couleur en orange si la case est retrouvée dans le chemin optimal
+                                            // change the color of the case in orange if the path is in the allPath
                                         />
                                     </Grid>
                                 ))}
@@ -486,7 +486,7 @@ export default function App(){
                                setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
                            }}
                            onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'}
-                           inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 15 characters)
+                           inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 1000 characters)
                            onChange={(e) => {
                                setPathCounter(0)
                                setSequence2(e.target.value)
@@ -658,7 +658,7 @@ export default function App(){
                 {helpWindow && helpIndex[9] && (
                     <div style={{opacity: 1, width: '300px', position: 'absolute', top: '0px', left: '0px', padding: '15px', zIndex: 999 }}>
                         <Alert severity="info">
-                            The first matrix is ​​the score matrix, it indicates each score at each stage to finally arrive at the final score. We also see a red display of an optimal path (an optimal alignment that gives the best score). The second matrix on the right is the matrix which represents the set of all optimal paths and their directions in the form of arrows. It is thanks to this matrix that we can observe all of the optimal alignments (orange boxes).
+                            The first matrix is the score matrix, it indicates each score at each stage to finally arrive at the final score. We also see a red display of an optimal path (an optimal alignment that gives the best score). The second matrix on the right is the matrix which represents the set of all optimal paths and their directions in the form of arrows. It is thanks to this matrix that we can observe all of the optimal alignments (orange boxes).
                         </Alert>
                     </div>
                 )}

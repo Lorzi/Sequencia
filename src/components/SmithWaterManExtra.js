@@ -7,7 +7,7 @@
  */
 export default function SmithWaterManExtra() {
     return (
-        "Aucune"
+        "None"
         //variantSelector
     );
 

@@ -12,7 +12,7 @@ import {addPathsToQueue} from "./utils";
  * @param missmatch
  * @returns {[]}
  */
-export function determineArrowedMatrix(S1,S2,subMatrix,transfMatrix,match,gap,missmatch){ //Optimisation possible en combinant le fait de mettre les fleches et les path en meme temps ? comme dans SW
+export function determineArrowedMatrix(S1,S2,subMatrix,transfMatrix,match,gap,missmatch){
     let y = S1.length, x= S2.length;
 
     //CREATION OF ARROW MATRIX INITIALIZED FROM ZERO
@@ -117,7 +117,7 @@ export function findPaths(arrowedMatrix,computeLimit) {
         }
 
         let arrows = arrowedMatrix[y][x].toString();
-        // Explore les directions possibles selon les flèches de la case
+        // Explore the possible directions according to the arrows in the box
         addPathsToQueue(queue, path, y, x, arrows);
         if (paths.length === computeLimit){
             return(paths);

@@ -45,7 +45,7 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
 
         if(uniquePath[counterUniquePath][0] !== uniquePath[counterUniquePath-1][0] && uniquePath[counterUniquePath][1] === uniquePath[counterUniquePath-1][1]){
 
-            //Mouvement Vertical
+            //Vertical move
 
             if(oldSeq2.length-1 === counterSeq2) {
                 opeSeq2 = oldSeq2.substring(0, counterSeq2 + 1) + oldSeq1.substring(counterSeq1, counterSeq1 + 1)
