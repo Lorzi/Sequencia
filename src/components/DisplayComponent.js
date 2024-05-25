@@ -1,5 +1,5 @@
 import {Box, Grid} from "@mui/material";
-import {Case} from "../Case";
+import {Case} from "./Case";
 import * as React from "react";
 
 export const displaySeq2 = (sequence2) => (

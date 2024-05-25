@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Case} from "./Case";
+import {Case} from "./components/Case";
 import {NeedleManWunschScript} from "./NeedleManWunschScript";
 import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
 import DataTable from "./components/DataTable"
@@ -26,8 +26,8 @@ import {DisplayedMatrix, DisplayedOtherSeq, DisplayedSeq, mergePaths} from "./ut
 
 
 /**
- * Heart of the application,
- * allows you to launch the program, takes care of the display and placement of the different elements on the page.
+ * Heart of the application, also known as the normal mode
+ * allows you to launch normal mode, takes care of the display and placement of the different elements on the page.
  * It returns different HTML elements in the same page
  * @returns {Element}
  * @constructor
@@ -72,11 +72,14 @@ export default function App(){
         allPath = findPathsSW(arrowedMatrix,matrixTestData[2],matrixFinal,computeLimit);
         optPath = allPath[pathCounter];
     }
-    //New Test era _____________________________________________________________________________________________________
-
-
-
-
+    //Matrix displayed as button matrix in html
+    const [displayed_matrix,setDisplayedMatrix] = useState();
+    //Arrow matrix as button matrix in html
+    const [displayedArrowed_matrix,setDisplayedArrowedMatrix] = useState();
+    //Display component SEQUENCE WORD 2
+    const [displayedSeq,setDisplayedSeq] = useState();
+    //Display component SEQUENCE WORD 1
+    const [displayedOtherSeq,setDisplayedOtherSeq] = useState();
 
     //INITIALISATION AREA END -------------------------------------------------------------------
 
@@ -309,14 +312,6 @@ export default function App(){
         }
     }
 
-    //Matrix displayed as button matrix in html
-    const [displayed_matrix,setDisplayedMatrix] = useState();
-    //Arrow matrix as button matrix in html
-    const [displayedArrowed_matrix,setDisplayedArrowedMatrix] = useState();
-    //Display component SEQUENCE WORD 2
-    const [displayedSeq,setDisplayedSeq] = useState();
-    //Display component SEQUENCE WORD 1
-    const [displayedOtherSeq,setDisplayedOtherSeq] = useState();
 
 
     /**

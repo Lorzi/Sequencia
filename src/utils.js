@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Grid } from "@mui/material";
-import {Case} from './Case';
+import {Case} from './components/Case';
 
 /**
  * Helper function to add new paths to the queue based on arrow directions
