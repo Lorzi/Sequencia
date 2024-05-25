@@ -55,7 +55,7 @@ export default function Blosum(){
                     let matrixCustom2 = JSON.parse(e.target.result)
                     setBlosumCustom(matrixCustom2);
                 }catch (jsonError){
-                    console.error("File is nbot in a JSON format");
+                    console.error("File is not in a JSON format");
                 }
             };
             reader.readAsText(file);
@@ -212,7 +212,6 @@ export default function Blosum(){
                                value={sequence2}
                                style={{
                                    width: '300px',
-
                                    outline: 'none',
                                    transition: 'box-shadow 0.3s',
                                }}

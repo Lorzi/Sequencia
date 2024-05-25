@@ -16,7 +16,7 @@ export default function NormalModePage() {
                 style ={{
                     height: '60px', width: '200px' , fontSize: '18px', position: 'absolute',marginLeft: '30px'
                 }}>
-            Menu principal
+            Main menu
         </Button>
 
     return(

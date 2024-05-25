@@ -13,7 +13,7 @@ export default function NeedlemanExtra({chooseSelectedVariant}) {
     const variantSelector =
         <div>
             <FormControl fullWidth>
-                <InputLabel id="needleman-extra">Variante</InputLabel>
+                <InputLabel id="needleman-extra">Variant</InputLabel>
                 <Select
                     label = "Variante"
                     variant="outlined"

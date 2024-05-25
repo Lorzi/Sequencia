@@ -21,7 +21,7 @@ export default function WelcomePage(){
             height: '80px', width: '450px', fontSize: '24px'
         }}>
 
-            Mode normal
+            Normal mode
         </Button>
 
     const gameModeButton =
@@ -30,7 +30,7 @@ export default function WelcomePage(){
                 style ={{
             height: '80px', width: '450px' , fontSize: '24px'
         }}>
-            Mode jeu
+            Game mode
         </Button>
 
     const helpModeButton =
@@ -39,7 +39,7 @@ export default function WelcomePage(){
                 style ={{
             height: '80px', width: '450px', fontSize: '24px'
         }}>
-            Aide et informations
+            Help and information
         </Button>
 
     const blosumModeButton =
@@ -48,7 +48,7 @@ export default function WelcomePage(){
                 style ={{
                     height: '80px', width: '450px', fontSize: '24px'
                 }}>
-            Mode Blosum et custom
+            BLOSUM MODE AND CUSTOM
         </Button>
 
     const buttonBox =
@@ -76,19 +76,20 @@ export default function WelcomePage(){
                     <img src={sequenciaImage} alt="Sequencia" style={{ width: '600px', height: 'auto', justifyContent: 'center'}}   />
                 </Grid>
                 <Grid item style={{ marginTop: '15px' }}>
-                    <label  style={{ textAlign: 'center', fontSize: '25px', color: 'dimgrey'  }}>Menu principal</label>
+                    <label  style={{ textAlign: 'center', fontSize: '25px', color: 'dimgrey'  }}>Main menu</label>
                 </Grid>
                 <Grid item style={{ width: '80%' }}>
                     <hr style={{ borderTop: '1px solid #ccc', width: '100%' }} />
                 </Grid>
                 <Grid item>
-                    <label style={{ textAlign: 'center' }}><strong>Outil de visualisation d'alignement de séquences réalisé par BOIVIN Lorentz dans le cadre du projet de Master 1 à l'Université de Mons.</strong></label>
+                    <label style={{ textAlign: 'center' }}><strong>Sequence alignment visualization tool created by BOIVIN Lorentz as part of the Master 1 project supervised by Mr Tom Mens. at the University of Mons.</strong></label>
                 </Grid>
                 <Grid item>
-                    <label style={{ textAlign: 'center' }}>Une des fonctionnalités principales de cet outil est d'aligner des séquences d'ADN et protéines dans le domaine de la biologie et de la bio-informatique.</label>
+                    <label style={{ textAlign: 'center' }}>One of the main functionalities of this tool is to align DNA and protein sequences in the field of biology and bioinformatics.
+                    </label>
                 </Grid>
                 <Grid item>
-                    <label style={{ textAlign: 'center' }}>Pour plus d'informations, cliquez sur le bouton "Aide et informations".</label>
+                    <label style={{ textAlign: 'center' }}>For more information, click the “Help and Information” button.</label>
                 </Grid>
                 <Grid item style={{ width: '40%' }}>
                     <hr style={{ borderTop: '1px solid #ccc', width: '100%' }} />

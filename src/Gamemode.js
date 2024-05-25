@@ -424,13 +424,13 @@ export default function Gamemode(){
     let fullHelp2 = (
         <div style={{fontSize: '1.5rem', marginTop: '9px'}}>
             <div>
-                <span style={{color: 'green'}}>Case actuelle</span> :  <span style={{color: 'green'}}>{leftDiagUpCheck(gameMode2Coord)[3]}</span>
+                <span style={{color: 'green'}}>Current box</span> :  <span style={{color: 'green'}}>{leftDiagUpCheck(gameMode2Coord)[3]}</span>
                 <div/>
-                <span style={{color: 'blue'}}>Case du haut</span> :  <span style={{color: 'green'}}>{leftDiagUpCheck(gameMode2Coord)[3]}</span> -  <span style={{color: 'blue'}}> ({leftDiagUpCheck(gameMode2Coord)[2]})</span>  = {leftDiagUpCheck(gameMode2Coord)[3]-leftDiagUpCheck(gameMode2Coord)[2]} {leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[2] === gap ? '   <- acceptée car = gap' : ''}
+                <span style={{color: 'blue'}}>Upper box</span> :  <span style={{color: 'green'}}>{leftDiagUpCheck(gameMode2Coord)[3]}</span> -  <span style={{color: 'blue'}}> ({leftDiagUpCheck(gameMode2Coord)[2]})</span>  = {leftDiagUpCheck(gameMode2Coord)[3]-leftDiagUpCheck(gameMode2Coord)[2]} {leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[2] === gap ? '   <- accepted (= gap)' : ''}
                 <div/>
-                <span style={{color: 'blueviolet'}}>Case diagonale</span> :  <span style={{color: 'green'}}>{leftDiagUpCheck(gameMode2Coord)[3]}</span> - <span style={{color: 'blueviolet'}}> ({leftDiagUpCheck(gameMode2Coord)[1]})</span>  = {leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[1]} {(leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[1] === match && sequence1[gameMode2Coord[0]-1] === sequence2[gameMode2Coord[1]-1]) ? '   <- acceptée car = match' : leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[1] === mismatch && sequence1[gameMode2Coord[0]-1] !== sequence2[gameMode2Coord[1]-1] ? '   <- acceptée car = mismatch' : ''}
+                <span style={{color: 'blueviolet'}}>Diagonal box</span> :  <span style={{color: 'green'}}>{leftDiagUpCheck(gameMode2Coord)[3]}</span> - <span style={{color: 'blueviolet'}}> ({leftDiagUpCheck(gameMode2Coord)[1]})</span>  = {leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[1]} {(leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[1] === match && sequence1[gameMode2Coord[0]-1] === sequence2[gameMode2Coord[1]-1]) ? '   <- accepted (= match)' : leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[1] === mismatch && sequence1[gameMode2Coord[0]-1] !== sequence2[gameMode2Coord[1]-1] ? '   <- accepted (= mismatch)' : ''}
                 <div/>
-                <span style={{color: 'cornflowerblue'}}>Case de gauche</span> :  <span style={{color: 'green'}}>{leftDiagUpCheck(gameMode2Coord)[3]}</span> - <span style={{color: 'cornflowerblue'}}>({leftDiagUpCheck(gameMode2Coord)[0]})</span>  = {leftDiagUpCheck(gameMode2Coord)[3]-leftDiagUpCheck(gameMode2Coord)[0]} {leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[0] === gap ? '   <- acceptée car = gap' : ''}
+                <span style={{color: 'cornflowerblue'}}>Left box</span> :  <span style={{color: 'green'}}>{leftDiagUpCheck(gameMode2Coord)[3]}</span> - <span style={{color: 'cornflowerblue'}}>({leftDiagUpCheck(gameMode2Coord)[0]})</span>  = {leftDiagUpCheck(gameMode2Coord)[3]-leftDiagUpCheck(gameMode2Coord)[0]} {leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[0] === gap ? '   <- accepted (= gap)' : ''}
             </div>
         </div>
     );
@@ -550,7 +550,7 @@ export default function Gamemode(){
      */
     let inputAnswer =
         <TextField
-            label = "Votre réponse"
+            label = "Your answer"
             variant="outlined"
             type="number"
             id="answer"
@@ -581,7 +581,7 @@ export default function Gamemode(){
                 disabled={!gamemode ? gameModeActivation : true}
                 onClick={() =>
             handleSubmitAnswerButtonClick()
-        }>Soumettre réponse</Button>
+        }>Submit Answer</Button>
 
     /**
      * UI component: Reset game parameters button
@@ -719,7 +719,7 @@ export default function Gamemode(){
 
             fontFamily: 'Arial',
         }}>
-            {gamemode ? "Découverte chemin optimal" : "Remplissage matrice score"}
+            {gamemode ? "Optimal path discovery" : "Score matrix filling"}
         </div>
 
     /**
@@ -793,11 +793,11 @@ export default function Gamemode(){
                         color: 'dimgrey',
                         fontFamily: 'Arial',
                     }}>
-                        Bonnes réponses : {goodAnswerCounter}
+                        Good answers : {goodAnswerCounter}
                         <div style={{marginTop:'15px'}}/>
-                        Mauvaises réponses : {badAnswerCounter}
+                        Wrong answers : {badAnswerCounter}
                         <div style={{marginTop:'15px'}}/>
-                        Precision : {badAnswerCounter === 0 ? 100 : ((goodAnswerCounter) / (goodAnswerCounter + badAnswerCounter ) * 100).toFixed(2)}%
+                        Accuracy : {badAnswerCounter === 0 ? 100 : ((goodAnswerCounter) / (goodAnswerCounter + badAnswerCounter ) * 100).toFixed(2)}%
                     </div>
                 </Grid>
 
@@ -834,7 +834,7 @@ export default function Gamemode(){
                         <hr style={{ borderTop: '1px solid #ccc', width: '100%' }} />
                     </Grid>
                     <Grid item>
-                        <label  style={{ textAlign: 'center', fontSize: '25px', color: 'dimgrey'  }}>AIDE</label>
+                        <label  style={{ textAlign: 'center', fontSize: '25px', color: 'dimgrey'  }}>HELP</label>
                     </Grid>
                     <Grid item style={{ width: '80%' }}>
                         <hr style={{ borderTop: '1px solid #ccc', width: '40%' }} />

@@ -363,7 +363,10 @@ export default function App(){
         setDisplayedOtherSeq(<DisplayedOtherSeq sequence1={sequence1} />);
     }
 
-    //Button that call onDisplayPath() in case the matrix don't update itself
+    /**
+     * UI Component: Button that call onDisplayPath() in case the matrix don't update itself
+     * @type {React.JSX.Element}
+     */
     const displayPathButton =
         <Button id={"displayed_button"} variant="contained" style={{
             width: '200px',
@@ -375,17 +378,28 @@ export default function App(){
 
         }}>Force update</Button>
 
-    //Button that decrement the PathCounter
+    /**
+     * UI Component: Button that decrement the PathCounter
+     * @type {React.JSX.Element}
+     */
     const leftOnPath =
         <Button variant="outlined" color="secondary" style ={{
             height: '55px'
         }} onClick={() => handleLeftButtonClick()}>←</Button>
-    //Button that increment the PathCounter
+
+    /**
+     * UI Component: Button that increment the PathCounter
+     * @type {React.JSX.Element}
+     */
     const rightOnPath =
         <Button variant="outlined" color="secondary" style ={{
             height: '55px'
         }} onClick={() => handleRightButtonClick()}>→</Button>
-    //Button that reset the value by default
+
+    /**
+     * UI Component: Button that reset the value by default
+     * @type {React.JSX.Element}
+     */
     const resetValueButton =
         <div style={{ position: 'relative' }}>
         <Button
@@ -408,13 +422,16 @@ export default function App(){
             {helpWindow && helpIndex[7] && (
                 <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999 }}>
                     <Alert  severity="info">
-                        Remet les valeur de match, mismatch et gap aux valeurs par défaut (respectivement : 1 ,-1 ,-2). Ces valeurs sont généralement les plus couramment utilisées
+                        Resets the match, mismatch and gap values to the default values (respectively: 1,-1,-2). These values are generally the most commonly used
                     </Alert>
                 </div>
             )}
         </div>
 
-    //Component containing the graphic boxes which allow information to be entered as an input (Sequence 1/Sequence 2)*/
+    /**
+     * UI Component: Component containing the graphic boxes which allow information to be entered as an input (Sequence 1/Sequence 2)
+     * @type {React.JSX.Element}
+     */
     const sequenceBox =
         <div style={{ display: 'flex', flexDirection: 'COLUMN', gap:'5px'}}>
             <Box
@@ -485,7 +502,7 @@ export default function App(){
                     {helpWindow && helpIndex[0] && (
                         <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999}}>
                             <Alert severity="info">
-                                Ceci est l'espace reservé aux séquences. Il est possible de choisir les deux séquences que l'on va aligner. La séquence 1 et la séquence 2. La plupart du temps on met des séquence d'ADN ou de protéines mais cet outil permet plus de possibilités comme le travail sur les chaines de caractères, etc... Alors n'hésitez pas à tester avec ce que vous voulez !
+                                This is the space reserved for sequences. It is possible to choose the two sequences that are going to be aligned : the Sequence 1 and sequence 2. Most of the time, we put DNA or protein sequences but this tool allows more possibilities such as working on character strings, etc... So don't hesitate to test with whatever you want !
                             </Alert>
                         </div>
                     )}
@@ -493,9 +510,12 @@ export default function App(){
             </Box>
         </div>
 
-    //Component containing the graphic boxes which allow you to enter information (Match/Mismatch/Gap)
 
-    //HTML component which allows you to select the algorithm used
+
+    /**
+     *
+     * @type {React.JSX.Element}
+     */
     const selector =
         <div style={{ display: 'flex', flexDirection: 'COLUMN',gap:'10px' }}>
             <Box
@@ -504,7 +524,7 @@ export default function App(){
             <div>
                 <FormControl fullWidth>
                     <div style={{ position: 'relative' }}>
-                    <InputLabel id="algorithm-choice">Algorithme</InputLabel>
+                    <InputLabel id="algorithm-choice">Algorithm</InputLabel>
                     <Select
 
                         value ={selectedAlgorithm}
@@ -525,7 +545,6 @@ export default function App(){
                             handleMouseOut()
                             setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
                         }}
-                        //onClick={() =>{setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])}}
                         onChange = {(e) => {
                             setPathCounter(0);
                             setSelectedAlgorithm(e.target.value)
@@ -554,7 +573,7 @@ export default function App(){
 
                             <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999 }}>
                                 <Alert severity="info">
-                                    Permet de choisir l'algorithme que l'on va utiliser pour notre alignement. On a deux choix : un algorithme d'alignement global maximal (Needleman-Wunsch), donc ici on va traiter toute les données d'un coup. Ou alors on a un algorithme d'alignement local minimal (Smith-Waterman), donc ici on va plutot s'interesser a de petits fragments similaires au lieu de tout traiter d'un coup.
+                                    Allows you to choose the algorithm that we will use for the alignment. We have two choices: a maximum global alignment algorithm (Needleman-Wunsch), so here we will process all the data at once. Or we have a minimal local alignment algorithm (Smith-Waterman), so here we will focus on small similar fragments instead of processing the whole sequences at once.
                                 </Alert>
                             </div>
                         )}
@@ -568,7 +587,10 @@ export default function App(){
 
         </div>
 
-    //HTML component representing the score matrix as well as its column and its sequence line aligned to it
+    /**
+     * UI Component: HTML component representing the score matrix as well as its column and its sequence line aligned to it
+     * @type {React.JSX.Element}
+     */
     let FullMatrix = (
         <div>
             <div style={{ marginBottom: '0.25rem' }}>
@@ -588,7 +610,10 @@ export default function App(){
         </div>
     );
 
-    //HTML component representing the arrowed matrix as well as its column and its sequence line aligned to it
+    /**
+     * UI Component: HTML component representing the arrowed matrix as well as its column and its sequence line aligned to it
+     * @type {React.JSX.Element}
+     */
     let FullMatrix2 =(
         <div>
             <div style={{ marginBottom: '0.25rem', flexWrap: 'nowrap' }}>
@@ -608,7 +633,10 @@ export default function App(){
         </div>
     );
 
-    //HTML component that merged the two matrix in one component
+    /**
+     * UI component: HTML component that merged the two matrix in one component
+     * @type {React.JSX.Element}
+     */
     let TwoMatrix =
         <Box sx={{ width: '100%', margin: '0 auto' , marginTop: '30px' }}>
             <Grid container  spacing={20} direction="row" alignItems="center" >
@@ -630,7 +658,7 @@ export default function App(){
                 {helpWindow && helpIndex[9] && (
                     <div style={{opacity: 1, width: '300px', position: 'absolute', top: '0px', left: '0px', padding: '15px', zIndex: 999 }}>
                         <Alert severity="info">
-                            La première matrice est la matrice des scores, elle indique chaque score à chaque étape pour enfin arriver au score final. On voit également un affichage en rouge d'un chemin optimal (un alignement optimal qui donne le meilleur score). La deuxième matrice à droite est la matrice qui représente l'ensemble de tout les chemins optimaux et leur directions sous forme de flèches. C'est grâce à cette matrice qu'on peut observer l'ensemble des alignement optimaux (cases oranges).
+                            The first matrix is ​​the score matrix, it indicates each score at each stage to finally arrive at the final score. We also see a red display of an optimal path (an optimal alignment that gives the best score). The second matrix on the right is the matrix which represents the set of all optimal paths and their directions in the form of arrows. It is thanks to this matrix that we can observe all of the optimal alignments (orange boxes).
                         </Alert>
                     </div>
                 )}
@@ -644,9 +672,10 @@ export default function App(){
         </Box>
 
 
-
-
-    //HTML ccomponent which brings together the result of the alignment of the two sequences
+    /**
+     * UI Component: HTML component which brings together the result of the alignment of the two sequences
+     * @type {React.JSX.Element}
+     */
     let resultDisplayElement =
         <Box component="section" sx={{ p: 2, border: '5px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 500, height: 100, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'  }}  >
             <div style={{
@@ -673,11 +702,10 @@ export default function App(){
             </div>
         </Box>
 
-
-
-
-
-
+    /**
+     * UI Component: Compute limit input
+     * @type {React.JSX.Element}
+     */
     let computeLimitComp =
         <div style={{ position: 'relative' }}>
         <TextField
@@ -716,13 +744,17 @@ export default function App(){
             {helpWindow && helpIndex[2] && (
                 <div style={{width: '400px', position: 'absolute', top: '140px', left: '0px', padding: '15px', zIndex: 999 }}>
                     <Alert severity="info">
-                        La valeur "Compute limit" est une limite empechant le calcul des chemins optimaux au delà de cette limite. Il se peut que l'alignement que vous faites contiennent un nombre de chemins optimaux beaucoup trop élévée pour le navigateur. Cette limite intervient pour éviter les crash en cas de génération trop élévée. Vous pouvez adapter cette limite selon vos besoin mais attention aux pertes de performances. Le bouton Force Update permet de forcer l'actualisation des matrices si il existe un cas exceptionnel ou l'affichage plante.
+                        The "Compute limit" value is a limit preventing the calculation of optimal paths beyond this limit. It is possible that the alignment you make contains too many optimal paths for the browser. This limit intervenes to avoid crashes in the event of too high a generation. You can adapt this limit according to your needs but be careful of performance losses. The Force Update button allows you to force the updating of the matrices if there is an exceptional case where the display crashes.
                     </Alert>
                 </div>
             )}
         </div>
-    let changePathButton =
 
+    /**
+     * UI Component: regroup two component that allows to change the number of compute limit and update the matrix
+     * @type {React.JSX.Element}
+     */
+    let changeComputeElem =
         <Box
             sx={{'& > :not(style)': { m: 1},}} //Make the alignment better
         >
@@ -734,6 +766,10 @@ export default function App(){
             </div>
         </Box>
 
+    /**
+     * UI component: Parameters textfield input for changing the value of the Match, Mismatch and Gap
+     * @type {React.JSX.Element}
+     */
     let paramButton =
         <Box
             sx={{'& > :not(style)': { m: 1},}} //Make the alignment better
@@ -781,7 +817,7 @@ export default function App(){
                 {helpWindow && helpIndex[4] && (
                     <div style={{  position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999, width : '200px'}}>
                         <Alert severity="info">
-                            Valeur du Match. Cette valeur est ajouté au score final à chaque fois que l'on aligne deux caractère qui sont égaux dans l'alignement.
+                            Match Value. This value is added to the final score each time we align two characters that are equal in alignment.
                         </Alert>
                     </div>
                 )}
@@ -825,7 +861,7 @@ export default function App(){
                 {helpWindow && helpIndex[5] && (
                     <div style={{ width : '200px',position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999 }}>
                         <Alert severity="info">
-                            Valeur du Mismatch. Cette valeur est ajouté au score final à chaque fois que l'on aligne deux caractère différent dans l'alignement.
+                            Value of Mismatch. This value is added to the final score each time two different characters are aligned in the alignment.
                         </Alert>
                     </div>
                 )}
@@ -871,7 +907,7 @@ export default function App(){
                 {helpWindow && helpIndex[6] && (
                     <div style={{ width : '200px',position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999 }}>
                         <Alert severity="info">
-                            Valeur de l'écart. Cette valeur est ajouté au score final à chaque fois que l'on introduit un écart dans l'alignement.
+                            Gap value. This value is added to the final score each time we introduce a gap in the alignment.
                         </Alert>
                     </div>
                 )}
@@ -899,19 +935,25 @@ export default function App(){
                 {rightOnPath}
             </div>
             <div style = {{ margin: '3px'}} />
-            <label>Nombre de chemins optimaux existants : </label> {allPath.length}
+            <label>Number of existing optimal paths : </label> {allPath.length}
             <div style = {{ margin: '10px'}} />
-            <label>Index du chemin actuel : </label> {pathCounter}
+            <label>Current path index : </label> {pathCounter}
 
         </Box >
             {helpWindow && helpIndex[10] && (
                 <div style={{width: '300px', position: 'absolute', top: '-80px', left: '0px', padding: '15px', zIndex: 999 }}>
                     <Alert severity="info">
-                        Permet de naviguer entre les chemins optimaux.
+                        Allows you to navigate between the optimal paths.
+
                     </Alert>
                 </div>
             )}
         </div>
+
+    /**
+     * UI Component: first line element
+     * @type {React.JSX.Element}
+     */
     let elementFirstLine =
         <Box  >
             <Grid container spacing={1}>
@@ -925,13 +967,16 @@ export default function App(){
                     {paramButton}
                 </Grid>
                 <Grid item>
-                    {changePathButton}
+                    {changeComputeElem}
                 </Grid>
 
 
             </Grid>
         </Box>
-
+    /**
+     * UI component: Second line component
+     * @type {React.JSX.Element}
+     */
     let elementSecondLine =
         <Box >
             <Grid container spacing={5}>
@@ -969,12 +1014,18 @@ export default function App(){
             </Grid>
         </Box>
 
-//HTML component that arranges and brings together the upper part of the page
+    /**
+     * UI Component: HTML component that arranges and brings together the upper part of the page
+     * @type {React.JSX.Element}
+     */
     let upElement =
         <Grid container  spacing={0.5} direction="column" alignItems="center" >
             {elementFirstLine}
         </Grid>
-
+    /**
+     * UI Component: HTML component that arranges and brings together the bottom part of the page
+     * @type {React.JSX.Element}
+     */
     let downElement =
         <Box sx={{ width: '100%', margin: '0 auto' , marginTop: '30px' }}>
             <Grid container  spacing={0.5} direction="column" alignItems="center" >
