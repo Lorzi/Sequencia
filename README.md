@@ -3,6 +3,8 @@
 Sequencia is a web framework for visualizing and learning sequence alignments developed by BOIVIN Lorentz, student at the University of Mons (UMons) and supervised by Mr. Tom Mens.
 It was developed to allow anyone with any interest in this subject or in bioinformatics to understand how it works.
 This comes in the form of a web application running directly in a web browser that is easy to install and use.
+
+The framework exist in English and in French. Choose the right version in the releases section.
 ## Installation
 
 Download the last release of this framework.\
