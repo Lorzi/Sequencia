@@ -39,6 +39,7 @@ In Help and info you can find a documentation but the language is only available
 
 ## Opening without build file
 There is a way to open it in development mode but it require the whole source code. \
+Note : this is the by default generated instruction when you start a project in React.
 If you want you can try to start the project with npm :
 ### `npm start`
 
