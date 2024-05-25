@@ -38,7 +38,7 @@ export default function App(){
     let [sequence1 ,setSequence1] = useState('')
     let [sequence2 ,setSequence2] = useState('')
     let [match,setMatch] = useState(1)
-    let [missmatch ,setMissmatch] = useState(-1)
+    let [mismatch ,setMismatch] = useState(-1)
     let [gap,setGap]=useState(-2)
     let [pathCounter, setPathCounter] = useState(0); //Counter that indicate which path in the allpath list we choose in the visualisation
     let [matchString, setMatchString] = useState(""); //Useful for the LCS function, make a string of every character that match for the LCS
@@ -50,15 +50,15 @@ export default function App(){
     const [blosumCheck, setBlosumCheck] = useState(false); //Check blosum option is activated
     //eslint-disable-next-line
     const [blosumCustom,setBlosumCustom] = useState(blosum62); //Custom matrix, by default blosum62
-    let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap,operationMm,blosumCheck,blosumCustom)//list that countain subsitution matrix and scoreMatrix
+    let matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,mismatch,gap,operationMm,blosumCheck,blosumCustom)//list that countain subsitution matrix and scoreMatrix
     let matrixFinal = matrixTestData[1]; //Score Matrix, also knowned as transfMatrix in other class
-    let arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0],matrixFinal,match,gap,missmatch) //Matrix that contains the arrows and direction, important to generate paths
+    let arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0],matrixFinal,match,gap,mismatch) //Matrix that contains the arrows and direction, important to generate paths
     let allPath = findPaths(arrowedMatrix,computeLimit); //list that contains every possible path/alignement on this session
     let optPath = allPath[pathCounter]; //one Path from allPath that as been chosen with the PathCounter
     const [finalScore, setFinalScore] = useState(0);
     const [chosenCase, setChosenCase] = useState([]);
     const [extraParameters,setExtraParameters]= useState(); //Parameters that change with the aglorithm chosen. Make appearing choice of variants
-    const [missmatchDisabled , setMissmatchDisabled] = useState(false) //Allows to know if we have to disable or not the mismatch button, same for the next one
+    const [mismatchDisabled , setMismatchDisabled] = useState(false) //Allows to know if we have to disable or not the mismatch button, same for the next one
     const [matchDisabled , setMatchDisabled] = useState(false)
     const [gapDisabled , setGapDisabled] = useState(false)
     const [helpWindow, setHelpWindow] = useState(false);
@@ -66,9 +66,9 @@ export default function App(){
     const [colorVariantCase,setColorVariantCase] = useState([]); //Coloring or not for a variant (example green for the LCS)
     const mergedAllPath = mergePaths(allPath); // //Merge every unique path for allPath in one list, very useful for displaying everypath on the arrowedmatrix (orange case)
     if(selectedAlgorithm === "Smith-Waterman"){
-        matrixTestData = SmithWatermanScript(sequence1,sequence2,match,missmatch,gap)
+        matrixTestData = SmithWatermanScript(sequence1,sequence2,match,mismatch,gap)
         matrixFinal = matrixTestData[1];
-        arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0], matrixTestData[1],match,gap,missmatch);
+        arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0], matrixTestData[1],match,gap,mismatch);
         allPath = findPathsSW(arrowedMatrix,matrixTestData[2],matrixFinal,computeLimit);
         optPath = allPath[pathCounter];
     }
@@ -210,7 +210,7 @@ export default function App(){
     const handleResetValueButtonClick = () => {
         setPathCounter(0);
         setMatch(1);
-        setMissmatch(-1);
+        setMismatch(-1);
         setGap(-2);
     }
 
@@ -263,19 +263,19 @@ export default function App(){
             }
         }
         if(blosumCheck){
-            setMissmatchDisabled(false);
+            setMismatchDisabled(false);
             setMatchDisabled(false);
             setMatch(0);
-            setMissmatch(0);
+            setMismatch(0);
         }
 
         else{
-            setMissmatchDisabled(true);
+            setMismatchDisabled(true);
             setMatchDisabled(true);
         }
 
         if(selectedVariant === "default"){
-            setMissmatchDisabled(false);
+            setMismatchDisabled(false);
             setMatchDisabled(false);
             setGapDisabled(false);
             setMatchString("");
@@ -283,8 +283,8 @@ export default function App(){
         }
 
         else if(selectedVariant === "LCS"){
-            setMissmatchDisabled(true);
-            setMissmatch(0);
+            setMismatchDisabled(true);
+            setMismatch(0);
             setMatchDisabled(true);
             setMatch(1);
             setGapDisabled(true);
@@ -295,8 +295,8 @@ export default function App(){
 
         else if(selectedVariant === "wagnerf"){
             setMatch(0);
-            setMissmatchDisabled(true);
-            setMissmatch(1);
+            setMismatchDisabled(true);
+            setMismatch(1);
             setMatchDisabled(true);
             setGap(1);
             setGapDisabled(true);
@@ -304,8 +304,8 @@ export default function App(){
         }
 
         else if(selectedVariant === "blosum"){
-            setMissmatch(0);
-            setMissmatchDisabled(true);
+            setMismatch(0);
+            setMismatchDisabled(true);
             setMatch(0);
             setGapDisabled(false);
             setMatchDisabled(true);
@@ -532,17 +532,15 @@ export default function App(){
                             const selectedValue = e.target.value
                             if(selectedValue === "Needleman-Wunsch"){
                                 setExtraParameters(<NeedlemanExtra chooseSelectedVariant = {chooseSelectedVariant}/>);
-                               // setMatrixTestData(NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap,operationMm)); //liste qui contient la matrice de Substitution et la matrice transformée
-                                matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,missmatch,gap,operationMm);
-                                matrixFinal = matrixTestData[1]; //Matrice transformée
+                                matrixTestData = NeedleManWunschScript(sequence1,sequence2,match,mismatch,gap,operationMm);
+                                matrixFinal = matrixTestData[1]; //Score matrix
                                 setSelectedVariant("default")
 
                             }
                             if(selectedValue === "Smith-Waterman"){
                                 setExtraParameters(<SmithWaterManExtra chooseSelectedVariant ={chooseSelectedVariant}/>);
-                                //setMatrixTestData(SmithWatermanScript(sequence1,sequence2,match,missmatch,gap,operationMm)); //liste qui contient la matrice de Substitution et la matrice transformée
-                                matrixTestData = SmithWatermanScript(sequence1,sequence2,match,missmatch,gap,operationMm);
-                                matrixFinal = matrixTestData[1]; //Matrice transformée
+                                matrixTestData = SmithWatermanScript(sequence1,sequence2,match,mismatch,gap,operationMm);
+                                matrixFinal = matrixTestData[1]; //Score matrix
                                 setSelectedVariant("default")
                             }
 
@@ -791,10 +789,10 @@ export default function App(){
             <div style={{ position: 'relative' }}>
             <TextField
                 type="number"
-                id="missmatch"
+                id="mismatch"
                 label = "Mismatch"
                 variant="outlined"
-                value={missmatch}
+                value={mismatch}
                 onMouseOver={() => {
                     handleMouseOver()
                     setHelpIndex([false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
@@ -805,8 +803,8 @@ export default function App(){
                 }}
                 onChange={(e) => {
                     setPathCounter(0);
-                    const newMissmatch = e.target.value
-                    setMissmatch(+newMissmatch)
+                    const newMismatch = e.target.value
+                    setMismatch(+newMismatch)
                     onDisplayPath()
                     setChosenCase([])
                 }
@@ -816,7 +814,7 @@ export default function App(){
                     setChosenCase([])
                 }
                 }
-                disabled={missmatchDisabled}
+                disabled={mismatchDisabled}
                 style={{
                     width: '100px',
                     height: '55px',
@@ -949,8 +947,8 @@ export default function App(){
                     <div style={{
                         fontSize: '2.1rem',
                         position: 'relative',
-                        top: '20px', // Positionne l'élément au milieu de la hauteur de l'écran
-                        left: '00px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
+                        top: '20px',
+                        left: '00px',
 
                         fontFamily: 'monospace',
                     }}>
@@ -960,8 +958,8 @@ export default function App(){
                     <div style={{
                         fontSize: '2.1rem',
                         position: 'relative',
-                        top: '20px', // Positionne l'élément au milieu de la hauteur de l'écran
-                        left: '00px', // Positionne l'élément juste à droite de upElement avec un espacement de 20px
+                        top: '20px',
+                        left: '00px',
                         fontFamily: 'monospace',
                     }}>
                         {matchString}

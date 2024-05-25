@@ -19,7 +19,7 @@ export function findPathsSW(arrowedMatrix,maxScoreList,transfMatrix,computeLimit
         //Add the last box to the queue
         queue.push([[yMax, xMax]]);
 
-        //Tant que la file n'est pas vide
+        //While the queue is not empty
         while (queue.length > 0) {
             const path = queue.shift(); //Get a path from the queue
             const [y, x] = path[0]; //Get the current position of the path

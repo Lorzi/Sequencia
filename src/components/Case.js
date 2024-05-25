@@ -9,7 +9,6 @@ import {Paper} from "@mui/material";
 export function Case(props){
 
     return(
-        //<Grow in={true} timeout={2000} >
         <Paper
             sx={{
                 backgroundColor: props.color,
