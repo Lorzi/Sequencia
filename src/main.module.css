@@ -1,0 +1,250 @@
+.directionButton {
+    height: 55px;
+}
+
+.spaceInterInput {
+    display: flex;
+    flex-direction: COLUMN;
+    gap: 10px;
+}
+
+.sequenceBox {
+    width: 300px;
+}
+
+.helpWindow {
+    position: absolute;
+    top: 55px;
+    padding: 15px;
+    z-index: 10;
+}
+
+.computeHelpWindow {
+    width: 400px;
+    position: absolute;
+    top: 140px;
+    padding: 15px;
+    z-index: 10;
+}
+
+.displayButton {
+    width: 200px;
+    height: 55px;
+}
+.computeLimitElem {
+    width: 200px;
+}
+
+.resetButton {
+    width: 310px;
+    height: 55px;
+}
+
+.selectorComp {
+    width: 300px;
+    height: 56px;
+}
+
+.fullMatrixVert {
+    margin-bottom: 4px;
+}
+
+.fullMatrixHoriz {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}
+
+.matrixGap {
+    width: 100%;
+    margin: 30px auto 0;
+}
+
+.matrixBorderBox {
+    width: 600px;
+    height: 600px;
+    border: 2px solid #c2c2c2;
+    border-radius: 16px;
+    overflow-x: auto ;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.resultDisplayPanel {
+    border: 1px solid #c2c2c2;
+    border-radius: 14px;
+    overflow-x: auto;
+    width: 500px;
+    height: 105px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pathsPanel {
+    border-radius: 14px;
+    border: 1px solid #c2c2c2;
+    width: 350px;
+    height: 105px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.matrixHelpWindow {
+    width: 300px;
+    position: absolute;
+    left: 0;
+    top: 200px;
+    padding: 15px;
+    z-index: 10;
+}
+
+
+.resultFont {
+    font-size: 30px;
+    font-family: monospace;
+    margin-right: 18px;
+    margin-top: 10px;
+}
+
+.spaceInputButton {
+    display: flex;
+    flex-direction: COLUMN;
+    gap:26px;
+}
+
+.spaceInputParam {
+    display: flex;
+    flex-direction: ROW;
+    gap: 5px;
+}
+
+.paramBox {
+    width: 100px;
+    height: 55px;
+}
+
+.helpWindowParam {
+    width : 275px;
+    position: absolute;
+    top: 55px;
+    padding: 15px;
+    z-index: 10;
+}
+
+.pathFont {
+    font-size: 17px;
+    font-family: Roboto, sans-serif;
+}
+
+.pathHelpWindow {
+    width: 300px ;
+    position: absolute;
+    top: -90px;
+    padding: 15px;
+    z-index: 10;
+}
+
+.scoreFont {
+    font-size: 32px;
+    position: relative;
+    top: 20px;
+    margin-left: 1px;
+    font-family: monospace;
+}
+
+.horizontalBorder {
+    border-top: 1px solid #c2c2c2;
+}
+
+.returnOrganization {
+    margin: 20px 20px 50px;
+}
+
+.tableOrganization {
+    display: flex;
+    justify-content: center;
+    gap: 100px;
+    margin-top: 60px;
+}
+
+.caseFont {
+    font-size: 17px;
+}
+
+.inputFile {
+    width: 200px;
+    height: 55px;
+}
+
+.blosumMatrixBorderBox {
+    width: 700px;
+    height: 700px;
+    border: 2px solid #c2c2c2;
+    border-radius: 16px;
+    overflow-x: auto ;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 15px;
+}
+.centeredElem {
+    display: flex;
+    justify-content: center;
+}
+
+.game2HelpFont {
+    font-size: 24px;
+    margin-top: 9px;
+}
+.game1HelpFont {
+    font-size: 20px;
+    margin-top: 25px;
+}
+
+.gameHelpBorderBox {
+    border: 2px solid #c2c2c2;
+    border-radius: 16px;
+    overflow-x: auto;
+    width: 650px;
+    height: 150px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.rowDisposition {
+    display: flex;
+    flex-direction: row;
+}
+
+.gameModeTitleFont {
+    display: flex;
+    justify-content: center;
+    font-size: 20px;
+    font-family: Arial, serif;
+}
+
+.gameResultFont {
+    font-size: 23px;
+    position: relative;
+    top: 20px;
+    color: dimgrey;
+    font-family: Arial, serif;
+}
+
+.blosumBorderBox {
+    width: 1200px;
+    height: 700px;
+    border: 1px solid #c2c2c2;
+    border-radius: 16px;
+    overflow-x: auto ;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.spaceBetweenGameAndParam {
+    display: flex;
+    justify-content: center ;
+    gap: 110px;
+    margin-top: 30px;
+}
+
+.fontHelpTitle {
+    text-align: center;
+    font-size: 25px;
+    color: dimgrey;
+}
+
+
+

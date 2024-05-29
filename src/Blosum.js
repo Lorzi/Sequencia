@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import {blosum62} from "./components/variants/blosum62";
 import {DisplayedMatrix, DisplayedOtherSeq, DisplayedSeq} from "./utils";
+import mainstyles from "./main.module.css";
 /**
  * Heart of the application,
  * allows you to launch the program, takes care of the display and placement of the different elements on the page.
@@ -38,8 +39,6 @@ export default function Blosum(){
     let optPath = allPath[pathCounter]; //one Path from allPath that as been chosen with the PathCounter
     const [chosenCase, setChosenCase] = useState([]);
     const [gapDisabled ,] = useState(false)
-    const [helpWindow, setHelpWindow] = useState(false);
-    const [helpIndex,setHelpIndex]=useState([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]) // Help for the index of the help windows
     const [colorVariantCase] = useState([]); //Coloring or not for a variant (example green for the LCS)
 
     /**
@@ -81,13 +80,6 @@ export default function Blosum(){
     //Display component SEQUENCE WORD 1
     const [displayedOtherSeq,setDisplayedOtherSeq] = useState();
 
-    const handleMouseOver = () => {
-        setHelpWindow(true);
-    };
-
-    const handleMouseOut = () => {
-        setHelpWindow(false);
-    };
     /**
      * Allows you to update the displayed matrix with new information and the optimal path.
      * Display of the matrix and update of it each time this function is called.
@@ -113,10 +105,10 @@ export default function Blosum(){
     //HTML component representing the score matrix as well as its column and its sequence line aligned to it
     let FullMatrix = (
         <div>
-            <div style={{ marginBottom: '0.25rem' }}>
+            <div className={mainstyles.fullMatrixVert}>
                 {displayedSeq}
             </div>
-            <div className="horizontal-matrix" style={{ display: 'flex', flexDirection: 'row', gap: '0.25rem' }}>
+            <div className={mainstyles.fullMatrixHoriz}>
                 <React.Fragment>
                     <Grid item >
                         {displayedOtherSeq}
@@ -130,103 +122,71 @@ export default function Blosum(){
     );
 
     let paramButton =
-            <div style={{ display: 'flex', flexDirection: 'COLUMN', gap:'27px' }}>
-                <div style = {{ display: 'flex', flexDirection: 'row', margin: '0px', gap: '5px'}}>
-                    <div style={{ position: 'relative' }}>
-                        <TextField
-                            label = "Gap"
-                            variant="outlined"
-                            type="number"
-                            id="gap"
-                            value={gap}
-                            onMouseOver={() => {
-                                handleMouseOver()
-                                setHelpIndex([false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false])
-                            }}
-                            onMouseOut={() => {
-                                handleMouseOut()
-                                setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
-                            }}
-                            onChange={(e) => {
-                                setPathCounter(0);
-                                const newGap = e.target.value
-                                setGap(+newGap)
-                                onDisplayPath()
-                                setChosenCase([])
-                            }
+        <div style={{ position: 'relative' }}>
+            <TextField
+                className = {mainstyles.paramBox}
+                label = "Gap"
+                variant="outlined"
+                type="number"
+                id="gap"
+                value={gap}
 
-                            }
-                            onKeyUp={() => {
-                                onDisplayPath()
-                                setChosenCase([])
-                            }
-                            }
-                            disabled={gapDisabled}
-                            style={{
-                                width: '150px',
-                                height: '55px',
-                                outline: 'none',
-                                transition: 'box-shadow 0.3s',
-                            }}
-                        />
-                        {helpWindow && helpIndex[6] && (
-                            <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', border: '2px solid black', backgroundColor: 'white' }}>
-                                Valeur de l'écart. Cette valeur est ajouté au score final à chaque fois que l'on introduit un écart dans l'alignement.
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
+                onChange={(e) => {
+                    setPathCounter(0);
+                    const newGap = e.target.value
+                    setGap(+newGap)
+                    onDisplayPath()
+                    setChosenCase([])
+                }}
+                onKeyUp={() => {
+                    onDisplayPath()
+                    setChosenCase([])
+                }}
+                disabled={gapDisabled}
+
+            />
+        </div>
 
     let elementFirstLine =
         <Box  >
             <Grid container spacing={1}>
                 <Grid item>
                     <TextField
+                        className={mainstyles.sequenceBox}
                         id="sequence1"
                         label="Sequence 1"
                         variant="outlined"
                         type="text"
                         value={sequence1}
-                        style={{
-                            width: '300px',
-                            outline: 'none',
-                            transition: 'box-shadow 0.3s',
-                        }}
-                        onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'}
                         inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 1000 characters)
                         onChange={(e) => {
                             setPathCounter(0)
                             setSequence1(e.target.value)
                             setChosenCase([])
                             onDisplayPath()
-                        }
-                        }
+                        }}
                         onKeyUp={() => {
                             onDisplayPath()
                         }}/>
                 </Grid>
                 <Grid item>
-                    <TextField id="sequence2" label="Sequence 2" variant="outlined"
-                               type="text"
-                               value={sequence2}
-                               style={{
-                                   width: '300px',
-                                   outline: 'none',
-                                   transition: 'box-shadow 0.3s',
-                               }}
-                               onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'}
-                               inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 15 characters)
-                               onChange={(e) => {
-                                   setPathCounter(0)
-                                   setSequence2(e.target.value)
-                                   setChosenCase([])
-                                   onDisplayPath()
-                               }
-                               }
-                               onKeyUp={() => {
-                                   onDisplayPath()
-                               }}
+                    <TextField
+                        className={mainstyles.sequenceBox}
+                        id="sequence2"
+                        label="Sequence 2"
+                        variant="outlined"
+                        type="text"
+                        value={sequence2}
+                        inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 15 characters)
+                        onChange={(e) => {
+                            setPathCounter(0)
+                            setSequence2(e.target.value)
+                            setChosenCase([])
+                            onDisplayPath()
+                        }}
+                        onKeyUp={() => {
+                            onDisplayPath()
+                        }}
                     />
                 </Grid>
                 <Grid item>
@@ -234,15 +194,13 @@ export default function Blosum(){
                 </Grid>
 
                 <Grid item>
-                    <Input type="file" style={{
-                        width: '200px',
-                        height: '55px',
-                        outline: 'none',
-                        transition: 'box-shadow 0.3s',
-                    }} onChange={(e) =>{
+                    <Input
+                        className={mainstyles.inputFile}
+                        type="file"
+                        onChange={(e) =>{
                         handleFileBlosumLoad(e)
-                    }
-                    } />
+                        }}
+                    />
                 </Grid>
             </Grid>
         </Box>
@@ -250,19 +208,19 @@ export default function Blosum(){
     let upElement =
         <div>
             {elementFirstLine}
-            <div style = {{ margin: '20px'}} />
+            <div style = {{ margin: '20px'}}/>
         </div>
 
     //Set of all the components in return for the final display on the page
     return (
 
-        <div style={{ marginLeft: '20px',marginTop: "30px",marginBottom: '50px',marginRight:"20px" }}>
+        <div className={mainstyles.returnOrganization}>
             <div style={{ position: 'relative'}}>
                 {upElement}
             </div>
-            <hr style={{ borderTop: '1px solid #ccc' }} />
-            <div style={{display: 'flex', justifyContent: 'center' , gap: '20Vh',marginTop: '20px'  }}>
-                <Box sx={{marginTop: '35px', p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 700, height: 700, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}>
+            <hr className={mainstyles.horizontalBorder} />
+            <div className={mainstyles.centeredElem}>
+                <Box className={mainstyles.blosumMatrixBorderBox} sx={{p: 2}}>
                     {FullMatrix}
                 </Box>
             </div>

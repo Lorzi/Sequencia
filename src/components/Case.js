@@ -1,5 +1,4 @@
 import {Paper} from "@mui/material";
-
 /**
  * Box/case component
  * @param props
@@ -8,18 +7,26 @@ import {Paper} from "@mui/material";
  */
 export function Case(props){
 
+    let fontSize = '17px'
+    if (props.value <= -100 || props.value >= 1000){
+        fontSize = '12px'
+    }
+    if (props.value <= -10000 || props.value >= 100000){
+        fontSize = '10px'
+    }
+
     return(
         <Paper
             sx={{
                 backgroundColor: props.color,
                 padding: '8px',
+                fontSize: {fontSize},
                 textAlign: 'center',
-                color: 'text.secondary',
                 width: '24px',
                 height: '24px',
             }}
         >
-            {props.value}
+            <label>{props.value}</label>
         </Paper>
 
     )

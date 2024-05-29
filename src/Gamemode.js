@@ -5,6 +5,7 @@ import {Box, Button, Grid, TextField, ToggleButton, ToggleButtonGroup} from "@mu
 import {Case} from "./components/Case";
 import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
 import {DisplayedOtherSeq, DisplayedSeq, mergePaths} from "./utils";
+import mainstyles from "./main.module.css";
 
 export default function Gamemode(){
     let [sequence1,setSequence1] = useState("");
@@ -57,8 +58,8 @@ export default function Gamemode(){
      * @type {React.JSX.Element}
      */
     const displayedHelpSeq2 =
-        <Box sx={{ width: '100%', margin: '0' }}>
-            <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
+        <Box>
+            <Grid container spacing={0.5} sx={{ flexWrap: 'nowrap' }}>
                 <Grid item>
                     <Case key={["first-case"]} value={"-"} color={'light_blue'} />
                 </Grid>
@@ -78,7 +79,7 @@ export default function Gamemode(){
      * @type {React.JSX.Element}
      */
     const displayedHelpSeq1 =
-        <Box sx={{ width: '100%', margin: '0' }}>
+        <Box>
             <Grid container direction="column" spacing={0.5}>
                 <Grid item>
                     <Case key={["first-case"]} value={"-"} color={'light_blue'} />
@@ -299,7 +300,7 @@ export default function Gamemode(){
     }, [sequence1,sequence2,match,mismatch,gap]);
 
     /**
-     *
+     * Check in the matrix if there is value on the left, on upper left and on top
      * @param gameMode2Coord
      * @returns {(*|number)[]|number[]|*[]|(number|*)[]}
      */
@@ -307,7 +308,6 @@ export default function Gamemode(){
         let y = gameMode2Coord[0];
         let x = gameMode2Coord[1];
         if(finalMatrix === undefined || finalMatrix[y] === undefined || finalMatrix[y-1] === undefined ){
-            console.log("undefined")
             return([0,0,0,0])
         }
         else{
@@ -336,8 +336,7 @@ export default function Gamemode(){
 
         generateHelpMatrix();
         setDisplayedMatrix(() =>
-            <Box sx={{ width: '100%', margin: '0' }}>
-
+            <Box>
                 <Grid container spacing={0.5}>
                     {matrix[1].map((row, rowIndex) => (
                         <Grid item xs={100} key={rowIndex}>
@@ -353,7 +352,7 @@ export default function Gamemode(){
                                                 (clickableCases.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) ? 'lightblue':
                                                 (greenCasesList.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) ? 'green' : 'white') :
                                                 (yPoint === rowIndex && xPoint === colIndex) ? 'lightblue' :
-                                                    (badAnswerCoord.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) ? 'coral' : 'white'}
+                                                    (badAnswerCoord.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) ? 'red' : 'white'}
                                         />
                                     </Grid>
                                 ))}
@@ -369,13 +368,12 @@ export default function Gamemode(){
         setDisplayedOtherSeq(<DisplayedOtherSeq sequence1={sequence1} />);
 
         setDisplayedHelpMatrix(() => (
-            <Box sx={{ width: '100%', margin: '0' }}>
+            <Box>
                 <Grid container spacing={0.5}>
                     {helpMatrixCoord.map((row, rowIndex) => (
                         <Grid item xs={100} key={rowIndex}>
                             <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
                                 {row.map((item, colIndex) => (
-
                                     <Grid item  key={colIndex} onClick={(gamemode && clickableCases.some(cases => cases[0] === rowIndex && cases[1] === colIndex)) ? () => handlePaperAnswerButtonClick(rowIndex, colIndex) : () => console.log("yes")}>
                                         <Case
                                             key={[rowIndex, colIndex]}
@@ -391,8 +389,6 @@ export default function Gamemode(){
                 </Grid>
             </Box>
         ));
-
-
     }
 
     /**
@@ -401,10 +397,10 @@ export default function Gamemode(){
      */
     let FullMatrix = (
         <div>
-            <div style={{ marginBottom: '0.25rem' }}>
+            <div className={mainstyles.fullMatrixVert}>
                 {displayedSeq}
             </div>
-            <div className="horizontal-matrix" style={{ display: 'flex', flexDirection: 'row', gap: '0.25rem' }}>
+            <div className={mainstyles.fullMatrixHoriz}>
                 <React.Fragment>
                     <Grid item >
                         {displayedOtherSeq}
@@ -412,7 +408,6 @@ export default function Gamemode(){
                     <Grid item>
                         {displayed_matrix}
                     </Grid>
-
                 </React.Fragment>
             </div>
         </div>
@@ -422,7 +417,7 @@ export default function Gamemode(){
      * @type {React.JSX.Element}
      */
     let fullHelp2 = (
-        <div style={{fontSize: '1.5rem', marginTop: '9px'}}>
+        <div className={mainstyles.game2HelpFont}>
             <div>
                 <span style={{color: 'green'}}>Current box</span> :  <span style={{color: 'green'}}>{leftDiagUpCheck(gameMode2Coord)[3]}</span>
                 <div/>
@@ -441,10 +436,10 @@ export default function Gamemode(){
      */
     let fullHelpMatrix = (
         <div>
-            <div style={{ marginBottom: '0.25rem' }}>
+            <div className={mainstyles.fullMatrixVert}>
                 {displayedHelpSeq2}
             </div>
-            <div className="horizontal-matrix" style={{ display: 'flex', flexDirection: 'row', gap: '0.25rem' }}>
+            <div className={mainstyles.fullMatrixHoriz}>
                 <React.Fragment>
                     <Grid item >
                         {displayedHelpSeq1}
@@ -452,7 +447,6 @@ export default function Gamemode(){
                     <Grid item>
                         {displayedHelpMatrix}
                     </Grid>
-
                 </React.Fragment>
             </div>
         </div>
@@ -463,7 +457,7 @@ export default function Gamemode(){
      * @type {React.JSX.Element}
      */
     let helpText1 =
-        <div style={{fontSize: '1.3rem', marginTop: '25px'}}>
+        <div className={mainstyles.game1HelpFont}>
             {xPoint === 0 && (
                 <div>
                     <span style={{color: 'lime'}}>TOP VALUE</span> = <span style={{color: 'lime'}}>{yPoint === 0 ? "0" : finalMatrix[yPoint-1][xPoint]}</span> + <span style={{color: 'orange'}}>{gap + " (gap) "}</span> = ?
@@ -490,59 +484,28 @@ export default function Gamemode(){
      * @type {React.JSX.Element}
      */
     let helperElem1 =
-        <Grid container direction="column"  spacing={4}>
-            <Grid item>
-                <div style={{
-                    fontSize: '1.4rem',
-                    position: 'relative',
-                    top: '20px',
-                    left: '00px',
+        <Box
+            className={mainstyles.gameHelpBorderBox}
+            sx={{p: 2}}>
+            <div className={mainstyles.rowDisposition}>
+                {fullHelpMatrix}
+                {helpText1}
+            </div>
+        </Box>
 
-                    fontFamily: 'Arial',
-                }}>
-                </div>
-            </Grid>
-            <Grid item>
-                <Box
-                    component="section"
-                    sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 650 ,height: 150, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}>
-                <div style={{ display: 'flex', flexDirection: 'row', gap:'0px'}}>
-                    {fullHelpMatrix}
-                    {helpText1}
-                </div>
-                    </Box>
-            </Grid>
-
-        </Grid>
 
     /**
      * UI component: Complete help of the game mode 2
      * @type {React.JSX.Element}
      */
     let helperElem2 =
-        <Grid container direction="column"  spacing={4}>
-            <Grid item>
-                <div style={{
-                    fontSize: '1.4rem',
-                    position: 'relative',
-                    top: '20px',
-                    left: '00px',
-
-                    fontFamily: 'Arial',
-                }}>
-                </div>
-            </Grid>
-            <Grid item>
-                <Box
-                    component="section"
-                    sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 650 ,height: 150, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}>
-                    <div style={{ display: 'flex', flexDirection: 'row', gap:'0px'}}>
-                        {fullHelp2}
-                    </div>
-                </Box>
-            </Grid>
-
-        </Grid>
+        <Box
+            className={mainstyles.gameHelpBorderBox}
+            sx={{ p: 2}}>
+            <div>
+                {fullHelp2}
+            </div>
+        </Box>
 
     /**
      * UI component: Input for the user guess the answer
@@ -550,24 +513,17 @@ export default function Gamemode(){
      */
     let inputAnswer =
         <TextField
+            className={mainstyles.paramBox}
             label = "Your answer"
             variant="outlined"
             type="number"
             id="answer"
             value={answeredValue}
             onChange={(e) => {
-
                 const newAnsweredValue = e.target.value
                 setAnsweredValue(+newAnsweredValue)
-            }
-            }
-            disabled={gamemode}
-            style={{
-                width: '100px',
-                height: '55px',
-                outline: 'none',
-                transition: 'box-shadow 0.3s',
             }}
+            disabled={gamemode}
         />
 
     /**
@@ -600,39 +556,31 @@ export default function Gamemode(){
      * @type {React.JSX.Element}
      */
     const sequenceBox =
-        <div style={{ display: 'flex', flexDirection: 'COLUMN', gap:'5px'}}>
+        <div className={mainstyles.spaceInterInput}>
                 <TextField
+                    className={mainstyles.sequenceBox}
                     id="sequence1"
                     label="Sequence 1"
                     variant="outlined"
                     type="text"
                     value={sequence1}
-                    style={{
-                        width: '300px',
-                        outline: 'none',
-                        transition: 'box-shadow 0.3s',
-                    }}
-
                     inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 1000 characters)
                     onChange={(e) => {
                         setSequence1(e.target.value)
                     }}
                 />
-            <div style={{marginLeft: '0px', margin: '0px'}}/>
-                    <TextField id="sequence2" label="Sequence 2" variant="outlined"
-                               type="text"
-                               value={sequence2}
-                               style={{
-                                   width: '300px',
-                                   outline: 'none',
-                                   transition: 'box-shadow 0.3s',
-                               }}
-                               inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 1000 characters)
-                               onChange={(e) => {
-
-                                   setSequence2(e.target.value)
-                               }}
-                    />
+                <TextField
+                    className={mainstyles.sequenceBox}
+                    id="sequence2"
+                    label="Sequence 2"
+                    variant="outlined"
+                    type="text"
+                    value={sequence2}
+                    inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 1000 characters)
+                    onChange={(e) => {
+                        setSequence2(e.target.value)
+                    }}
+                />
         </div>
 
     /**
@@ -640,68 +588,44 @@ export default function Gamemode(){
      * @type {React.JSX.Element}
      */
     let paramButton =
-        <div style = {{ display: 'flex', flexDirection: 'row', margin: '0px', gap: '5px'}}>
-            <div style={{ position: 'relative' }}>
-                <TextField
-                    type="number"
-                    id="match"
-                    label = "Match"
-                    variant="outlined"
-                    value={match}
-                    onChange={(e) => {
-                        const newMatch = e.target.value
-                        setMatch(+newMatch)
-                    }
-                }
-                    style={{
-                        width: '100px',
-                        height: '55px',
-                        outline: 'none',
-                        transition: 'box-shadow 0.3s',
-                    }}
-                />
-            </div>
-            <div style={{ position: 'relative' }}>
-                <TextField
-                    type="number"
-                    id="mismatch"
-                    label = "Mismatch"
-                    variant="outlined"
-                    value={mismatch}
-                    onChange={(e) => {
-                        const newMismatch = e.target.value
-                        setMismatch(+newMismatch)
-                    }
-                }
-                    style={{
-                        width: '100px',
-                        height: '55px',
-                        outline: 'none',
-                        transition: 'box-shadow 0.3s',
-                    }}
-                />
-            </div>
+        <div className={mainstyles.spaceInputParam}>
+            <TextField
+                className={mainstyles.paramBox}
+                type="number"
+                id="match"
+                label = "Match"
+                variant="outlined"
+                value={match}
+                   onChange={(e) => {
+                       const newMatch = e.target.value
+                       setMatch(+newMatch)
+                   }}
+            />
 
-            <div style={{ position: 'relative' }}>
-                <TextField
-                    label = "Gap"
-                    variant="outlined"
-                    type="number"
-                    id="gap"
-                    value={gap}
-                    onChange={(e) => {
-                        const newGap = e.target.value
-                        setGap(+newGap)
-                    }
-                    }
-                    style={{
-                        width: '100px',
-                        height: '55px',
-                        outline: 'none',
-                        transition: 'box-shadow 0.3s',
-                    }}
-                />
-            </div>
+            <TextField
+                className={mainstyles.paramBox}
+                type="number"
+                id="mismatch"
+                label = "Mismatch"
+                variant="outlined"
+                value={mismatch}
+                onChange={(e) => {
+                    const newMismatch = e.target.value
+                    setMismatch(+newMismatch)
+                }}
+            />
+            <TextField
+                className={mainstyles.paramBox}
+                label = "Gap"
+                variant="outlined"
+                type="number"
+                id="gap"
+                value={gap}
+                onChange={(e) => {
+                    const newGap = e.target.value
+                    setGap(+newGap)
+                }}
+            />
         </div>
 
     /**
@@ -709,16 +633,7 @@ export default function Gamemode(){
      * @type {React.JSX.Element}
      */
     const gameModeTitle =
-        <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            fontSize: '20px',
-            position: 'relative',
-            top: '0px',
-            left: '00px',
-
-            fontFamily: 'Arial',
-        }}>
+        <div className={mainstyles.gameModeTitleFont}>
             {gamemode ? "Optimal path discovery" : "Score matrix filling"}
         </div>
 
@@ -727,27 +642,20 @@ export default function Gamemode(){
      * @type {React.JSX.Element}
      */
     let gameModeButtons =
-
-        <div style = {{ display: 'flex', flexDirection: 'row', gap: '0px'}}>
+        <div className={mainstyles.rowDisposition}>
             <ToggleButtonGroup
+                className={mainstyles.inputFile}
                 value={gamemode}
                 exclusive
-                style={{
-                    width: '200px',
-                    height: '55px',
-                    outline: 'none',
-                    transition: 'box-shadow 0.3s',
-                }}
                 onChange={() => {
                     setGamemode(!gamemode);
                     handleResetButton();
                 }}
-                aria-label="toggle-button-group"
             >
-                <ToggleButton value={false} aria-label="activated">
+                <ToggleButton value={false} >
                     Mode 1
                 </ToggleButton>
-                <ToggleButton value={true} aria-label="deactivated">
+                <ToggleButton value={true} >
                     Mode 2
                 </ToggleButton>
             </ToggleButtonGroup>
@@ -759,14 +667,14 @@ export default function Gamemode(){
      */
     const rightElement =
         <Box >
-            <Grid container direction="column"  spacing={4}>
+            <Grid container direction="column"  spacing={3}>
                 <Grid item>
                     {gameModeTitle}
                 </Grid>
                 <Grid item>
-                    <div style = {{ display: 'flex', flexDirection: 'row', margin: '0px', gap: '15px'}}>
-                    {gameModeButtons}
-                    {resetGameButton}
+                    <div className={mainstyles.rowDisposition} style={{gap: '15px'}}>
+                        {gameModeButtons}
+                        {resetGameButton}
                     </div>
                 </Grid>
                 <Grid item>
@@ -776,23 +684,16 @@ export default function Gamemode(){
                     {paramButton}
                 </Grid>
                 <Grid item>
-                    <hr style={{ borderTop: '1px solid #ccc' }} />
+                    <hr className={mainstyles.horizontalBorder} />
                 </Grid>
                 <Grid item>
-                    <div style = {{ display: 'flex', flexDirection: 'row', margin: '0px', gap: '5px'}}>
+                    <div className={mainstyles.rowDisposition} style={{gap: '5px'}}>
                     {inputAnswer}
                     {submitAnswerButton}
                     </div>
                 </Grid>
                 <Grid item>
-                    <div style={{
-                        fontSize: '23px',
-                        position: 'relative',
-                        top: '20px',
-                        left: '00px',
-                        color: 'dimgrey',
-                        fontFamily: 'Arial',
-                    }}>
+                    <div className={mainstyles.gameResultFont}>
                         Good answers : {goodAnswerCounter}
                         <div style={{marginTop:'15px'}}/>
                         Wrong answers : {badAnswerCounter}
@@ -808,41 +709,37 @@ export default function Gamemode(){
 
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'center' , gap: '10Vh',marginTop: '30px'  }}>
+            <div style={{marginTop: '30px'}}>
             <Box
-                component="section"
-                sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 1200, height: 700, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}
+                className={mainstyles.blosumBorderBox}
+                sx={{p: 2}}
             >
-            <div style={{ display: 'flex', justifyContent: 'center' , gap: '10Vh',marginTop: '30px'  }}>
+            <div className={mainstyles.spaceBetweenGameAndParam}>
             <Box
-                component="section"
-                sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 600, height: 600, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}
+                className={mainstyles.matrixBorderBox}
+                sx={{ p: 2}}
             >
                 {FullMatrix}
             </Box>
                 {rightElement}
-
             </div>
             </Box>
-
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center' , gap: '20Vh',marginTop: '20px'  }}>
-            <Box component="section"
-                 sx={{ p: 2,justifyContent: 'center',borderRadius: '16px', overflowX: 'auto' }}>
+            <div className={mainstyles.centeredElem} style={{marginTop: '20px',marginBottom: '20px'}}>
+            <Box>
                 <Grid container direction="column"  spacing={0} alignItems="center">
-                    <Grid item style={{ width: '80%' }}>
-                        <hr style={{ borderTop: '1px solid #ccc', width: '100%' }} />
+                    <Grid item sx={{ width: '80%' }}>
+                        <hr className={mainstyles.horizontalBorder} />
                     </Grid>
                     <Grid item>
-                        <label  style={{ textAlign: 'center', fontSize: '25px', color: 'dimgrey'  }}>HELP</label>
+                        <label className={mainstyles.fontHelpTitle}>HELP</label>
                     </Grid>
-                    <Grid item style={{ width: '80%' }}>
-                        <hr style={{ borderTop: '1px solid #ccc', width: '40%' }} />
+                    <Grid item sx={{ width: '40%' }}>
+                        <hr className={mainstyles.horizontalBorder} />
                     </Grid>
-                    <Grid item>
+                    <Grid item sx={{marginTop:'10px'}}>
                         {gamemode ? helperElem2 : helperElem1}
                     </Grid>
-
                 </Grid>
             </Box>
             </div>

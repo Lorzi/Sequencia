@@ -12,7 +12,6 @@ export function findPathsSW(arrowedMatrix,maxScoreList,transfMatrix,computeLimit
     const paths = []; //List to store found paths
     const queue = []; //File to follow the paths
 
-
     for(let i =0;i < maxScoreList.length; i++) {
         const yMax = maxScoreList[i][0];
         const xMax = maxScoreList[i][1];
@@ -29,15 +28,17 @@ export function findPathsSW(arrowedMatrix,maxScoreList,transfMatrix,computeLimit
             //If we reach the first box, add the path found to the list of paths
             if (transfMatrix[y][x] === 0) { //If we find a zero we stop
 
-                path.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+                path.sort((y, x) => { //Sort of an array, compare first element then next element
+                    let result = y[0] - x[0];
+                    if (result === 0) {
+                        result = y[1] - x[1];
+                    }
+                    return result;
+                });
                 paths.push(path);
-
                 continue;
             }
-
-
             let arrows = arrowedMatrix[y][x].toString();
-
             //Explore possible directions according to the arrows in the box
             addPathsToQueue(queue, path, y, x, arrows);
         }

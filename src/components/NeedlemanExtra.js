@@ -42,7 +42,7 @@ export default function NeedlemanExtra({chooseSelectedVariant}) {
                     }
 
                 >
-                    <MenuItem  value = "default">default</MenuItem >
+                    <MenuItem  value = "default">Default</MenuItem >
                     <MenuItem  value = "LCS">LCS</MenuItem >
                     <MenuItem  value = "wagnerf">Wagner-Fischer</MenuItem >
                 </Select>

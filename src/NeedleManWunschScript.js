@@ -76,6 +76,6 @@ export function NeedleManWunschScript(S1,S2,Match,Mismatch,Gap,operation_mm,blos
 
 }
 //Put off the comment to start tests
-//module.exports(NeedleManWunschScript);
+//module.exports =NeedleManWunschScript;
 
 

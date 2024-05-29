@@ -61,7 +61,7 @@ export function determineArrowedMatrix(S1,S2,subMatrix,transfMatrix,match,gap,mi
                 arrowWord = arrowWord + "←";
             }
             else if(arrowWord.length === 0){
-                arrowWord = arrowWord + "‎ ";
+                arrowWord = arrowWord + " ";
             }
             //TOTAL WORD + PUSH IN THE ARROWS MATRIX
             arrowedMatrix[y][x] = arrowWord;
@@ -112,7 +112,14 @@ export function findPaths(arrowedMatrix,computeLimit) {
                     yNew-=1;
                 }
             }
-            path.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+            path.sort((y, x) => { //Sort of an array, compare first element then next element
+                let result = y[0] - x[0];
+                if (result === 0) {
+                    result = y[1] - x[1];
+                }
+                return result;
+            });
+
             paths.push(path);
         }
 

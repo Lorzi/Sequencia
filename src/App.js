@@ -22,7 +22,7 @@ import {SmithWatermanScript} from "./SmithWatermanScript";
 import {findPathsSW} from "./SmithWatermanOptimalPath_V2";
 import {blosum62} from "./components/variants/blosum62";
 import {DisplayedMatrix, DisplayedOtherSeq, DisplayedSeq, mergePaths} from "./utils";
-
+import mainstyles from "./main.module.css";
 
 
 /**
@@ -64,13 +64,14 @@ export default function App(){
     const [helpWindow, setHelpWindow] = useState(false);
     const [helpIndex,setHelpIndex]=useState([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]) // Help for the index of the help windows
     const [colorVariantCase,setColorVariantCase] = useState([]); //Coloring or not for a variant (example green for the LCS)
-    const mergedAllPath = mergePaths(allPath); // //Merge every unique path for allPath in one list, very useful for displaying everypath on the arrowedmatrix (orange case)
+    let mergedAllPath = mergePaths(allPath); // //Merge every unique path for allPath in one list, very useful for displaying everypath on the arrowedmatrix (orange case)
     if(selectedAlgorithm === "Smith-Waterman"){
         matrixTestData = SmithWatermanScript(sequence1,sequence2,match,mismatch,gap)
         matrixFinal = matrixTestData[1];
         arrowedMatrix = determineArrowedMatrix(sequence1,sequence2,matrixTestData[0], matrixTestData[1],match,gap,mismatch);
         allPath = findPathsSW(arrowedMatrix,matrixTestData[2],matrixFinal,computeLimit);
         optPath = allPath[pathCounter];
+        mergedAllPath = mergePaths(allPath);
     }
     //Matrix displayed as button matrix in html
     const [displayed_matrix,setDisplayedMatrix] = useState();
@@ -368,33 +369,36 @@ export default function App(){
      * @type {React.JSX.Element}
      */
     const displayPathButton =
-        <Button id={"displayed_button"} variant="contained" style={{
-            width: '200px',
-            height: '55px',
-            outline: 'none',
-            transition: 'box-shadow 0.3s',
-        }} onClick={() => {
-            onDisplayPath();
-
-        }}>Force update</Button>
+        <Button
+            className = {mainstyles.displayButton}
+            id={"displayed_button"}
+            variant="contained"
+            onClick={() => {
+                onDisplayPath();
+            }}>Force update
+        </Button>
 
     /**
      * UI Component: Button that decrement the PathCounter
      * @type {React.JSX.Element}
      */
     const leftOnPath =
-        <Button variant="outlined" color="secondary" style ={{
-            height: '55px'
-        }} onClick={() => handleLeftButtonClick()}>←</Button>
+        <Button
+            className ={mainstyles.directionButton}
+            variant="contained"
+            onClick={() => handleLeftButtonClick()}>←
+        </Button>
 
     /**
      * UI Component: Button that increment the PathCounter
      * @type {React.JSX.Element}
      */
     const rightOnPath =
-        <Button variant="outlined" color="secondary" style ={{
-            height: '55px'
-        }} onClick={() => handleRightButtonClick()}>→</Button>
+        <Button
+            className ={mainstyles.directionButton}
+            variant="contained"
+            onClick={() => handleRightButtonClick()}>→
+        </Button>
 
     /**
      * UI Component: Button that reset the value by default
@@ -403,11 +407,8 @@ export default function App(){
     const resetValueButton =
         <div style={{ position: 'relative' }}>
         <Button
+            className = {mainstyles.resetButton}
             variant="contained"
-            style ={{
-                height: '55px',
-                width: "310px"
-            }}
             disabled = {gapDisabled}
             onClick={() => handleResetValueButtonClick()}
             onMouseOver={() => {
@@ -420,7 +421,7 @@ export default function App(){
             }}
         >Reset value</Button>
             {helpWindow && helpIndex[7] && (
-                <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999 }}>
+                <div className={mainstyles.helpWindow}>
                     <Alert  severity="info">
                         Resets the match, mismatch and gap values to the default values (respectively: 1,-1,-2). These values are generally the most commonly used
                     </Alert>
@@ -433,24 +434,17 @@ export default function App(){
      * @type {React.JSX.Element}
      */
     const sequenceBox =
-        <div style={{ display: 'flex', flexDirection: 'COLUMN', gap:'5px'}}>
+        <div className={mainstyles.spaceInterInput}>
             <Box
-                sx={{'& > :not(style)': { m: 1},}} //Make the alignment better
+                sx={{m: 1}} //Make the alignment better
             >
                 <TextField
+                    className = {mainstyles.sequenceBox}
                     id="sequence1"
                     label="Sequence 1"
                     variant="outlined"
                     type="text"
                     value={sequence1}
-                    style={{
-                        width: '300px',
-
-
-                        outline: 'none',
-                        transition: 'box-shadow 0.3s',
-                }}
-                    onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'}
                     inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 1000 characters)
                     onChange={(e) => {
                         setPathCounter(0)
@@ -463,44 +457,40 @@ export default function App(){
                         onDisplayPath()
                     }}/>
             </Box>
-            <div style={{marginLeft: '0px', margin: '0px'}}/>
+
             <Box
-                sx={{'& > :not(style)': { m: 1},}} //Make the alignment better
+                sx={{m: 1}} //Make the alignment better
             >
                 <div style={{ position: 'relative' }}>
-                <TextField id="sequence2" label="Sequence 2" variant="outlined"
-                           type="text"
-                           value={sequence2}
-                           style={{
-                               width: '300px',
-
-                               outline: 'none',
-                               transition: 'box-shadow 0.3s',
-                           }}
-                           onMouseOver={() => {
-                               handleMouseOver()
-                               setHelpIndex([true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
-                           }}
-                           onMouseOut={() => {
-                               handleMouseOut()
-                               setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
-                           }}
-                           onFocus={(e) => e.target.style.boxShadow = '0 0 10px rgba(0, 0, 255, 0.5)'}
-                           inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 1000 characters)
-                           onChange={(e) => {
-                               setPathCounter(0)
-                               setSequence2(e.target.value)
-                               setChosenCase([])
-                               onDisplayPath()
-                           }
-                           }
-                           onKeyUp={() => {
-
-                               onDisplayPath()
-                           }}
+                <TextField
+                    className = {mainstyles.sequenceBox}
+                    id="sequence2"
+                    label="Sequence 2"
+                    variant="outlined"
+                    type="text"
+                    value={sequence2}
+                    onMouseOver={() => {
+                        handleMouseOver()
+                        setHelpIndex([true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                    }}
+                    onMouseOut={() => {
+                        handleMouseOut()
+                        setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                    }}
+                    inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 1000 characters)
+                    onChange={(e) => {
+                        setPathCounter(0)
+                        setSequence2(e.target.value)
+                        setChosenCase([])
+                        onDisplayPath()
+                    }
+                    }
+                    onKeyUp={() => {
+                        onDisplayPath()
+                    }}
                 />
                     {helpWindow && helpIndex[0] && (
-                        <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999}}>
+                        <div className={mainstyles.helpWindow}>
                             <Alert severity="info">
                                 This is the space reserved for sequences. It is possible to choose the two sequences that are going to be aligned : the Sequence 1 and sequence 2. Most of the time, we put DNA or protein sequences but this tool allows more possibilities such as working on character strings, etc... So don't hesitate to test with whatever you want !
                             </Alert>
@@ -517,26 +507,19 @@ export default function App(){
      * @type {React.JSX.Element}
      */
     const selector =
-        <div style={{ display: 'flex', flexDirection: 'COLUMN',gap:'10px' }}>
+        <div className={mainstyles.spaceInterInput}>
             <Box
-                sx={{'& > :not(style)': { m: 1}}}
+                sx={{m: 1}}
             >
             <div>
                 <FormControl fullWidth>
                     <div style={{ position: 'relative' }}>
                     <InputLabel id="algorithm-choice">Algorithm</InputLabel>
                     <Select
-
+                        className = {mainstyles.selectorComp}
                         value ={selectedAlgorithm}
                         label = "Algorithm"
                         variant="outlined"
-                        style={{
-
-                            width: '300px',
-                            height: '56px',
-                            outline: 'none',
-                            transition: 'box-shadow 0.3s',
-                        }}
                         onMouseOver={() => {
                             handleMouseOver()
                             setHelpIndex([false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
@@ -571,7 +554,7 @@ export default function App(){
                     </Select>
                         {helpWindow && helpIndex[1] && (
 
-                            <div style={{ position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999 }}>
+                            <div className={mainstyles.helpWindow}>
                                 <Alert severity="info">
                                     Allows you to choose the algorithm that we will use for the alignment. We have two choices: a maximum global alignment algorithm (Needleman-Wunsch), so here we will process all the data at once. Or we have a minimal local alignment algorithm (Smith-Waterman), so here we will focus on small similar fragments instead of processing the whole sequences at once.
                                 </Alert>
@@ -581,7 +564,7 @@ export default function App(){
                 </FormControl>
             </div>
             </Box>
-                <Box sx={{'& > :not(style)': { m: 1 }}}>
+                <Box sx={{ m: 1 }}>
             {extraParameters}
                 </Box>
 
@@ -593,10 +576,10 @@ export default function App(){
      */
     let FullMatrix = (
         <div>
-            <div style={{ marginBottom: '0.25rem' }}>
+            <div className={mainstyles.fullMatrixVert}>
                 {displayedSeq}
             </div>
-            <div className="horizontal-matrix" style={{ display: 'flex', flexDirection: 'row', gap: '0.25rem' }}>
+            <div className={mainstyles.fullMatrixHoriz}>
                 <React.Fragment>
                     <Grid item >
                         {displayedOtherSeq}
@@ -616,10 +599,10 @@ export default function App(){
      */
     let FullMatrix2 =(
         <div>
-            <div style={{ marginBottom: '0.25rem', flexWrap: 'nowrap' }}>
+            <div className={mainstyles.fullMatrixVert}>
                 {displayedSeq}
             </div>
-            <div className="fullMatrix2" style={{ display: 'flex', flexDirection: 'row', gap: '0.25rem' }}>
+            <div className={mainstyles.fullMatrixHoriz}>
                 <React.Fragment>
                     <Grid item>
                         {displayedOtherSeq}
@@ -627,7 +610,6 @@ export default function App(){
                     <Grid item>
                         {displayedArrowed_matrix}
                     </Grid>
-
                 </React.Fragment>
             </div>
         </div>
@@ -638,12 +620,15 @@ export default function App(){
      * @type {React.JSX.Element}
      */
     let TwoMatrix =
-        <Box sx={{ width: '100%', margin: '0 auto' , marginTop: '30px' }}>
-            <Grid container  spacing={20} direction="row" alignItems="center" >
+        <Box className={mainstyles.matrixGap}>
+            <Grid container
+                  direction="row"
+                  columnSpacing={20}
+                  alignItems="center">
                 <Grid item>
                     <Box
-                        component="section"
-                        sx={{ p: 2, border: '4px solid grey',borderRadius: '16px', overflowX: 'auto' ,width: 600, height: 600, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}
+                        className={mainstyles.matrixBorderBox}
+                        sx={{p: 2}}
                         onMouseOver={() => {
                             handleMouseOver()
                             setHelpIndex([false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false])
@@ -656,7 +641,7 @@ export default function App(){
                         {FullMatrix}
                     </Box>
                 {helpWindow && helpIndex[9] && (
-                    <div style={{opacity: 1, width: '300px', position: 'absolute', top: '0px', left: '0px', padding: '15px', zIndex: 999 }}>
+                    <div className={mainstyles.matrixHelpWindow}>
                         <Alert severity="info">
                             The first matrix is the score matrix, it indicates each score at each stage to finally arrive at the final score. We also see a red display of an optimal path (an optimal alignment that gives the best score). The second matrix on the right is the matrix which represents the set of all optimal paths and their directions in the form of arrows. It is thanks to this matrix that we can observe all of the optimal alignments (orange boxes).
                         </Alert>
@@ -664,7 +649,9 @@ export default function App(){
                 )}
                 </Grid>
                 <Grid item>
-                    <Box component="section" sx={{ p: 2, border: '4px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 600, height: 600, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'  }}   >
+                    <Box
+                        className={mainstyles.matrixBorderBox}
+                        sx={{p: 2}}>
                         {FullMatrix2}
                     </Box>
                 </Grid>
@@ -677,27 +664,18 @@ export default function App(){
      * @type {React.JSX.Element}
      */
     let resultDisplayElement =
-        <Box component="section" sx={{ p: 2, border: '5px solid  grey',borderRadius: '16px', overflowX: 'auto' ,width: 500, height: 100, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'  }}  >
-            <div style={{
-                display: 'flex',
-            }}>
+        <Box
+            className={mainstyles.resultDisplayPanel}
+            sx={{p: 2}}>
+
+            <div style={{display: 'flex'}}>
                 {[...allAlignedResult[pathCounter][0]].map((char, index) => (
-                    <div key={index} style={{
-                        fontSize: '2.5rem',
-                        fontFamily: 'monospace',
-                        marginRight: '10px',
-                    }}>{char}</div>
+                    <div className={mainstyles.resultFont} key={index}>{char}</div>
                 ))}
             </div>
-            <div style={{
-                display: 'flex',
-            }}>
+            <div style={{display: 'flex'}}>
                 {[...allAlignedResult[pathCounter][1]].map((char, index) => (
-                    <div key={index} style={{
-                        fontSize: '2.5rem',
-                        fontFamily: 'monospace',
-                        marginRight: '10px',
-                    }}>{char}</div>
+                    <div className={mainstyles.resultFont} key={index}>{char}</div>
                 ))}
             </div>
         </Box>
@@ -709,6 +687,7 @@ export default function App(){
     let computeLimitComp =
         <div style={{ position: 'relative' }}>
         <TextField
+            className={mainstyles.computeLimitElem}
             label={ "Compute limit"}
             type="number"
             id="computeLimit"
@@ -732,17 +711,13 @@ export default function App(){
                     setComputeLimit(+newComputeLimit)
                     onDisplayPath()
                 }
-
-            }
-            }
+            }}
             onKeyUp={() => {
                 onDisplayPath()
-            }
-            }
-            style={ { width: "200px" }}
+            }}
         />
             {helpWindow && helpIndex[2] && (
-                <div style={{width: '400px', position: 'absolute', top: '140px', left: '0px', padding: '15px', zIndex: 999 }}>
+                <div className={mainstyles.computeHelpWindow}>
                     <Alert severity="info">
                         The "Compute limit" value is a limit preventing the calculation of optimal paths beyond this limit. It is possible that the alignment you make contains too many optimal paths for the browser. This limit intervenes to avoid crashes in the event of too high a generation. You can adapt this limit according to your needs but be careful of performance losses. The Force Update button allows you to force the updating of the matrices if there is an exceptional case where the display crashes.
                     </Alert>
@@ -756,13 +731,11 @@ export default function App(){
      */
     let changeComputeElem =
         <Box
-            sx={{'& > :not(style)': { m: 1},}} //Make the alignment better
+            sx={{ m: 1}} //Make the alignment better
         >
-            <div style={{ display: 'flex', flexDirection: 'COLUMN', gap:'26px' }}>
+            <div className={mainstyles.spaceInputButton}>
                 {computeLimitComp}
-                <div style = {{ display: 'flex', flexDirection: 'row', margin: '0px', gap: '5px'}}>
-                    {displayPathButton}
-                </div>
+                {displayPathButton}
             </div>
         </Box>
 
@@ -772,13 +745,12 @@ export default function App(){
      */
     let paramButton =
         <Box
-            sx={{'& > :not(style)': { m: 1},}} //Make the alignment better
+            sx={{ m: 1}} //Make the alignment better
         >
-        <div style={{ display: 'flex', flexDirection: 'COLUMN', gap:'27px' }}>
-
-        <div style = {{ display: 'flex', flexDirection: 'row', margin: '0px', gap: '5px'}}>
-            <div style={{ position: 'relative' }}>
+        <div className={mainstyles.spaceInputButton}>
+            <div className={mainstyles.spaceInputParam}>
             <TextField
+                className = {mainstyles.paramBox}
                 type="number"
                 id="match"
                 label = "Match"
@@ -807,23 +779,17 @@ export default function App(){
                 }
                 }
                 disabled={matchDisabled}
-                style={{
-                    width: '100px',
-                    height: '55px',
-                    outline: 'none',
-                    transition: 'box-shadow 0.3s',
-                }}
             />
                 {helpWindow && helpIndex[4] && (
-                    <div style={{  position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999, width : '200px'}}>
+                    <div className={mainstyles.helpWindowParam}>
                         <Alert severity="info">
                             Match Value. This value is added to the final score each time we align two characters that are equal in alignment.
                         </Alert>
                     </div>
                 )}
-            </div>
-            <div style={{ position: 'relative' }}>
+
             <TextField
+                className = {mainstyles.paramBox}
                 type="number"
                 id="mismatch"
                 label = "Mismatch"
@@ -851,24 +817,17 @@ export default function App(){
                 }
                 }
                 disabled={mismatchDisabled}
-                style={{
-                    width: '100px',
-                    height: '55px',
-                    outline: 'none',
-                    transition: 'box-shadow 0.3s',
-                }}
             />
                 {helpWindow && helpIndex[5] && (
-                    <div style={{ width : '200px',position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999 }}>
+                    <div className={mainstyles.helpWindowParam}>
                         <Alert severity="info">
                             Value of Mismatch. This value is added to the final score each time two different characters are aligned in the alignment.
                         </Alert>
                     </div>
                 )}
-            </div>
 
-            <div style={{ position: 'relative' }}>
                 <TextField
+                    className = {mainstyles.paramBox}
                     label = "Gap"
                     variant="outlined"
                     type="number"
@@ -897,21 +856,15 @@ export default function App(){
                     }
                     }
                     disabled={gapDisabled}
-                    style={{
-                        width: '100px',
-                        height: '55px',
-                        outline: 'none',
-                        transition: 'box-shadow 0.3s',
-                    }}
                 />
                 {helpWindow && helpIndex[6] && (
-                    <div style={{ width : '200px',position: 'absolute', top: '55px', left: '0px', padding: '15px', zIndex: 999 }}>
+                    <div className={mainstyles.helpWindowParam}>
                         <Alert severity="info">
                             Gap value. This value is added to the final score each time we introduce a gap in the alignment.
                         </Alert>
                     </div>
                 )}
-            </div>
+
         </div>
             {resetValueButton}
 
@@ -919,7 +872,8 @@ export default function App(){
 </Box>
     let paramPathComp =
         <div style={{ position: 'relative' }}>
-        <Box component="section"
+        <Box
+            className = {mainstyles.pathsPanel}
              onMouseOver={() => {
                  handleMouseOver()
                  setHelpIndex([false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false])
@@ -928,23 +882,27 @@ export default function App(){
                  handleMouseOut()
                  setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
              }}
-             sx={{ p: 2, border: '1px solid',borderRadius: '16px',borderColor: 'secondary.main' , overflowX: 'false' ,width: 350, height: 108, boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}  >
-            <div style = {{ display: 'flex', flexDirection: 'row'}}>
-                {leftOnPath}
-                <div style={{marginLeft: '5px'}}/>
-                {rightOnPath}
-            </div>
-            <div style = {{ margin: '3px'}} />
-            <label>Number of existing optimal paths : </label> {allPath.length}
-            <div style = {{ margin: '10px'}} />
-            <label>Current path index : </label> {pathCounter}
-
+             sx={{ p: 2}}>
+        <Grid container>
+            <Grid item>
+                <div style = {{ display: 'flex', flexDirection: 'row'}}>
+                    {leftOnPath}
+                    <div style={{marginLeft: '5px'}}/>
+                    {rightOnPath}
+                </div>
+            </Grid>
+            <Grid item sx={{marginTop : '10px'}}>
+            <label className={mainstyles.pathFont}>Number of existing optimal paths :  {allPath.length} </label>
+            </Grid>
+            <Grid item sx={{marginTop : '2px'}}>
+            <label className={mainstyles.pathFont}>Current path index : {pathCounter} </label>
+            </Grid>
+        </Grid>
         </Box >
             {helpWindow && helpIndex[10] && (
-                <div style={{width: '300px', position: 'absolute', top: '-80px', left: '0px', padding: '15px', zIndex: 999 }}>
+                <div className={mainstyles.pathHelpWindow}>
                     <Alert severity="info">
                         Allows you to navigate between the optimal paths.
-
                     </Alert>
                 </div>
             )}
@@ -955,7 +913,7 @@ export default function App(){
      * @type {React.JSX.Element}
      */
     let elementFirstLine =
-        <Box  >
+        <Box>
             <Grid container spacing={1}>
                 <Grid item>
                     {sequenceBox}
@@ -978,7 +936,7 @@ export default function App(){
      * @type {React.JSX.Element}
      */
     let elementSecondLine =
-        <Box >
+        <Box>
             <Grid container spacing={5}>
                 <Grid item>
                     {paramPathComp}
@@ -989,24 +947,11 @@ export default function App(){
                 </Grid>
                 <Grid item>
                     <div>
-                    <div style={{
-                        fontSize: '2.1rem',
-                        position: 'relative',
-                        top: '20px',
-                        left: '00px',
-
-                        fontFamily: 'monospace',
-                    }}>
-                        Score :
+                    <div className={mainstyles.scoreFont}>
+                        Score:
                         {finalScore}
                     </div>
-                    <div style={{
-                        fontSize: '2.1rem',
-                        position: 'relative',
-                        top: '20px',
-                        left: '00px',
-                        fontFamily: 'monospace',
-                    }}>
+                    <div className={mainstyles.scoreFont}>
                         {matchString}
                     </div>
                     </div>
@@ -1027,7 +972,7 @@ export default function App(){
      * @type {React.JSX.Element}
      */
     let downElement =
-        <Box sx={{ width: '100%', margin: '0 auto' , marginTop: '30px' }}>
+        <Box className={mainstyles.matrixGap}>
             <Grid container  spacing={0.5} direction="column" alignItems="center" >
                 <Grid item>
                     {elementSecondLine}
@@ -1036,7 +981,7 @@ export default function App(){
                     {TwoMatrix}
                 </Grid>
                 <Grid item>
-                    <div style={{ display: 'flex', justifyContent: 'center' , gap: '100px',marginTop: '60px' }}>
+                    <div className={mainstyles.tableOrganization}>
                         <DataTable allPath = {allPath} choosePathCounter = {choosePathCounter} allAlignedResult = {allAlignedResult}/>
                         <SubTable uniquePath = {optPath} modSequence1 = {allAlignedResult[pathCounter][0]} modSequence2 = {allAlignedResult[pathCounter][1]} transfMatrix = {matrixFinal} chooseCase = {chooseCase} rawSequence1={sequence1} rawSequence2={sequence2}/>
                     </div>
@@ -1044,14 +989,13 @@ export default function App(){
             </Grid>
         </Box>
 
-
         //Set of all the components in return for the final display on the page
         return (
-        <div style={{ marginLeft: '20px',marginTop: '20px',marginBottom: '50px',marginRight:'20px' }}>
+        <div className={mainstyles.returnOrganization}>
             <div style={{ position: 'relative'}}>
                 {upElement}
             </div>
-            <hr style={{ borderTop: '1px solid #ccc'}} />
+            <hr className={mainstyles.horizontalBorder} />
             {downElement}
         </div>
     );

@@ -1,0 +1,53 @@
+.mainMenuButton {
+    height: 60px;
+    width: 200px;
+    font-size: 18px !important;
+    position: absolute !important;
+    margin-left: 30px !important;
+}
+
+.verticalLine {
+    border-top: 1px;
+    height: 80%;
+}
+
+.horizontalLine {
+    border-top: 1px;
+    height: 100%;
+}
+
+.fontTitles {
+    text-align: center;
+    font-size: 27px;
+    color: dimgrey;
+}
+
+.welcomeButtons {
+    height: 80px;
+    width: 450px;
+    font-size: 24px !important;
+}
+.logoAndTitle {
+    display: flex;
+    flex-direction: row;
+}
+
+.pageMargin {
+    width: 100%;
+    margin-top: 30px;
+}
+
+.titlePosition {
+    margin-top: 26px !important;
+    margin-left: 10px !important;
+}
+
+.topLogo {
+    width: 300px;
+}
+
+.fontNormalText {
+    text-align: center;
+    font-size: 16px;
+}
+

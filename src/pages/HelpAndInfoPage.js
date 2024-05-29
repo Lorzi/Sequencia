@@ -9,6 +9,7 @@ import documentation4 from "./documentation_images/documentation4.jpg"
 import documentation5 from "./documentation_images/documentation5.jpg"
 import documentation6 from "./documentation_images/documentation6.jpg"
 import {useAdjustedZoom} from "./pagesUtils";
+import pages from './pages.module.css';
 export default function HelpAndInfoPage() {
 
     //Allows the resize of the windows and adapt the page with it
@@ -17,42 +18,36 @@ export default function HelpAndInfoPage() {
     const navigate = useNavigate();
 
     const GoBackToMenuButton =
-        <Button variant="outlined"
-                onClick={() => navigate('/')}
-                style ={{
-                    height: '60px', width: '200px' , fontSize: '18px', position: 'absolute',marginLeft: '30px'
-                }}>
-            Menu principal
+        <Button
+            className={pages.mainMenuButton}
+            variant="outlined"
+            onClick={() => navigate('/')}>
+            Main menu
         </Button>
-
-
-
 
     return(
         <div>
-
-            <Box sx={{ width: '100%', margin: '0 auto' , marginTop: '30px' }}>
+            <Box className={pages.pageMargin}>
                 {GoBackToMenuButton}
-                <Grid container  spacing={0.5} direction="column" alignItems="center" >
-                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <Grid container direction="column" alignItems="center">
+                    <div className={pages.logoAndTitle}>
                         <Grid item>
-                            <img src={sequenciaImage} alt="Sequencia" style={{ width: '300px', height: 'auto', justifyContent: 'center'}}   />
+                            <img className={pages.topLogo} src={sequenciaImage} alt="Sequencia" />
                         </Grid>
                         <Grid item>
-                            <hr style={{ borderTop: '1px solid #ccc', height: '80%' }} />
+                            <hr className={pages.verticalLine}/>
                         </Grid>
-                        <Grid item style={{marginTop:'25.5px', marginLeft: '10px'}}>
-                            <label  style={{ textAlign: 'center', fontSize: '27px', color: 'dimgrey'  }}>DOCUMENTATION</label>
+                        <Grid item className={pages.titlePosition}>
+                            <label className={pages.fontTitles}>DOCUMENTATION</label>
                         </Grid>
                     </div>
                     <Grid item>
-
-                        <img src={documentation1} alt="Sequencia" style={{ width: '1500px', height: 'auto', justifyContent: 'center'}}   />
-                        <img src={documentation2} alt="Sequencia" style={{ width: '1500px', height: 'auto', justifyContent: 'center'}}   />
-                        <img src={documentation3} alt="Sequencia" style={{ width: '1500px', height: 'auto', justifyContent: 'center'}}   />
-                        <img src={documentation4} alt="Sequencia" style={{ width: '1500px', height: 'auto', justifyContent: 'center'}}   />
-                        <img src={documentation5} alt="Sequencia" style={{ width: '1500px', height: 'auto', justifyContent: 'center'}}   />
-                        <img src={documentation6} alt="Sequencia" style={{ width: '1500px', height: 'auto', justifyContent: 'center'}}   />
+                        <img src={documentation1} alt="Sequencia" style={{ width: '100%'}}/>
+                        <img src={documentation2} alt="Sequencia" style={{ width: '100%'}}/>
+                        <img src={documentation3} alt="Sequencia" style={{ width: '100%'}}/>
+                        <img src={documentation4} alt="Sequencia" style={{ width: '100%'}}/>
+                        <img src={documentation5} alt="Sequencia" style={{ width: '100%'}}/>
+                        <img src={documentation6} alt="Sequencia" style={{ width: '100%'}}/>
                     </Grid>
                 </Grid>
             </Box>
