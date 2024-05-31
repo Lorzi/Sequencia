@@ -1,4 +1,4 @@
-import {addPathsToQueue} from "./utils";
+import {addPathsToQueue} from "../utils";
 
 /**
  * Allows you to find the optimal paths in the arrow matrix for the Smith-Waterman algorithm.

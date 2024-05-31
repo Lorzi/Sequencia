@@ -1,4 +1,4 @@
-import {addPathsToQueue} from "./utils";
+import {addPathsToQueue} from "../utils";
 
 /**
  * Function that determines the arrow matrix and returns it in list form

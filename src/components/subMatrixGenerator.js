@@ -3,10 +3,10 @@
  * @param S1
  * @param S2
  * @param Match
- * @param Missmatch
+ * @param Mismatch
  * @returns {[]}
  */
-export default function createSubMatrix(S1,S2,Match,Missmatch){
+export default function createSubMatrix(S1,S2,Match,Mismatch){
     let i,j=0;
     const subMatrix = [];
 
@@ -17,7 +17,7 @@ export default function createSubMatrix(S1,S2,Match,Missmatch){
                 line.push(Match);
             }
             else {
-                line.push(Missmatch);
+                line.push(Mismatch);
             }
         }
 

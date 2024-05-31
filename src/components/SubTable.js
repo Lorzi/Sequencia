@@ -107,16 +107,17 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
             counterSeq1--;
             counterSeq2--;
         }
-        rows.push({
-            id: counterUniquePath,
-            coordinates: uniquePath[counterUniquePath],
-            type: type,
-            seq1:modSequence1[counterUniquePath-1],
-            seq2:modSequence2[counterUniquePath-1],
-            score: transfMatrix[uniquePath[counterUniquePath][0]][uniquePath[counterUniquePath][1]],
-            operation1: oldSeq1 + " -> " + opeSeq1,
-            operation2: oldSeq2 + " -> " + opeSeq2
-        });
+        rows.push(
+            {id: counterUniquePath,
+                coordinates: uniquePath[counterUniquePath],
+                type: type,
+                seq1:modSequence1[counterUniquePath-1],
+                seq2:modSequence2[counterUniquePath-1],
+                score: transfMatrix[uniquePath[counterUniquePath][0]][uniquePath[counterUniquePath][1]],
+                operation1: oldSeq1 + " -> " + opeSeq1,
+                operation2: oldSeq2 + " -> " + opeSeq2
+            }
+        );
         oldSeq1 = opeSeq1;
         oldSeq2 = opeSeq2;
         counterUniquePath--;

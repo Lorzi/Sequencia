@@ -19,9 +19,18 @@ export default function GameModePage(){
             Main menu
         </Button>
 
+    const helpButton =
+        <Button
+            className={pages.helpButton}
+            variant="outlined"
+            onClick={() => navigate('/helpGame')}>
+            Help
+        </Button>
+
     return(
         <Box className={pages.pageMargin}>
             {GoBackToMenuButton}
+            {helpButton}
             <Grid container direction="column" alignItems="center" >
                 <div className={pages.logoAndTitle}>
                     <Grid item>
@@ -31,7 +40,7 @@ export default function GameModePage(){
                         <hr className={pages.verticalLine}/>
                     </Grid>
                     <Grid item className={pages.titlePosition}>
-                        <label className={pages.fontTitles}>MODE JEU</label>
+                        <label className={pages.fontTitles}>GAME MODE</label>
                     </Grid>
                 </div>
                 <Grid item>

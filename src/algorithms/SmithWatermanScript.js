@@ -1,4 +1,4 @@
-import createSubMatrix from "./components/subMatrixGenerator";
+import createSubMatrix from "../components/subMatrixGenerator";
 
 /**
  * Script to create the score matrix with Smith-Waterman algorithm and will slightly differ depending on the chosen parameter, activated options, chosen variant, etc...

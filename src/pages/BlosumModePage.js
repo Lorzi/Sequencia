@@ -21,9 +21,18 @@ export default function BlosumModePage(){
             Main menu
         </Button>
 
+    const helpButton =
+        <Button
+            className={pages.helpButton}
+            variant="outlined"
+            onClick={() => navigate('/helpBlosum')}>
+            Help
+        </Button>
+
     return(
         <Box className={pages.pageMargin}>
             {GoBackToMenuButton}
+            {helpButton}
             <Grid container direction="column" alignItems="center">
                 <div className={pages.logoAndTitle}>
                     <Grid item>

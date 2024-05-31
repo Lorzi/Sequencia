@@ -1,4 +1,4 @@
-import createSubMatrix, {createSubMatrixBLOSUM} from "./components/subMatrixGenerator";
+import createSubMatrix, {createSubMatrixBLOSUM} from "../components/subMatrixGenerator";
 
 /**
  * Script to create the score matrix with Needleman-Wunsch algorithm and will slightly differ depending on the chosen parameter, activated options, chosen variant, etc...

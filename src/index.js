@@ -11,6 +11,9 @@ import GameModePage from "./pages/GameModePage";
 import HelpAndInfoPage from "./pages/HelpAndInfoPage";
 import NormalModePage from "./pages/NormalModePage";
 import BlosumModePage from "./pages/BlosumModePage";
+import HelpPageBlosum from "./pages/help_pages/HelpPageBlosum";
+import HelpPageNormal from "./pages/help_pages/HelpPageNormal";
+import HelpPageGame from "./pages/help_pages/HelpPageGame";
 
 const router = createBrowserRouter([
     {
@@ -32,6 +35,18 @@ const router = createBrowserRouter([
     {
         path: "blosum",
         element: <BlosumModePage/>,
+    },
+    {
+        path: "helpBlosum",
+        element: <HelpPageBlosum/>,
+    },
+    {
+        path: "helpNormal",
+        element: <HelpPageNormal/>,
+    },
+    {
+        path: "helpGame",
+        element: <HelpPageGame/>,
     },
 ]);
 

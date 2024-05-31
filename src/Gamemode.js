@@ -1,9 +1,9 @@
 import * as React from "react";
-import {NeedleManWunschScript} from "./NeedleManWunschScript";
+import {NeedleManWunschScript} from "./algorithms/NeedleManWunschScript";
 import {useEffect, useState} from "react";
 import {Box, Button, Grid, TextField, ToggleButton, ToggleButtonGroup} from "@mui/material";
 import {Case} from "./components/Case";
-import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
+import {determineArrowedMatrix, findPaths} from "./algorithms/NeedleManOptimalPath_V2";
 import {DisplayedOtherSeq, DisplayedSeq, mergePaths} from "./utils";
 import mainstyles from "./main.module.css";
 

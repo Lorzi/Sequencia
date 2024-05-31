@@ -21,9 +21,18 @@ export default function NormalModePage() {
             Main menu
         </Button>
 
+    const helpButton =
+        <Button
+            className={pages.helpButton}
+            variant="outlined"
+            onClick={() => navigate('/helpNormal')}>
+            Help
+        </Button>
+
     return(
         <Box className={pages.pageMargin}>
             {GoBackToMenuButton}
+            {helpButton}
             <Grid container direction="column" alignItems="center" >
                 <div className={pages.logoAndTitle}>
                     <Grid item>
@@ -33,7 +42,7 @@ export default function NormalModePage() {
                         <hr className={pages.verticalLine}/>
                     </Grid>
                     <Grid item className={pages.titlePosition}>
-                        <label className={pages.fontTitles}>MODE CLASSIC</label>
+                        <label className={pages.fontTitles}>NORMAL</label>
                     </Grid>
                 </div>
                 <Grid item>

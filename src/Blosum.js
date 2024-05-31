@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {NeedleManWunschScript} from "./NeedleManWunschScript";
-import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
+import {NeedleManWunschScript} from "./algorithms/NeedleManWunschScript";
+import {determineArrowedMatrix, findPaths} from "./algorithms/NeedleManOptimalPath_V2";
 import {
     Box,
     Grid,
@@ -38,7 +38,6 @@ export default function Blosum(){
     let allPath = findPaths(arrowedMatrix,computeLimit); //list that contains every possible path/alignement on this session
     let optPath = allPath[pathCounter]; //one Path from allPath that as been chosen with the PathCounter
     const [chosenCase, setChosenCase] = useState([]);
-    const [gapDisabled ,] = useState(false)
     const [colorVariantCase] = useState([]); //Coloring or not for a variant (example green for the LCS)
 
     /**
@@ -136,13 +135,11 @@ export default function Blosum(){
                     const newGap = e.target.value
                     setGap(+newGap)
                     onDisplayPath()
-                    setChosenCase([])
                 }}
                 onKeyUp={() => {
                     onDisplayPath()
-                    setChosenCase([])
                 }}
-                disabled={gapDisabled}
+
 
             />
         </div>
@@ -162,7 +159,6 @@ export default function Blosum(){
                         onChange={(e) => {
                             setPathCounter(0)
                             setSequence1(e.target.value)
-                            setChosenCase([])
                             onDisplayPath()
                         }}
                         onKeyUp={() => {
@@ -181,7 +177,6 @@ export default function Blosum(){
                         onChange={(e) => {
                             setPathCounter(0)
                             setSequence2(e.target.value)
-                            setChosenCase([])
                             onDisplayPath()
                         }}
                         onKeyUp={() => {

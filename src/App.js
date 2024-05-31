@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Case} from "./components/Case";
-import {NeedleManWunschScript} from "./NeedleManWunschScript";
-import {determineArrowedMatrix, findPaths} from "./NeedleManOptimalPath_V2";
+import {NeedleManWunschScript} from "./algorithms/NeedleManWunschScript";
+import {determineArrowedMatrix, findPaths} from "./algorithms/NeedleManOptimalPath_V2";
 import DataTable from "./components/DataTable"
 import SubTable from "./components/SubTable";
 import {
@@ -18,8 +18,8 @@ import {
 from "@mui/material";
 import NeedlemanExtra from "./components/NeedlemanExtra";
 import SmithWaterManExtra from "./components/SmithWaterManExtra";
-import {SmithWatermanScript} from "./SmithWatermanScript";
-import {findPathsSW} from "./SmithWatermanOptimalPath_V2";
+import {SmithWatermanScript} from "./algorithms/SmithWatermanScript";
+import {findPathsSW} from "./algorithms/SmithWatermanOptimalPath_V2";
 import {blosum62} from "./components/variants/blosum62";
 import {DisplayedMatrix, DisplayedOtherSeq, DisplayedSeq, mergePaths} from "./utils";
 import mainstyles from "./main.module.css";
@@ -93,24 +93,47 @@ export default function App(){
     const alignmentResultResolver =(actualPath) => {
         let alignedSeq1 ="", alignedSeq2="";
 
-        for(let i=1,j1=0,j2=0;i<actualPath.length;i++){
-            if(actualPath[i-1][0] !== actualPath[i][0] && actualPath[i-1][1]!==actualPath[i][1]){
-                alignedSeq1+=sequence1[j1];
-                alignedSeq2+=sequence2[j2];
-                j1++;
-                j2++;
-            }
-            if(actualPath[i-1][0] === actualPath[i][0] && actualPath[i-1][1] < actualPath[i][1]){
-                alignedSeq2+=sequence2[j2];
-                j2++;
-                alignedSeq1+="-";
-            }
-            if(actualPath[i-1][0] < actualPath[i][0] && actualPath[i-1][1] === actualPath[i][1]){
-                alignedSeq1+=sequence1[j1];
-                j1++;
-                alignedSeq2+="-";
+        if(selectedAlgorithm === "Smith-Waterman"){
+            for(let i=1,j1=0,j2=0;i<actualPath.length;i++){
+                if(actualPath[i-1][0] !== actualPath[i][0] && actualPath[i-1][1]!==actualPath[i][1]){
+                    alignedSeq1+=sequence1[actualPath[j1][0]];
+                    alignedSeq2+=sequence2[actualPath[j2][1]];
+                    j1++;
+                    j2++;
+                }
+                if(actualPath[i-1][0] === actualPath[i][0] && actualPath[i-1][1] < actualPath[i][1]){
+                    alignedSeq2+=sequence2[actualPath[j2][1]];
+                    j2++;
+                    alignedSeq1+="-";
+                }
+                if(actualPath[i-1][0] < actualPath[i][0] && actualPath[i-1][1] === actualPath[i][1]){
+                    alignedSeq1+=sequence1[actualPath[j1][0]];
+                    j1++;
+                    alignedSeq2+="-";
+                }
             }
         }
+        else{
+            for(let i=1,j1=0,j2=0;i<actualPath.length;i++){
+                if(actualPath[i-1][0] !== actualPath[i][0] && actualPath[i-1][1]!==actualPath[i][1]){
+                    alignedSeq1+=sequence1[j1];
+                    alignedSeq2+=sequence2[j2];
+                    j1++;
+                    j2++;
+                }
+                if(actualPath[i-1][0] === actualPath[i][0] && actualPath[i-1][1] < actualPath[i][1]){
+                    alignedSeq2+=sequence2[j2];
+                    j2++;
+                    alignedSeq1+="-";
+                }
+                if(actualPath[i-1][0] < actualPath[i][0] && actualPath[i-1][1] === actualPath[i][1]){
+                    alignedSeq1+=sequence1[j1];
+                    j1++;
+                    alignedSeq2+="-";
+                }
+            }
+        }
+
         return([alignedSeq1,alignedSeq2]);
     }
 
