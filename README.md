@@ -42,10 +42,11 @@ In the BLOSUM mode, you can upload your own custom matrix of score. In the relea
 In Help and info you can find a documentation but the language is only available in French for the moment.
 
 ## About
-Link of the repository : https://github.com/Lorzi/NeedleMan-Wunsch
+Link of the repository : https://github.com/Lorzi/Sequencia
 This framework is based on the Needleman-Wunsch and Smith-Waterman algorithms.
 The code has been created on base of the recursive formula of theses algorithms.
 And the documentation part is inspired by some books and Wikipedia pages of theses algorithms.
 All the sources are available in the report associated to this project.
 
+You can find every sources inside the report : https://1drv.ms/b/s!ApdrD7C8eYGn_RBxTBgH_jRE8oyU?e=yOvmGy
 A video presentation of the framework is available in French here : https://youtu.be/WyVwGiGKclo
