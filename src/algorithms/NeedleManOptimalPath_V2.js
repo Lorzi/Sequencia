@@ -1,8 +1,9 @@
-import {addPathsToQueue} from "../utils";
+import {addPathsToQueue, comparePath} from "../utils";
 
 /**
  * Function that determines the arrow matrix and returns it in list form
  * The arrow matrix is a list of arrow that indicate which direction can be taken by a path in a traceback.
+ * Analyse the arrowedMatrix and return a list of optimals paths
  * @param S1
  * @param S2
  * @param subMatrix
@@ -71,8 +72,6 @@ export function determineArrowedMatrix(S1,S2,subMatrix,transfMatrix,match,gap,mi
         x = S2.length; //DECREMENT Y AND INCREMENT X OF SIZE S2
         }
 
-
-
     return arrowedMatrix;
 }
 
@@ -83,8 +82,8 @@ export function determineArrowedMatrix(S1,S2,subMatrix,transfMatrix,match,gap,mi
  * @returns {number[][][]|[]}
  */
 export function findPaths(arrowedMatrix,computeLimit) {
-    const paths = []; // List to store found paths
-    const queue = []; // Queue to create the paths
+    const paths = [];
+    const queue = [];
 
     const yMax = arrowedMatrix.length - 1;
     const xMax = arrowedMatrix[0].length - 1;
@@ -92,11 +91,9 @@ export function findPaths(arrowedMatrix,computeLimit) {
     // Add the last box/case to the queue
     queue.push([[yMax, xMax]]);
 
-    //As long as the queue is not empty
     while (queue.length > 0) {
-        const path = queue.shift(); // Get a path from the queue
-        const [y, x] = path[0]; // Get the current position of the path
-
+        const path = queue.shift();
+        const [y, x] = path[0];
         //If we reach the first box, add the path found to the list of paths
         if (y === 0 || x === 0) {
             let yNew = y, xNew = x;
@@ -112,15 +109,10 @@ export function findPaths(arrowedMatrix,computeLimit) {
                     yNew-=1;
                 }
             }
-            path.sort((y, x) => { //Sort of an array, compare first element then next element
-                let result = y[0] - x[0];
-                if (result === 0) {
-                    result = y[1] - x[1];
-                }
-                return result;
-            });
+            path.sort(comparePath);
 
             paths.push(path);
+            continue;
         }
 
         let arrows = arrowedMatrix[y][x].toString();

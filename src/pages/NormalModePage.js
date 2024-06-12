@@ -7,6 +7,12 @@ import sequenciaImage from "../components/sequencia10.png";
 import {useAdjustedZoom} from "./pagesUtils";
 import pages from "./pages.module.css";
 
+/**
+ * Page for normal mode
+ * returns the elements needed for display
+ * @returns {Element}
+ * @constructor
+ */
 export default function NormalModePage() {
     const navigate = useNavigate();
 

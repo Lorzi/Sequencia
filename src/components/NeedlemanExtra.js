@@ -27,17 +27,13 @@ export default function NeedlemanExtra({chooseSelectedVariant}) {
                     onChange = {(e) => {
 
                         chooseSelectedVariant(e.target.value)
-
                         const selectedValue = e.target.value
                         if(selectedValue === "default"){
-
                             console.log("Variante par defaut choisie")
                         }
                         if(selectedValue === "LCS"){
-
                             console.log("Variante LCS choisie")
                         }
-
                     }
                     }
 

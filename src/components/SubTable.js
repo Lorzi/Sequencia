@@ -39,14 +39,10 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
     let counterSeq2 = rawSequence2.length  - 1;
     let counterUniquePath = uniquePath.length - 1;
 
-
     while(counterUniquePath !== 0){
-
-
         if(uniquePath[counterUniquePath][0] !== uniquePath[counterUniquePath-1][0] && uniquePath[counterUniquePath][1] === uniquePath[counterUniquePath-1][1]){
 
             //Vertical move
-
             if(oldSeq2.length-1 === counterSeq2) {
                 opeSeq2 = oldSeq2.substring(0, counterSeq2 + 1) + oldSeq1.substring(counterSeq1, counterSeq1 + 1)
                 type = ("Delete");
@@ -65,14 +61,11 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
                 opeSeq1 = oldSeq1.substring(0,counterSeq1) + oldSeq1.substring(counterSeq1+1,rawSequence1.length-1)
                 type = ("Insertion");
             }
-
-
-
             counterSeq1--;
         }
         else if(uniquePath[counterUniquePath][0] === uniquePath[counterUniquePath-1][0] && uniquePath[counterUniquePath][1] !== uniquePath[counterUniquePath-1][1]){
-            //Horizontal move
 
+            //Horizontal move
             if(oldSeq1.length-1 === counterSeq1) {
                 opeSeq1 = oldSeq1.substring(0, counterSeq1 + 1) + oldSeq2.substring(counterSeq2, counterSeq2 + 1)
                 type = ("Insertion");
@@ -89,10 +82,7 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
             else{
                 opeSeq2 = oldSeq2.substring(0,counterSeq2) + oldSeq2.substring(counterSeq2+1,rawSequence2.length-1)
                 type = ("Delete");
-
             }
-
-
             counterSeq2--;
         }
         else{
@@ -103,7 +93,6 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
                 opeSeq1 = oldSeq1.substring(0, counterSeq1) + oldSeq2.substring(counterSeq2,counterSeq2+1) + oldSeq1.substring(counterSeq1 +1, oldSeq1.length+1);
                 opeSeq2 = oldSeq2.substring(0, counterSeq2) + oldSeq1.substring(counterSeq1,counterSeq1+1) + oldSeq2.substring(counterSeq2 +1, oldSeq2.length+1);
             }
-
             counterSeq1--;
             counterSeq2--;
         }
@@ -121,7 +110,6 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
         oldSeq1 = opeSeq1;
         oldSeq2 = opeSeq2;
         counterUniquePath--;
-
     }
 
     /**
@@ -130,12 +118,13 @@ export default function SubTable({uniquePath,modSequence1,modSequence2, transfMa
      * @param id
      */
     function handleClick(event, id) {
-
         chooseCase(uniquePath[id]);
-
     }
 
     return (
+        /**
+         * This data grid has been created on base of the MUI DataGrid documentation : https://mui.com/x/react-data-grid/
+         */
         <div style={{ height: 600, width: '40%' }}>
             <DataGrid
                 rows={rows}

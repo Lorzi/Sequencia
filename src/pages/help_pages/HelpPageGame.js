@@ -6,6 +6,13 @@ import sequenciaImage from "../../components/sequencia10.png";
 import {helpGameText} from "../pagesUtils";
 import {useAdjustedZoom} from "../pagesUtils";
 import pages from '../pages.module.css';
+
+/**
+ * help Page for Game mode
+ * returns the elements needed for display
+ * @returns {Element}
+ * @constructor
+ */
 export default function HelpPageGame() {
 
     //Allows the resize of the windows and adapt the page with it

@@ -4,6 +4,13 @@ import {useNavigate} from "react-router-dom";
 import sequenciaImage from "../../components/sequencia10.png";
 import {helpBlosumText, useAdjustedZoom} from "../pagesUtils";
 import pages from '../pages.module.css';
+
+/**
+ * help Page for BLosum mode
+ * returns the elements needed for display
+ * @returns {Element}
+ * @constructor
+ */
 export default function HelpPageBlosum() {
 
     //Allows the resize of the windows and adapt the page with it

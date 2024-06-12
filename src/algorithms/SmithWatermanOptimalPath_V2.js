@@ -1,7 +1,8 @@
-import {addPathsToQueue} from "../utils";
+import {addPathsToQueue, comparePath} from "../utils";
 
 /**
  * Allows you to find the optimal paths in the arrow matrix for the Smith-Waterman algorithm.
+ * Analyse the arrowedMatrix and return a list of optimals paths
  * @param arrowedMatrix
  * @param maxScoreList
  * @param transfMatrix
@@ -9,32 +10,24 @@ import {addPathsToQueue} from "../utils";
  * @returns {number[][][]|[]}
  */
 export function findPathsSW(arrowedMatrix,maxScoreList,transfMatrix,computeLimit) {
-    const paths = []; //List to store found paths
-    const queue = []; //File to follow the paths
+    const paths = [];
+    const queue = [];
 
     for(let i =0;i < maxScoreList.length; i++) {
         const yMax = maxScoreList[i][0];
         const xMax = maxScoreList[i][1];
-        //Add the last box to the queue
+        //Add the last case to the queue
         queue.push([[yMax, xMax]]);
 
-        //While the queue is not empty
         while (queue.length > 0) {
-            const path = queue.shift(); //Get a path from the queue
-            const [y, x] = path[0]; //Get the current position of the path
+            const path = queue.shift();
+            const [y, x] = path[0];
             if(paths.length === computeLimit){
                 return(paths);
             }
-            //If we reach the first box, add the path found to the list of paths
-            if (transfMatrix[y][x] === 0) { //If we find a zero we stop
-
-                path.sort((y, x) => { //Sort of an array, compare first element then next element
-                    let result = y[0] - x[0];
-                    if (result === 0) {
-                        result = y[1] - x[1];
-                    }
-                    return result;
-                });
+            //The iteration stops if we find a zero
+            if (transfMatrix[y][x] === 0) {
+                path.sort(comparePath);
                 paths.push(path);
                 continue;
             }

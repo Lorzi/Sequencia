@@ -5,6 +5,13 @@ import sequenciaImage from "../../components/sequencia10.png";
 import {helpNormalText} from "../pagesUtils";
 import {useAdjustedZoom} from "../pagesUtils";
 import pages from '../pages.module.css';
+
+/**
+ * help Page for Normal mode
+ * returns the elements needed for display
+ * @returns {Element}
+ * @constructor
+ */
 export default function HelpPageNormal() {
 
     //Allows the resize of the windows and adapt the page with it

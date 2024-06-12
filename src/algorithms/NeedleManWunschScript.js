@@ -15,14 +15,12 @@ import createSubMatrix, {createSubMatrixBLOSUM} from "../components/subMatrixGen
  */
 export function NeedleManWunschScript(S1,S2,Match,Mismatch,Gap,operation_mm,blosumCheck,blosumCustom){
     let operationMaxMin = Math.max;
-    // Create and return the Substitution matrix that will be needed in order to fulfill the transformed matrix
     if(operation_mm ===0){
         operationMaxMin = Math.max;
     }
     else if(operation_mm===1){
         operationMaxMin = Math.min;
     }
-
 
     /**
      * Create and return the transformed matrix (score matrix) that will help to find the best path possible, this is also the matrix that should be displayed on the screen
@@ -41,28 +39,30 @@ export function NeedleManWunschScript(S1,S2,Match,Mismatch,Gap,operation_mm,blos
         const first_line = [];
         let cumulative = 0;
 
-        for (i=0;i<lenX +1;i++){ //Creation of the first line which is an exceptional case of the algorithm
+        //Creation of the first line which is an exceptional case of the algorithm
+        for (i=0;i<lenX +1;i++){
             first_line.push(cumulative);
             cumulative += Gap;
         }
-        transfMatrix.push(first_line) //Add the first line
+        transfMatrix.push(first_line)
         cumulative = 0
 
         for(i=1;i<lenY+1;i++){
             cumulative += Gap
-            transfMatrix.push([cumulative]) //Adding the first column gradually (mandatory to calculate the rest)
+            transfMatrix.push([cumulative])
 
             for(j=1;j<lenX+1;j++) {
-
-                transfMatrix[i].push(operationMaxMin(transfMatrix[i - 1][j - 1] + subMatrix[i - 1][j - 1] , transfMatrix[i - 1][j] + Gap, transfMatrix[i][j - 1] + Gap)) //Core of the algorithm #This is typically where we will display the steps on the GUI each time
+                //Core of the algorithm -> This is where each value of the score matrix is computed
+                transfMatrix[i].push(operationMaxMin(transfMatrix[i - 1][j - 1] + subMatrix[i - 1][j - 1] , transfMatrix[i - 1][j] + Gap, transfMatrix[i][j - 1] + Gap))
             }
         }
         return transfMatrix
     }
 
+    //SubMatrix creation, check if blosum mode is active or not
     let subMatrix;
     if (blosumCheck){
-        subMatrix = createSubMatrixBLOSUM(S1,S2,blosumCustom); //Put instead of custom score the matrix entry
+        subMatrix = createSubMatrixBLOSUM(S1,S2,blosumCustom);
 
     }
     else{

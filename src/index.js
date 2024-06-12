@@ -15,6 +15,10 @@ import HelpPageBlosum from "./pages/help_pages/HelpPageBlosum";
 import HelpPageNormal from "./pages/help_pages/HelpPageNormal";
 import HelpPageGame from "./pages/help_pages/HelpPageGame";
 
+/**
+ * Create a router
+ * @type {Router}
+ */
 const router = createBrowserRouter([
     {
         path: "/",
@@ -50,6 +54,10 @@ const router = createBrowserRouter([
     },
 ]);
 
+/**
+ * The next lines comes from the documentation of React Router. https://reactrouter.com/en/main/routers/picking-a-router by ©Remix Software, Inc.
+ * @type {Root}
+ */
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

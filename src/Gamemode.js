@@ -55,11 +55,12 @@ export default function Gamemode(){
 
     /**
      * UI component: Display of sequence 2 fraction useful for displaying the help matrix
+     * The help sequence will be split into boxes to allow it to be displayed as matrix
      * @type {React.JSX.Element}
      */
     const displayedHelpSeq2 =
         <Box>
-            <Grid container spacing={0.5} sx={{ flexWrap: 'nowrap' }}>
+            <Grid container spacing={0.5}>
                 <Grid item>
                     <Case key={["first-case"]} value={"-"} color={'light_blue'} />
                 </Grid>
@@ -76,6 +77,7 @@ export default function Gamemode(){
 
     /**
      * UI component: Display of sequence 1 fraction useful for displaying the help matrix
+     * The help sequence will be split into boxes to allow it to be displayed as matrix
      * @type {React.JSX.Element}
      */
     const displayedHelpSeq1 =
@@ -95,6 +97,8 @@ export default function Gamemode(){
 
     /**
      * Function that manages clicking a case during game mode number 2
+     * Check if the case that the user chose (y,x) is in the optimal path list. If yes, then this position is added to the greenCaseList.
+     * If not this position is added to the red Case list
      * @param y
      * @param x
      */
@@ -102,6 +106,7 @@ export default function Gamemode(){
 
         setGoodAnswerCounter(greenCasesList.length)
         setBadAnswerCounter(redCasesList.length)
+
         if (optimizedCasesList.some(optimizedCases => optimizedCases[0] === y && optimizedCases[1] === x)) {
             setGreenCasesList([...greenCasesList, [y, x]]);
             setGameMode2Coord([y,x]);
@@ -142,6 +147,8 @@ export default function Gamemode(){
 
     /**
      * Generates the help matrix for the game mode
+     * Since the help matrix is a matrix of 2*2 values, it set the value for the TOP, LEFT and DIAGONAL case and display a "?" for the searched value
+     * It will display differently if the position of the researched case is on an edge or not.
      */
     const generateHelpMatrix = () =>{
         if(sequence1[yPoint-1] === undefined){
@@ -206,11 +213,13 @@ export default function Gamemode(){
 
     /**
      * Manage user entries by clicking on the button.
-     * This function manages the entire game mode number 1 and compares the entered answers
+     * This function manages the entire game mode number 1 and compares the input answers
      * with the real answers and continues the game accordingly.
      */
     const handleSubmitAnswerButtonClick = () =>{
         setVisibleCase([...visibleCase, [yPoint, xPoint]]);
+
+        //If it's the right answer, then add it to the goodAnswer list and increment the good score
         if(answeredValue === finalMatrix[yPoint][xPoint]){
             let newGoodAnswerCounter= goodAnswerCounter;
             newGoodAnswerCounter +=1 ;
@@ -220,8 +229,10 @@ export default function Gamemode(){
             setNumberOfCase(newNumberOfCase);
 
         }
+        //If answer is wrong, then add the case to the badAnswer list and increment the bad score
         else {
-            if(xPoint >= finalMatrix[0].length-1 && yPoint >= finalMatrix.length-1){ //If it's the end of the game
+            if(xPoint >= finalMatrix[0].length-1 && yPoint >= finalMatrix.length-1){
+                //This condition prevents a misuse where a bad answer can be chosen multiple time at the end of the game
             }
             else{
                 let newBadAnswerCounter=badAnswerCounter;
@@ -233,7 +244,9 @@ export default function Gamemode(){
 
             }
         }
+        //If it's the end of the line
         if(xPoint >= finalMatrix[0].length-1){
+            //If it's the end of the game
             if (yPoint >= finalMatrix.length-1)
             {
                 if(xPoint === finalMatrix[0].length-1 && yPoint ===finalMatrix.length-1){
@@ -259,6 +272,7 @@ export default function Gamemode(){
                     setXPoint(newX)
                 }
             }
+            //End of the line and return to next line
             else{
                 setXPoint(0);
                 let newY =yPoint +1;
@@ -272,7 +286,7 @@ export default function Gamemode(){
     }
 
     /**
-     * useEffect that allows the update (call change()) if one of the dependances value changes.
+     * useEffect that allows the update (call change()) if one of the dependencies value changes.
      */
     useEffect(() => {
         // eslint-disable-next-line
@@ -281,7 +295,7 @@ export default function Gamemode(){
     }, [visibleCase,gamemode,sequence1,sequence2]);
 
     /**
-     * useEffect that reset the whole parameters of the gameMode in case of changement in the dependances (to avoid unexpected behaviour)
+     * useEffect that reset the whole parameters of the gameMode in case of change in the dependencies (to avoid unexpected behaviour)
      */
     useEffect(() => {
         resetGamemode2Param()
@@ -301,6 +315,7 @@ export default function Gamemode(){
 
     /**
      * Check in the matrix if there is value on the left, on upper left and on top
+     * and return a list of the coordinates of the clickable cases
      * @param gameMode2Coord
      * @returns {(*|number)[]|number[]|*[]|(number|*)[]}
      */
@@ -327,13 +342,148 @@ export default function Gamemode(){
 
     }
 
+    /**
+     * Checks if the box chosen by the user is clickable before taking an action.
+     * @param rowIndex
+     * @param colIndex
+     */
+    const handleClickableCase = (rowIndex,colIndex) => {
+        if (gamemode && clickableCases.some(cases => cases[0] === rowIndex && cases[1] === colIndex)) {
+            handlePaperAnswerButtonClick(rowIndex, colIndex);
+        }
+    }
+
+    /**
+     * Determines the value displayed by the box depending on its game mode.
+     * @param item
+     * @param rowIndex
+     * @param colIndex
+     * @returns {*|string}
+     */
+    const determineValue = (item,rowIndex,colIndex) => {
+        if(gamemode) {
+            return(item);
+        }
+        else{
+            if (yPoint === rowIndex && xPoint === colIndex) {
+                return('?');
+            }
+            else {
+                if ( visibleCase.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) {
+                    return(item);
+                }
+                else {
+                    return('');
+                }
+            }
+        }
+    }
+
+    /**
+     * Determines and return the color that the case should display depending on its game mode.
+     * Return a red color if the user made a mistake, or green/white if the user made the right choice
+     * Return a light blue color when the answer must be guessed.
+     * @param rowIndex
+     * @param colIndex
+     * @returns {string}
+     */
+    const determineCaseColor = (rowIndex,colIndex) => {
+        //Game mode Optimal Path Discovery
+        if(gamemode) {
+            if(redCasesList.some(coord => coord[0] === rowIndex && coord[1] === colIndex)){
+                return('red');
+            }
+            else{
+                if(clickableCases.some(coord => coord[0] === rowIndex && coord[1] === colIndex)){
+                    return('lightblue');
+                }
+                else{
+                    if(greenCasesList.some(coord => coord[0] === rowIndex && coord[1] === colIndex)){
+                        return('green');
+                    }
+                    else{
+                        return('white');
+                    }
+                }
+            }
+        }
+        //Game mode Scores matrix filling
+        else{
+            if(yPoint === rowIndex && xPoint === colIndex){
+                return('lightblue');
+            }
+            else{
+                if(badAnswerCoord.some(coord => coord[0] === rowIndex && coord[1] === colIndex)){
+                    return('red');
+                }
+                else{
+                    return('white');
+                }
+            }
+        }
+    }
+
+    /**
+     * Return the color of the cases from the Help Matrix
+     * @param rowIndex
+     * @param colIndex
+     * @returns {string}
+     */
+    const determineHelpCaseColor = (rowIndex,colIndex) => {
+        if(rowIndex === 0 && colIndex === 0){
+            return('aqua');
+        }
+        else if(rowIndex === 1 && colIndex === 0 ){
+            return('fuchsia');
+        }
+        else if(rowIndex === 0 && colIndex === 1){
+            return ('lime');
+        }
+        else{
+            return('white');
+        }
+    }
+
+    /**
+     * Will return the information about match or mismatch for the help of the first game mode
+     * @returns {Element}
+     */
+    const helpMatchMismatchDisplayer = () => {
+        if(sequence1[yPoint-1] === sequence2[xPoint-1]){
+            return(<span style={{color: 'green'}}>{match + " (match)"}  <span style={{color: 'black'}}> =
+                {finalMatrix[yPoint-1][xPoint-1] + match}</span> </span>)
+        }
+        else{
+            return(<span style={{color: 'red'}}>{mismatch + " (mismatch) "} <span style={{color: 'black'}}> =
+                { finalMatrix[yPoint-1][xPoint-1] + mismatch}</span></span>)
+        }
+    }
+
+    /**
+     * Will return the information about match or mismatch for the help of the second game mode
+     * @returns {string}
+     */
+    const help2MatchMismatchDisplayer = () => {
+        if (leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[1] === match && sequence1[gameMode2Coord[0]-1] === sequence2[gameMode2Coord[1]-1]){
+            return('   <- accepted (= match)');
+        }
+        else {
+            if(leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[1] === mismatch && sequence1[gameMode2Coord[0]-1] !== sequence2[gameMode2Coord[1]-1]){
+                return('   <- accepted (= mismatch)');
+            }
+            else{
+                return('');
+            }
+        }
+    }
+
+
 
     /**
      * This functions updates the components everytime there is an action or that one of the dependance of the
      * useEffect has changed.
      */
     const change =() =>{
-
         generateHelpMatrix();
         setDisplayedMatrix(() =>
             <Box>
@@ -342,17 +492,13 @@ export default function Gamemode(){
                         <Grid item xs={100} key={rowIndex}>
                             <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
                                 {row.map((item, colIndex) => (
-
-                                    <Grid item  key={colIndex} onClick={(gamemode && clickableCases.some(cases => cases[0] === rowIndex && cases[1] === colIndex)) ? () => handlePaperAnswerButtonClick(rowIndex, colIndex) : () => console.log("yes")}>
+                                    <Grid item
+                                        key={colIndex}
+                                        onClick={() => handleClickableCase(rowIndex, colIndex)}>
                                         <Case
                                             key={[rowIndex, colIndex]}
-                                            value={(gamemode) ? item : (yPoint === rowIndex && xPoint === colIndex) ? '?' :
-                                                visibleCase.some(coord => coord[0] === rowIndex && coord[1] === colIndex) ? item : ""}
-                                            color={(gamemode) ? (redCasesList.some(coord => coord[0] === rowIndex && coord[1] === colIndex) ? 'red'  :
-                                                (clickableCases.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) ? 'lightblue':
-                                                (greenCasesList.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) ? 'green' : 'white') :
-                                                (yPoint === rowIndex && xPoint === colIndex) ? 'lightblue' :
-                                                    (badAnswerCoord.some(coord => coord[0] === rowIndex && coord[1] === colIndex)) ? 'red' : 'white'}
+                                            value={determineValue(item,rowIndex,colIndex)}
+                                            color={determineCaseColor(rowIndex,colIndex)}
                                         />
                                     </Grid>
                                 ))}
@@ -372,14 +518,13 @@ export default function Gamemode(){
                 <Grid container spacing={0.5}>
                     {helpMatrixCoord.map((row, rowIndex) => (
                         <Grid item xs={100} key={rowIndex}>
-                            <Grid container spacing={0.5} style={{ flexWrap: 'nowrap' }}>
+                            <Grid container spacing={0.5}>
                                 {row.map((item, colIndex) => (
-                                    <Grid item  key={colIndex} onClick={(gamemode && clickableCases.some(cases => cases[0] === rowIndex && cases[1] === colIndex)) ? () => handlePaperAnswerButtonClick(rowIndex, colIndex) : () => console.log("yes")}>
+                                    <Grid item  key={colIndex}>
                                         <Case
                                             key={[rowIndex, colIndex]}
-                                            value={(gamemode) ? item : (yPoint === rowIndex && xPoint === colIndex) ? "" :
-                                                visibleCase.some(coord => coord[0] === rowIndex && coord[1] === colIndex) ? item : ""}
-                                            color={rowIndex === 0 && colIndex === 0 ? 'aqua' : rowIndex === 1 && colIndex === 0 ? 'fuchsia' : rowIndex === 0 && colIndex === 1 ? 'lime' : 'white'}
+                                            value={determineValue(item,rowIndex,colIndex)}
+                                            color={determineHelpCaseColor(rowIndex,colIndex)}
                                         />
                                     </Grid>
                                 ))}
@@ -416,19 +561,27 @@ export default function Gamemode(){
      * UI component: Help of the game mode 2
      * @type {React.JSX.Element}
      */
-    let fullHelp2 = (
-        <div className={mainstyles.game2HelpFont}>
+    let fullHelp2 = () =>{
+        let currentValue = leftDiagUpCheck(gameMode2Coord)[3];
+        let leftValue = leftDiagUpCheck(gameMode2Coord)[0];
+        let topValue = leftDiagUpCheck(gameMode2Coord)[2];
+        let diagValue = leftDiagUpCheck(gameMode2Coord)[1];
+        return(
+            <div className={mainstyles.game2HelpFont}>
             <div>
-                <span style={{color: 'green'}}>Current box</span> :  <span style={{color: 'green'}}>{leftDiagUpCheck(gameMode2Coord)[3]}</span>
+                <span style={{color: 'green'}}>Current case</span> :  <span style={{color: 'green'}}>{currentValue}</span>
                 <div/>
-                <span style={{color: 'blue'}}>Upper box</span> :  <span style={{color: 'green'}}>{leftDiagUpCheck(gameMode2Coord)[3]}</span> -  <span style={{color: 'blue'}}> ({leftDiagUpCheck(gameMode2Coord)[2]})</span>  = {leftDiagUpCheck(gameMode2Coord)[3]-leftDiagUpCheck(gameMode2Coord)[2]} {leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[2] === gap ? '   <- accepted (= gap)' : ''}
+                <span style={{color: 'blue'}}>Upper case</span> :  <span style={{color: 'green'}}>{currentValue}</span> - <span style={{color: 'blue'}}> ({topValue})</span>  = {currentValue - topValue}
+                {(currentValue - topValue) === gap ? '   <- accepted (= gap)' : ''}
                 <div/>
-                <span style={{color: 'blueviolet'}}>Diagonal box</span> :  <span style={{color: 'green'}}>{leftDiagUpCheck(gameMode2Coord)[3]}</span> - <span style={{color: 'blueviolet'}}> ({leftDiagUpCheck(gameMode2Coord)[1]})</span>  = {leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[1]} {(leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[1] === match && sequence1[gameMode2Coord[0]-1] === sequence2[gameMode2Coord[1]-1]) ? '   <- accepted (= match)' : leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[1] === mismatch && sequence1[gameMode2Coord[0]-1] !== sequence2[gameMode2Coord[1]-1] ? '   <- accepted (= mismatch)' : ''}
+                <span style={{color: 'blueviolet'}}>Diagonal case</span> :  <span style={{color: 'green'}}>{currentValue}</span> - <span style={{color: 'blueviolet'}}>({diagValue})</span>
+                <span> = {currentValue - diagValue} {help2MatchMismatchDisplayer()}</span>
                 <div/>
-                <span style={{color: 'cornflowerblue'}}>Left box</span> :  <span style={{color: 'green'}}>{leftDiagUpCheck(gameMode2Coord)[3]}</span> - <span style={{color: 'cornflowerblue'}}>({leftDiagUpCheck(gameMode2Coord)[0]})</span>  = {leftDiagUpCheck(gameMode2Coord)[3]-leftDiagUpCheck(gameMode2Coord)[0]} {leftDiagUpCheck(gameMode2Coord)[3] - leftDiagUpCheck(gameMode2Coord)[0] === gap ? '   <- accepted (= gap)' : ''}
+                <span style={{color: 'cornflowerblue'}}>Left case</span> :  <span style={{color: 'green'}}>{currentValue}</span> - <span style={{color: 'cornflowerblue'}}>({leftValue})</span>  = {currentValue-leftValue}
+                {(currentValue - leftValue) === gap ? '   <- accepted (= gap)' : ''}
             </div>
-        </div>
-    );
+        </div>)
+    }
 
     /**
      * UI component: Help matrix of the game mode 1
@@ -460,21 +613,33 @@ export default function Gamemode(){
         <div className={mainstyles.game1HelpFont}>
             {xPoint === 0 && (
                 <div>
-                    <span style={{color: 'lime'}}>TOP VALUE</span> = <span style={{color: 'lime'}}>{yPoint === 0 ? "0" : finalMatrix[yPoint-1][xPoint]}</span> + <span style={{color: 'orange'}}>{gap + " (gap) "}</span> = ?
+                    <span style={{color: 'lime'}}>TOP VALUE</span> =
+                    <span style={{color: 'lime'}}>{yPoint === 0 ? "0" : finalMatrix[yPoint-1][xPoint]}</span> +
+                    <span style={{color: 'orange'}}>{gap + " (gap) "}</span> = ?
                 </div>
             )}
             {yPoint === 0 && (
                 <div>
-                    <span style={{color: 'fuchsia'}}>LEFT VALUE</span> = <span style={{color: 'fuchsia'}}>{yPoint === 0 ? "0" : finalMatrix[yPoint][xPoint-1]}</span> + <span style={{color: 'orange'}}>{gap + " (gap) "}</span> = ?
+                    <span style={{color: 'fuchsia'}}>LEFT VALUE</span> =
+                    <span style={{color: 'fuchsia'}}>{yPoint === 0 ? "0" : finalMatrix[yPoint][xPoint-1]}</span> +
+                    <span style={{color: 'orange'}}>{gap + " (gap) "}</span> = ?
                 </div>
             )}
             {(xPoint !== 0 && yPoint !== 0) && (
                 <div>
-                <span style={{color: 'lime'}}>TOP VALUE</span> = <span style={{color: 'lime'}}>{yPoint === 0 ? "0" : finalMatrix[yPoint-1][xPoint]}</span> + <span style={{color: 'orange'}}>{gap + " (gap) "}</span> = <span> {finalMatrix[yPoint-1][xPoint] + gap} </span>
+                    <span style={{color: 'lime'}}>TOP VALUE</span> =
+                    <span style={{color: 'lime'}}>{yPoint === 0 ? "0" : finalMatrix[yPoint-1][xPoint]}</span> +
+                    <span style={{color: 'orange'}}>{gap + " (gap) "}</span> =
+                    <span> {finalMatrix[yPoint-1][xPoint] + gap} </span>
                 <div/>
-                    <span style={{color: 'aqua'}}>DIAGONAL VALUE</span> = <span style={{color: 'aqua'}}>{(yPoint === 0 || xPoint===0) ? "0" : finalMatrix[yPoint-1][xPoint-1]}</span> + {sequence1[yPoint-1] === sequence2[xPoint-1] ? <span style={{color: 'green'}}>{match + " (match)"}  <span style={{color: 'black'}}>= { finalMatrix[yPoint-1][xPoint-1] + match}</span> </span>  : <span style={{color: 'red'}}>{mismatch + " (mismatch) "} <span style={{color: 'black'}}>= { finalMatrix[yPoint-1][xPoint-1] + mismatch}</span></span>}
+                    <span style={{color: 'aqua'}}>DIAGONAL VALUE</span> =
+                    <span style={{color: 'aqua'}}>{(yPoint === 0 || xPoint===0) ? "0" : finalMatrix[yPoint-1][xPoint-1]}</span> +
+                    {helpMatchMismatchDisplayer()}
                         <div/>
-                        <span style={{color: 'fuchsia'}}>LEFT VALUE</span> = <span style={{color: 'fuchsia'}}>{yPoint === 0 ? "0" : finalMatrix[yPoint][xPoint-1]}</span> + <span style={{color: 'orange'}}>{gap + " (gap) "}</span> = <span> {finalMatrix[yPoint][xPoint-1] + gap} </span>
+                    <span style={{color: 'fuchsia'}}>LEFT VALUE</span> =
+                    <span style={{color: 'fuchsia'}}>{yPoint === 0 ? "0" : finalMatrix[yPoint][xPoint-1]}</span> +
+                    <span style={{color: 'orange'}}>{gap + " (gap) "}</span> =
+                    <span> {finalMatrix[yPoint][xPoint-1] + gap} </span>
                 </div>
                 )}
             </div>
@@ -503,7 +668,7 @@ export default function Gamemode(){
             className={mainstyles.gameHelpBorderBox}
             sx={{ p: 2}}>
             <div>
-                {fullHelp2}
+                {fullHelp2()}
             </div>
         </Box>
 
@@ -695,9 +860,9 @@ export default function Gamemode(){
                 <Grid item>
                     <div className={mainstyles.gameResultFont}>
                         Good answers : {goodAnswerCounter}
-                        <div style={{marginTop:'15px'}}/>
+                        <div className={mainstyles.smallSpaceUp}/>
                         Wrong answers : {badAnswerCounter}
-                        <div style={{marginTop:'15px'}}/>
+                        <div className={mainstyles.smallSpaceUp}/>
                         Accuracy : {badAnswerCounter === 0 ? 100 : ((goodAnswerCounter) / (goodAnswerCounter + badAnswerCounter ) * 100).toFixed(2)}%
                     </div>
                 </Grid>
@@ -706,42 +871,42 @@ export default function Gamemode(){
             </Grid>
         </Box>
 
-
     return (
         <div>
             <div style={{marginTop: '30px'}}>
-            <Box
-                className={mainstyles.blosumBorderBox}
-                sx={{p: 2}}
-            >
-            <div className={mainstyles.spaceBetweenGameAndParam}>
-            <Box
-                className={mainstyles.matrixBorderBox}
-                sx={{ p: 2}}
-            >
-                {FullMatrix}
-            </Box>
-                {rightElement}
+                <Box
+                    className={mainstyles.blosumBorderBox}
+                    sx={{p: 2}}>
+                    <div className={mainstyles.spaceBetweenGameAndParam}>
+                        <Box
+                            className={mainstyles.matrixBorderBox}
+                            sx={{ p: 2}}
+                        >
+                            {FullMatrix}
+                        </Box>
+                        {rightElement}
+                    </div>
+                </Box>
             </div>
-            </Box>
-            </div>
-            <div className={mainstyles.centeredElem} style={{marginTop: '20px',marginBottom: '20px'}}>
-            <Box>
-                <Grid container direction="column"  spacing={0} alignItems="center">
-                    <Grid item sx={{ width: '80%' }}>
-                        <hr className={mainstyles.horizontalBorder} />
+            <div
+                className={mainstyles.centeredElem}
+                style={{marginTop: '20px',marginBottom: '20px'}}>
+                <Box>
+                    <Grid container direction="column" alignItems="center">
+                        <Grid item sx={{ width: '80%' }}>
+                            <hr className={mainstyles.horizontalBorder} />
+                        </Grid>
+                        <Grid item>
+                            <label className={mainstyles.fontHelpTitle}>HELP</label>
+                        </Grid>
+                        <Grid item sx={{ width: '40%' }}>
+                            <hr className={mainstyles.horizontalBorder} />
+                        </Grid>
+                        <Grid item sx={{marginTop:'10px'}}>
+                            {gamemode ? helperElem2 : helperElem1}
+                        </Grid>
                     </Grid>
-                    <Grid item>
-                        <label className={mainstyles.fontHelpTitle}>HELP</label>
-                    </Grid>
-                    <Grid item sx={{ width: '40%' }}>
-                        <hr className={mainstyles.horizontalBorder} />
-                    </Grid>
-                    <Grid item sx={{marginTop:'10px'}}>
-                        {gamemode ? helperElem2 : helperElem1}
-                    </Grid>
-                </Grid>
-            </Box>
+                </Box>
             </div>
         </div>
     );

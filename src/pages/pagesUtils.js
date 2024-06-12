@@ -12,14 +12,17 @@ import mode2Help from "./documentation_images/mode2Help.png";
 import blosum from "./documentation_images/blosum.png";
 
 
+
 /**
+ * This code comes/inspired from a solution of windows resize from stackOverflow Source : https://stackoverflow.com/questions/73600399/why-resized-function-is-always-trigger-when-resizing-browser-window-even-if-the
  * Allows the resize of the windows and adapt the page with it
  */
 export const adjustedZoomValue = () => {
-    document.body.style.zoom = (window.innerWidth / 1920).toString();
+    document.body.style.zoom = (window.innerWidth / 1920);
 };
 
 /**
+ * This code comes/inspired from a solution of windows resize from stackOverflow Source : https://stackoverflow.com/questions/73600399/why-resized-function-is-always-trigger-when-resizing-browser-window-even-if-the
  * Handling window resize and adjust zoom.
  */
 export const useAdjustedZoom = () => {
@@ -32,6 +35,14 @@ export const useAdjustedZoom = () => {
     }, []);
 };
 
+/**
+ * Help documentation for the normal mode
+ *  The documentation wrote in this file is inspired by . Durbin, S. R. Eddy, A. Krogh, and G. Mitchison. Biological Sequence Analysis :
+ *  Probabilistic Models of Proteins and Nucleic Acids. Cambridge University Press,
+ *  1998
+ *  and from many sources in the report linked to this project -> Please check the report.
+ * @type {React.JSX.Element}
+ */
 export const helpNormalText = (
     <div className={pages.pageTextMargin}>
         <div>
@@ -121,6 +132,14 @@ export const helpNormalText = (
     </div>
 );
 
+/**
+ * Help Documentation for the gamemode
+ *  The documentation wrote in this file is inspired by . Durbin, S. R. Eddy, A. Krogh, and G. Mitchison. Biological Sequence Analysis :
+ *  Probabilistic Models of Proteins and Nucleic Acids. Cambridge University Press,
+ *  1998
+ *  and from many sources in the report linked to this project -> Please check the report.
+ * @type {React.JSX.Element}
+ */
 export const helpGameText = (
     <div className={pages.pageTextMargin}>
         <div>
@@ -188,6 +207,14 @@ export const helpGameText = (
     </div>
 );
 
+/**
+ * Help Documentation for the BLOSUM mode
+ *  The documentation wrote in this file is inspired by . Durbin, S. R. Eddy, A. Krogh, and G. Mitchison. Biological Sequence Analysis :
+ *  Probabilistic Models of Proteins and Nucleic Acids. Cambridge University Press,
+ *  1998
+ *  and from many sources in the report linked to this project -> Please check the report.
+ * @type {React.JSX.Element}
+ */
 export const helpBlosumText = (
     <div className={pages.pageTextMargin}>
         <div>
@@ -207,6 +234,14 @@ export const helpBlosumText = (
     </div>
 );
 
+/**
+ * Introduction
+ *  The documentation wrote in this file is inspired by . Durbin, S. R. Eddy, A. Krogh, and G. Mitchison. Biological Sequence Analysis :
+ *  Probabilistic Models of Proteins and Nucleic Acids. Cambridge University Press,
+ *  1998
+ *  and from many sources in the report linked to this project -> Please check the report.
+ * @type {React.JSX.Element}
+ */
 export const introductionText = (
     <div className={pages.pageTextMargin}>
         <div>
@@ -221,7 +256,14 @@ export const introductionText = (
             However, it also allows you to work on strings.<br/>
             This aims to make the sequence alignment more understandable and visual.<br/>
             Different modes are accessible such as normal mode, game mode, and "Blosum" mode.<br/>
-            In this documentation, each mode will be explained with textual information and images.
+            In this documentation, each mode will be explained with textual information and images.<br/><br/>
+
+            Sources for the algorithms and explanations : < a href="https://1drv.ms/b/s!ApdrD7C8eYGn_RBxTBgH_jRE8oyU?e=yOvmGy" > Report of the project < /a >.<br/><br/>
+
+            Link of the repository :  < a href="https://github.com/Lorzi/Sequencia"> https://github.com/Lorzi/Sequencia< /a >.<br/>
+            Contact : Lorentz.BOIVIN@umons.student.ac.be
+
+
         </p>
 
         <div>

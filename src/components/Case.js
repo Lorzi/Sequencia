@@ -6,7 +6,7 @@ import {Paper} from "@mui/material";
  * @constructor
  */
 export function Case(props){
-
+    //Decreases the text size of a box if it exceeds a certain length
     let fontSize = '17px'
     if (props.value <= -100 || props.value >= 1000){
         fontSize = '12px'

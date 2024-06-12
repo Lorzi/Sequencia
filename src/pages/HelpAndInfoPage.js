@@ -4,6 +4,13 @@ import {useNavigate} from "react-router-dom";
 import sequenciaImage from "../components/sequencia10.png";
 import {helpBlosumText, helpGameText, helpNormalText, introductionText, useAdjustedZoom} from "./pagesUtils";
 import pages from './pages.module.css';
+
+/**
+ * Page for Help and Info mode
+ * returns the elements needed for display
+ * @returns {Element}
+ * @constructor
+ */
 export default function HelpAndInfoPage() {
 
     //Allows the resize of the windows and adapt the page with it
@@ -41,6 +48,7 @@ export default function HelpAndInfoPage() {
             {helpNormalText}
             {helpGameText}
             {helpBlosumText}
+
         </div>
     );
 }

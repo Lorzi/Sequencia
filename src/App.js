@@ -86,7 +86,7 @@ export default function App(){
 
     /**
      * Return the 2 strings sequences with the gaps "-" in a list of 2 elements
-     * It's useful to display the results and see where are the gaps.
+     * Theses strings are useful to display the results and see where are the gaps.
      * @param actualPath
      * @returns {[string,string]}
      */
@@ -144,17 +144,19 @@ export default function App(){
      * @returns {[]}
      */
     const allAlignmentResultResolver = (allPath) =>{
-        let result = [];
+        let AllAlignedPaths = [];
         for(let i=0;i<allPath.length;i++){
-            result.push(alignmentResultResolver(allPath[i]))
+            AllAlignedPaths.push(alignmentResultResolver(allPath[i]))
         }
-        return result;
+        return AllAlignedPaths;
     }
     let allAlignedResult = allAlignmentResultResolver(allPath);
 
 
     /**
      * Determine the coordinates of the boxes to be colored for the LCS in the matrix display
+     * Push into a list (coloredGreenCase) the coordinates of the boxes that must be colored to highlight the LCS
+     * set MatchString and ColorVariantCase
      * @param actualPath
      */
     const matchStringResolver = (actualPath) => {
@@ -165,7 +167,7 @@ export default function App(){
         while(count !== actualPath.length-1){
             if (alignedSequences[0][count] === alignedSequences[1][count]){
                 matchString+=alignedSequences[0][count];
-                coloredGreenCase.push(actualPath[count+1]); //Push into a list the coordinates of the boxes that must be colored to highlight the LCS
+                coloredGreenCase.push(actualPath[count+1]);
                 count++;
             }
             else{
@@ -247,25 +249,27 @@ export default function App(){
     };
 
 
-
     /**
      * useEffect function call the OnDisplayPath() to refresh the visual display of the elements when one of the deps is modified.
-     * Same for the function checkVariant and its own deps.
      */
 
     useEffect(() => {
-        onDisplayPath(); // Run onDisplayPath() when pathCounter is updated
+        onDisplayPath();
         // eslint-disable-next-line
     }, [pathCounter,chosenCase,gap,colorVariantCase,selectedAlgorithm,blosumCheck,blosumCustom]);
 
+    /**
+     * useEffect function call the checkVariant() to refresh the visual display of the elements when one of the deps is modified.
+     */
     useEffect(() => {
         // eslint-disable-next-line
-        checkVariant(); // Run onDisplayPath() when pathCounter is updated
+        checkVariant();
         // eslint-disable-next-line
     }, [selectedVariant,pathCounter]);
 
     /**
      * Function allowing you to check which variant has been chosen by the user and graying/adapting the parameters accordingly
+     * also set the final score according to the game mode chosen
      */
     const checkVariant = () => {
         if(matrixFinal[0].length === 0) {
@@ -336,6 +340,20 @@ export default function App(){
         }
     }
 
+    /**
+     * Determines what color the case of the arrow matrix will be.
+     * @param rowIndex
+     * @param colIndex
+     * @returns {string}
+     */
+    const determineColorArrowedCase = (rowIndex,colIndex) => {
+        if(mergedAllPath.some(coord => coord[0] === rowIndex && coord[1] === colIndex)){
+            return('orange');
+        }
+        else{
+            return('white');
+        }
+    }
 
 
     /**
@@ -343,7 +361,8 @@ export default function App(){
      * Display of the matrix and update of it each time this function is called.
      */
     const onDisplayPath = () => {
-        setExtraParameters(<NeedlemanExtra chooseSelectedVariant = {chooseSelectedVariant} />); //ALLOWS you to set the default variant otherwise it only appears after clicking twice on needleman
+        //ALLOWS you to set the default variant otherwise it only appears after clicking twice on needleman
+        setExtraParameters(<NeedlemanExtra chooseSelectedVariant = {chooseSelectedVariant} />);
         checkVariant();
 
         //Updating the score matrix
@@ -359,7 +378,7 @@ export default function App(){
 
         //Updating the arrow matrix
         setDisplayedArrowedMatrix(() => (
-            <Box sx={{ width: '100%', margin: '0' }}>
+            <Box>
                 <Grid container spacing={0.5} >
                     {arrowedMatrix.map((row, rowIndex) => (
                         <Grid item xs={12} key={rowIndex}>
@@ -369,8 +388,7 @@ export default function App(){
                                         <Case
                                             key={[rowIndex, colIndex]}
                                             value={item}
-                                            color={mergedAllPath.some(coord => coord[0] === rowIndex && coord[1] === colIndex) ? 'orange' : 'white'}
-                                            // change the color of the case in orange if the path is in the allPath
+                                            color={determineColorArrowedCase(rowIndex,colIndex)}
                                         />
                                     </Grid>
                                 ))}
@@ -385,6 +403,49 @@ export default function App(){
         setDisplayedSeq(<DisplayedSeq sequence2={sequence2} />);
         //Updating the Sequence 1 display
         setDisplayedOtherSeq(<DisplayedOtherSeq sequence1={sequence1} />);
+    }
+
+    const determineHelp = (i) => {
+        if(helpWindow && helpIndex === i){
+            let helpText;
+            switch(i) {
+                case 0:
+                    helpText = "This is the space reserved for sequences. It is possible to choose the two sequences that are going to be aligned : the Sequence 1 and sequence 2. Most of the time, we put DNA or protein sequences but this tool allows more possibilities such as working on character strings, etc... So don't hesitate to test with whatever you want !";
+                    break;
+                case 1:
+                    helpText = "Allows you to choose the algorithm that we will use for the alignment. We have two choices: a maximum global alignment algorithm (Needleman-Wunsch), so here we will process all the data at once. Or we have a minimal local alignment algorithm (Smith-Waterman), so here we will focus on small similar fragments instead of processing the whole sequences at once.";
+                    break;
+                case 2:
+                    helpText = "The 'Compute limit' value is a limit preventing the calculation of optimal paths beyond this limit. It is possible that the alignment you make contains too many optimal paths for the browser. This limit intervenes to avoid crashes in the event of too high a generation. You can adapt this limit according to your needs but be careful of performance losses. The Force Update button allows you to force the updating of the matrices if there is an exceptional case where the display crashes.";
+                    break;
+                case 3:
+                    helpText = "The first matrix is the score matrix, it indicates each score at each stage to finally arrive at the final score. We also see a red display of an optimal path (an optimal alignment that gives the best score). The second matrix on the right is the matrix which represents the set of all optimal paths and their directions in the form of arrows. It is thanks to this matrix that we can observe all of the optimal alignments (orange boxes).";
+                    break;
+                case 4:
+                    helpText = "Match Value. This value is added to the final score each time we align two characters that are equal in alignment.";
+                    break;
+                case 5:
+                    helpText = "Value of Mismatch. This value is added to the final score each time two different characters are aligned in the alignment.";
+                    break;
+                case 6:
+                    helpText = "Gap value. This value is added to the final score each time we introduce a gap in the alignment.";
+                    break;
+                case 7:
+                    helpText = "Resets the match, mismatch and gap values to the default values (respectively: 1,-1,-2). These values are generally the most commonly used";
+                    break;
+                case 8:
+                    helpText = "Allows you to navigate between the optimal paths.";
+                    break;
+                default:
+                    helpText = "Help for this component coming soon..."
+                    break;
+            }
+            return(
+                <Alert  severity="info">
+                    {helpText}
+                </Alert>
+            )
+        }
     }
 
     /**
@@ -423,12 +484,13 @@ export default function App(){
             onClick={() => handleRightButtonClick()}>→
         </Button>
 
+
     /**
      * UI Component: Button that reset the value by default
      * @type {React.JSX.Element}
      */
     const resetValueButton =
-        <div style={{ position: 'relative' }}>
+        <div className={mainstyles.relativeForHelp}>
         <Button
             className = {mainstyles.resetButton}
             variant="contained"
@@ -436,20 +498,16 @@ export default function App(){
             onClick={() => handleResetValueButtonClick()}
             onMouseOver={() => {
                 handleMouseOver()
-                setHelpIndex([false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false])
+                setHelpIndex(7)
             }}
             onMouseOut={() => {
                 handleMouseOut()
-                setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                setHelpIndex(null)
             }}
         >Reset value</Button>
-            {helpWindow && helpIndex[7] && (
-                <div className={mainstyles.helpWindow}>
-                    <Alert  severity="info">
-                        Resets the match, mismatch and gap values to the default values (respectively: 1,-1,-2). These values are generally the most commonly used
-                    </Alert>
-                </div>
-            )}
+            <div className={mainstyles.helpWindow}>
+                {determineHelp(7)}
+            </div>
         </div>
 
     /**
@@ -457,9 +515,17 @@ export default function App(){
      * @type {React.JSX.Element}
      */
     const sequenceBox =
-        <div className={mainstyles.spaceInterInput}>
+        <div className={mainstyles.spaceInterInput}
+             onMouseOver={() => {
+                 handleMouseOver()
+                 setHelpIndex(0);
+             }}
+             onMouseOut={() => {
+                 handleMouseOut()
+                 setHelpIndex(null);
+             }}>
             <Box
-                sx={{m: 1}} //Make the alignment better
+                sx={{m: 1}}
             >
                 <TextField
                     className = {mainstyles.sequenceBox}
@@ -482,9 +548,9 @@ export default function App(){
             </Box>
 
             <Box
-                sx={{m: 1}} //Make the alignment better
+                sx={{m: 1}}
             >
-                <div style={{ position: 'relative' }}>
+                <div className={mainstyles.relativeForHelp}>
                 <TextField
                     className = {mainstyles.sequenceBox}
                     id="sequence2"
@@ -492,14 +558,7 @@ export default function App(){
                     variant="outlined"
                     type="text"
                     value={sequence2}
-                    onMouseOver={() => {
-                        handleMouseOver()
-                        setHelpIndex([true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
-                    }}
-                    onMouseOut={() => {
-                        handleMouseOut()
-                        setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
-                    }}
+
                     inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 1000 characters)
                     onChange={(e) => {
                         setPathCounter(0)
@@ -512,13 +571,9 @@ export default function App(){
                         onDisplayPath()
                     }}
                 />
-                    {helpWindow && helpIndex[0] && (
-                        <div className={mainstyles.helpWindow}>
-                            <Alert severity="info">
-                                This is the space reserved for sequences. It is possible to choose the two sequences that are going to be aligned : the Sequence 1 and sequence 2. Most of the time, we put DNA or protein sequences but this tool allows more possibilities such as working on character strings, etc... So don't hesitate to test with whatever you want !
-                            </Alert>
-                        </div>
-                    )}
+                    <div className={mainstyles.helpWindow}>
+                        {determineHelp(0)}
+                    </div>
                 </div>
             </Box>
         </div>
@@ -545,11 +600,11 @@ export default function App(){
                         variant="outlined"
                         onMouseOver={() => {
                             handleMouseOver()
-                            setHelpIndex([false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                            setHelpIndex(1)
                         }}
                         onMouseOut={() => {
                             handleMouseOut()
-                            setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                            setHelpIndex(null)
                         }}
                         onChange = {(e) => {
                             setPathCounter(0);
@@ -575,14 +630,9 @@ export default function App(){
                         <MenuItem  value = "Needleman-Wunsch">Needleman-Wunsch</MenuItem >
                         <MenuItem  value = "Smith-Waterman">Smith-Waterman</MenuItem >
                     </Select>
-                        {helpWindow && helpIndex[1] && (
-
-                            <div className={mainstyles.helpWindow}>
-                                <Alert severity="info">
-                                    Allows you to choose the algorithm that we will use for the alignment. We have two choices: a maximum global alignment algorithm (Needleman-Wunsch), so here we will process all the data at once. Or we have a minimal local alignment algorithm (Smith-Waterman), so here we will focus on small similar fragments instead of processing the whole sequences at once.
-                                </Alert>
-                            </div>
-                        )}
+                        <div className={mainstyles.helpWindow}>
+                            {determineHelp(1)}
+                        </div>
                     </div>
                 </FormControl>
             </div>
@@ -654,22 +704,18 @@ export default function App(){
                         sx={{p: 2}}
                         onMouseOver={() => {
                             handleMouseOver()
-                            setHelpIndex([false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false])
+                            setHelpIndex(3)
                         }}
                         onMouseOut={() => {
                             handleMouseOut()
-                            setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                            setHelpIndex(null)
                         }}
                     >
                         {FullMatrix}
                     </Box>
-                {helpWindow && helpIndex[9] && (
                     <div className={mainstyles.matrixHelpWindow}>
-                        <Alert severity="info">
-                            The first matrix is the score matrix, it indicates each score at each stage to finally arrive at the final score. We also see a red display of an optimal path (an optimal alignment that gives the best score). The second matrix on the right is the matrix which represents the set of all optimal paths and their directions in the form of arrows. It is thanks to this matrix that we can observe all of the optimal alignments (orange boxes).
-                        </Alert>
+                        {determineHelp(3)}
                     </div>
-                )}
                 </Grid>
                 <Grid item>
                     <Box
@@ -708,7 +754,7 @@ export default function App(){
      * @type {React.JSX.Element}
      */
     let computeLimitComp =
-        <div style={{ position: 'relative' }}>
+        <div className={mainstyles.relativeForHelp}>
         <TextField
             className={mainstyles.computeLimitElem}
             label={ "Compute limit"}
@@ -717,11 +763,11 @@ export default function App(){
             value={computeLimit}
             onMouseOver={() => {
                 handleMouseOver()
-                setHelpIndex([false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                setHelpIndex(2)
             }}
             onMouseOut={() => {
                 handleMouseOut()
-                setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                setHelpIndex(null)
             }}
             onChange={(e) => {
                 setPathCounter(0);
@@ -739,13 +785,9 @@ export default function App(){
                 onDisplayPath()
             }}
         />
-            {helpWindow && helpIndex[2] && (
-                <div className={mainstyles.computeHelpWindow}>
-                    <Alert severity="info">
-                        The "Compute limit" value is a limit preventing the calculation of optimal paths beyond this limit. It is possible that the alignment you make contains too many optimal paths for the browser. This limit intervenes to avoid crashes in the event of too high a generation. You can adapt this limit according to your needs but be careful of performance losses. The Force Update button allows you to force the updating of the matrices if there is an exceptional case where the display crashes.
-                    </Alert>
-                </div>
-            )}
+            <div className={mainstyles.computeHelpWindow}>
+                {determineHelp(2)}
+            </div>
         </div>
 
     /**
@@ -754,7 +796,7 @@ export default function App(){
      */
     let changeComputeElem =
         <Box
-            sx={{ m: 1}} //Make the alignment better
+            sx={{ m: 1}}
         >
             <div className={mainstyles.spaceInputButton}>
                 {computeLimitComp}
@@ -768,7 +810,7 @@ export default function App(){
      */
     let paramButton =
         <Box
-            sx={{ m: 1}} //Make the alignment better
+            sx={{ m: 1}}
         >
         <div className={mainstyles.spaceInputButton}>
             <div className={mainstyles.spaceInputParam}>
@@ -781,11 +823,11 @@ export default function App(){
                 value={match}
                 onMouseOver={() => {
                     handleMouseOver()
-                    setHelpIndex([false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                    setHelpIndex(4)
                 }}
                 onMouseOut={() => {
                     handleMouseOut()
-                    setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                    setHelpIndex(null)
                 }}
 
                 onChange={(e) => {
@@ -803,13 +845,9 @@ export default function App(){
                 }
                 disabled={matchDisabled}
             />
-                {helpWindow && helpIndex[4] && (
-                    <div className={mainstyles.helpWindowParam}>
-                        <Alert severity="info">
-                            Match Value. This value is added to the final score each time we align two characters that are equal in alignment.
-                        </Alert>
-                    </div>
-                )}
+                <div className={mainstyles.helpWindowParam}>
+                    {determineHelp(4)}
+                </div>
 
             <TextField
                 className = {mainstyles.paramBox}
@@ -820,11 +858,11 @@ export default function App(){
                 value={mismatch}
                 onMouseOver={() => {
                     handleMouseOver()
-                    setHelpIndex([false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                    setHelpIndex(5)
                 }}
                 onMouseOut={() => {
                     handleMouseOut()
-                    setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                    setHelpIndex(null)
                 }}
                 onChange={(e) => {
                     setPathCounter(0);
@@ -841,13 +879,9 @@ export default function App(){
                 }
                 disabled={mismatchDisabled}
             />
-                {helpWindow && helpIndex[5] && (
-                    <div className={mainstyles.helpWindowParam}>
-                        <Alert severity="info">
-                            Value of Mismatch. This value is added to the final score each time two different characters are aligned in the alignment.
-                        </Alert>
-                    </div>
-                )}
+                <div className={mainstyles.helpWindowParam}>
+                    {determineHelp(5)}
+                </div>
 
                 <TextField
                     className = {mainstyles.paramBox}
@@ -858,11 +892,11 @@ export default function App(){
                     value={gap}
                     onMouseOver={() => {
                         handleMouseOver()
-                        setHelpIndex([false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                        setHelpIndex(6)
                     }}
                     onMouseOut={() => {
                         handleMouseOut()
-                        setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                        setHelpIndex(null)
                     }}
                     onChange={(e) => {
                         setPathCounter(0);
@@ -880,13 +914,9 @@ export default function App(){
                     }
                     disabled={gapDisabled}
                 />
-                {helpWindow && helpIndex[6] && (
-                    <div className={mainstyles.helpWindowParam}>
-                        <Alert severity="info">
-                            Gap value. This value is added to the final score each time we introduce a gap in the alignment.
-                        </Alert>
-                    </div>
-                )}
+                <div className={mainstyles.helpWindowParam}>
+                    {determineHelp(6)}
+                </div>
 
         </div>
             {resetValueButton}
@@ -894,21 +924,21 @@ export default function App(){
         </div>
 </Box>
     let paramPathComp =
-        <div style={{ position: 'relative' }}>
+        <div className={mainstyles.relativeForHelp}>
         <Box
             className = {mainstyles.pathsPanel}
              onMouseOver={() => {
                  handleMouseOver()
-                 setHelpIndex([false,false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false])
+                 setHelpIndex(8)
              }}
              onMouseOut={() => {
                  handleMouseOut()
-                 setHelpIndex([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false])
+                 setHelpIndex(null)
              }}
              sx={{ p: 2}}>
         <Grid container>
             <Grid item>
-                <div style = {{ display: 'flex', flexDirection: 'row'}}>
+                <div className={mainstyles.rowDisposition}>
                     {leftOnPath}
                     <div style={{marginLeft: '5px'}}/>
                     {rightOnPath}
@@ -922,13 +952,9 @@ export default function App(){
             </Grid>
         </Grid>
         </Box >
-            {helpWindow && helpIndex[10] && (
-                <div className={mainstyles.pathHelpWindow}>
-                    <Alert severity="info">
-                        Allows you to navigate between the optimal paths.
-                    </Alert>
-                </div>
-            )}
+            <div className={mainstyles.pathHelpWindow}>
+                {determineHelp(8)}
+            </div>
         </div>
 
     /**
@@ -1015,7 +1041,7 @@ export default function App(){
         //Set of all the components in return for the final display on the page
         return (
         <div className={mainstyles.returnOrganization}>
-            <div style={{ position: 'relative'}}>
+            <div className={mainstyles.relativeForHelp}>
                 {upElement}
             </div>
             <hr className={mainstyles.horizontalBorder} />

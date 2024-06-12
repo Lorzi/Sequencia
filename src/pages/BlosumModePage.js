@@ -6,7 +6,12 @@ import Blosum from "../Blosum";
 import {useAdjustedZoom} from "./pagesUtils";
 import pages from "./pages.module.css";
 
-
+/**
+ * Page for BLOSUM mode
+ * returns the elements needed for display
+ * @returns {Element}
+ * @constructor
+ */
 export default function BlosumModePage(){
     //Allows the resize of the windows and adapt the page with it
     useAdjustedZoom();

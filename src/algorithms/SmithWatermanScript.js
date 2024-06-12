@@ -11,10 +11,10 @@ import createSubMatrix from "../components/subMatrixGenerator";
  * @constructor
  */
 export function SmithWatermanScript(S1,S2,Match,Mismatch,Gap) {
-
     /**
-     * Create and return the transformed matrix (score matrix) that will help to find the best path possible, this is also the matrix that should be displayed on the screen
-     * Smith-Waterman algorithm
+     * Create and return the transformed matrix (score matrix) that will help to find the best path possible
+     * This algorithm is the Smith-Waterman algorithm
+     * Returns a list containing the sub-matrix, the transfMatrix (score matrix) and the max score (needed to know where the optimal paths are)
      * @param S1
      * @param S2
      * @param subMatrix
@@ -30,18 +30,18 @@ export function SmithWatermanScript(S1,S2,Match,Mismatch,Gap) {
         let caseValue = 0;
         let maxScore = 0;
         let maxCoordList = [];
-        for (i=0;i<lenX +1;i++){ //Creation of the first line which is an exceptional case of the algorithm
+
+        for (i=0;i<lenX +1;i++){
             first_line.push(0);
         }
-
-        transfMatrix.push(first_line) //Added the first line
+        transfMatrix.push(first_line)
         for(i=1;i<lenY+1;i++){
-            transfMatrix.push([0]); //Adding the first column gradually (mandatory to calculate the rest)
+            transfMatrix.push([0]);
             for(j=1;j<lenX+1;j++) {
-                //Max    (Diagonal                                                   , Vertical,                   Horizontal                   ,0)
+                //Core of the algorithm -> This is where we compute and fill every case of the score matrix (transfMatrix).
                 caseValue = Math.max(transfMatrix[i - 1][j - 1] + subMatrix[i - 1][j - 1], transfMatrix[i - 1][j] + Gap, transfMatrix[i][j - 1] + Gap,0)
-                transfMatrix[i].push(caseValue); //Core of the algorithm #This is typically where we will display the steps on the GUI each time
-                if (caseValue > maxScore){ //Filling a list with coordinates which corresponds to the maximums in order to be able to do the traceback
+                transfMatrix[i].push(caseValue);
+                if (caseValue > maxScore){
                     maxScore = caseValue;
                     maxCoordList = [[i,j]];
                 }
@@ -56,7 +56,6 @@ export function SmithWatermanScript(S1,S2,Match,Mismatch,Gap) {
     const transfMatrixResult = createTransfMatrix(S1,S2,subMatrix,Gap);
     const transfMatrix = transfMatrixResult[0];
     const maxCoordList = transfMatrixResult[1];
-
 
     return([subMatrix,transfMatrix,maxCoordList]);
 }

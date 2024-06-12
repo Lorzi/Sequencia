@@ -42,6 +42,8 @@ export default function Blosum(){
 
     /**
      * Handle the custom matrix blosum file in .JSON input by the user
+     * This function has been created and inspired on base of the FileRead documentation and javascript.info : https://developer.mozilla.org/en-US/docs/Web/API/FileReader/load_event
+     * https://javascript.info/file
      * @param e
      */
     const handleFileBlosumLoad = (e) => {
@@ -101,7 +103,10 @@ export default function Blosum(){
         //Updating the Sequence 1 display
         setDisplayedOtherSeq(<DisplayedOtherSeq sequence1={sequence1} />);
     }
-    //HTML component representing the score matrix as well as its column and its sequence line aligned to it
+    /**
+     * UI component : representing the score matrix as well as its column and its sequence line aligned to it
+     * @type {React.JSX.Element}
+     */
     let FullMatrix = (
         <div>
             <div className={mainstyles.fullMatrixVert}>
@@ -121,7 +126,7 @@ export default function Blosum(){
     );
 
     let paramButton =
-        <div style={{ position: 'relative' }}>
+        <div>
             <TextField
                 className = {mainstyles.paramBox}
                 label = "Gap"
@@ -199,7 +204,10 @@ export default function Blosum(){
                 </Grid>
             </Grid>
         </Box>
-//HTML component that arranges and brings together the upper part of the page
+    /**
+     * UI Component : component representing the score matrix as well as its column and its sequence line aligned to it
+     * @type {React.JSX.Element}
+     */
     let upElement =
         <div>
             {elementFirstLine}
@@ -208,9 +216,8 @@ export default function Blosum(){
 
     //Set of all the components in return for the final display on the page
     return (
-
         <div className={mainstyles.returnOrganization}>
-            <div style={{ position: 'relative'}}>
+            <div>
                 {upElement}
             </div>
             <hr className={mainstyles.horizontalBorder} />

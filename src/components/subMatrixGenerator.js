@@ -1,5 +1,5 @@
 /**
- * Creates the match/missmatch matrix to divide work and make it easier to add the gaps in another function (when creating the transfMatrix)
+ * Creates the match/mismatch matrix to divide work and make it easier to add the gaps in another function (when creating the transfMatrix(scoreMatrix))
  * @param S1
  * @param S2
  * @param Match

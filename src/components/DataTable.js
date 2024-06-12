@@ -36,6 +36,9 @@ export default function DataTable({allPath,choosePathCounter,allAlignedResult}) 
     }
 
     return (
+        /**
+         * This data grid has been created on base of the MUI DataGrid documentation : https://mui.com/x/react-data-grid/
+         */
         <div style={{ height: 600, width: '40%' }}>
             <DataGrid
                 rows={rows}
@@ -47,7 +50,7 @@ export default function DataTable({allPath,choosePathCounter,allAlignedResult}) 
                     },
                 }}
                 pageSizeOptions={[5, 10,20,50,100]}
-                disableMultipleSelection //Disable multiple selection, we only want one path at a time
+                disableMultipleSelection //We only want one path at a time
                 onCellClick={(rows,event) => handleClick(event, rows.id)}
                 rowHeight={30}
             />

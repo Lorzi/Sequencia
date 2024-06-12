@@ -5,6 +5,13 @@ import sequenciaImage from "../components/sequencia10.png";
 import {useNavigate} from "react-router-dom";
 import {useAdjustedZoom} from "./pagesUtils";
 import pages from "./pages.module.css";
+
+/**
+ * Page for game mode
+ * returns the elements needed for display
+ * @returns {Element}
+ * @constructor
+ */
 export default function GameModePage(){
     const navigate = useNavigate();
 

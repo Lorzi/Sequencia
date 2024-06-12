@@ -5,6 +5,12 @@ import {useNavigate} from "react-router-dom";
 import {useAdjustedZoom} from "./pagesUtils";
 import pages from "./pages.module.css";
 
+/**
+ * Welcome page
+ * returns the elements needed for display
+ * @returns {Element}
+ * @constructor
+ */
 export default function WelcomePage(){
     //Allows the resize of the windows and adapt the page with it
     useAdjustedZoom();
@@ -64,7 +70,7 @@ export default function WelcomePage(){
         </Box>
 
     return(
-        <Box sx={{ width: '60%', margin: '0 auto', marginTop: '20px', marginBottom:'20px' }}>
+        <Box className={pages.welcomeBox}>
             <Grid container spacing={0.5} direction="column" alignItems="center" >
                 <Grid item>
                     <img src={sequenciaImage} alt="Sequencia" style={{ width: '600px'}}   />
