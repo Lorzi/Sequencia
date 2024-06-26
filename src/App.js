@@ -214,6 +214,7 @@ export default function App(){
     const chooseSelectedVariant = (selectedVariant) =>{
         setSelectedVariant(selectedVariant);
         setPathCounter(0);
+        setChosenCase([]);
     };
 
     /**
@@ -607,8 +608,9 @@ export default function App(){
                             setHelpIndex(null)
                         }}
                         onChange = {(e) => {
-                            setPathCounter(0);
+                            setPathCounter(0)
                             setSelectedAlgorithm(e.target.value)
+                            setChosenCase([])
                             const selectedValue = e.target.value
                             if(selectedValue === "Needleman-Wunsch"){
                                 setExtraParameters(<NeedlemanExtra chooseSelectedVariant = {chooseSelectedVariant}/>);

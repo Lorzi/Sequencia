@@ -731,7 +731,9 @@ export default function Gamemode(){
                     value={sequence1}
                     inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 1000 characters)
                     onChange={(e) => {
-                        setSequence1(e.target.value)
+                        setSequence1(e.target.value);
+                        resetGamemode1Param();
+
                     }}
                 />
                 <TextField
@@ -743,7 +745,8 @@ export default function Gamemode(){
                     value={sequence2}
                     inputProps={{maxLength: 1000}} //Limit the length of the input text (here size of 1000 characters)
                     onChange={(e) => {
-                        setSequence2(e.target.value)
+                        setSequence2(e.target.value);
+                        resetGamemode1Param();
                     }}
                 />
         </div>
